@@ -1,0 +1,15 @@
+# Local financial data (MUST NOT BE PUSHED TO GITHUB)
+*.xlsx
+DCR_Budget_Tracker.xlsx
+DCR_Budget_Tracker_backup.xlsx
+Monzo/uploaded_*
+
+# OS metadata
+.DS_Store
+
+# Backups and temp files
+*_backup.py
+__pycache__/
+*.log
+scratch/
+test_server.py

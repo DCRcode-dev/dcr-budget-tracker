@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DCR Spend Tracker</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FAF7F2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Soho House / Lux-Tech Light Sepia Palette */
+            --bg: #FAF7F2;          /* vellum paper */
+            --card: #FFFFFF;        /* high-contrast clean white */
+            --border: #EDE8E0;      /* warm division line */
+            --text: #2A2421;        /* warm espresso charcoal */
+            --text-muted: #6B6259;  /* sand/taupe */
+            --gold: #C9A84C;        /* antique gold */
+            --gold-light: rgba(201, 168, 76, 0.08);
+            --red: #F04E23;         /* terracotta orange for alerts */
+            --red-light: rgba(240, 78, 35, 0.08);
+            --green: #22C55E;       /* emerald green for offsets */
+            --green-light: rgba(34, 197, 94, 0.08);
+            
+            --font-hero: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-haptic: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.4;
+            overflow: hidden;
+            height: 100svh;
+            max-height: 100svh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Tactical micro-noise grain overlay from Gym/Travel apps */
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 999; pointer-events: none;
+            opacity: 0.025; mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 128px 128px;
+        }
+
+        /* App Layout Shell */
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100svh;
+            max-height: 100svh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sticky Glass Header */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(250, 247, 242, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .logo-text {
+            font-family: var(--font-hero);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            text-align: center;
+        }
+
+        /* Navigation Bottom Tab Bar */
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding-bottom: env(safe-area-inset-bottom, 12px);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            gap: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            transition: transform 0.2s var(--ease-haptic);
+        }
+
+        .nav-item:active svg {
+            transform: scale(0.9);
+        }
+
+        /* Screens Container */
+        .screens-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            padding: 20px;
+            padding-bottom: 95px; /* offset for bottom tab bar */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: none;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .screen.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* UI Cards - Clean, high contrast */
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Trajectory Hero Card styling */
+        .hero-card {
+            background: linear-gradient(145deg, #ffffff, #faf8f5);
+            border: 1px solid var(--border);
+            text-align: center;
+            padding: 34px 20px;
+        }
+
+        .hero-lbl {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .hero-val {
+            font-family: var(--font-hero);
+            font-size: 3.2rem;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.1;
+            margin-bottom: 6px;
+        }
+
+        .hero-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Metric Grid styling */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .mini-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .mini-lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .mini-val {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* native-feel scrollbar overrides */
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Premium File Upload Interface */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            background-color: var(--card);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .upload-zone:active {
+            transform: scale(0.98);
+            background-color: rgba(201, 168, 76, 0.03);
+            border-color: var(--gold);
+        }
+
+        .upload-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .upload-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .upload-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
+        /* Clinical Analytics Table styling */
+        .clinical-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .clinical-table th {
+            text-align: left;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .clinical-table td {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(237, 232, 224, 0.6);
+            vertical-align: middle;
+        }
+
+        .col-status { width: 15%; }
+        .col-item { width: 45%; font-weight: 600; }
+        .col-amt { width: 20%; text-align: right; font-variant-numeric: tabular-nums; }
+        .col-forecast { width: 20%; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+        /* Clinical Status Badges */
+        .badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-normal {
+            background-color: var(--green-light);
+            color: var(--green);
+        }
+
+        .badge-spike {
+            background-color: var(--red-light);
+            color: var(--red);
+        }
+
+        .badge-fixed {
+            background-color: var(--gold-light);
+            color: var(--gold);
+        }
+
+        .badge-offset {
+            background-color: rgba(59, 130, 246, 0.08);
+            color: #3b82f6;
+        }
+
+        /* Insights Feed styling */
+        .insight-card {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 18px;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .insight-body {
+            flex: 1;
+        }
+
+        .insight-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .insight-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Transaction row item styling */
+        .tx-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tx-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            max-width: 70%;
+        }
+
+        .tx-merchant {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tx-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .tx-right {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .tx-amount-spend {
+            color: var(--text);
+        }
+
+        .tx-amount-refund {
+            color: var(--green);
+        }
+
+        /* Settings Forms & Inputs styling */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--gold);
+            background-color: #ffffff;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--text);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            background-color: var(--text-muted);
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+        }
+
+        .btn-gold:active {
+            background-color: #bfa044;
+        }
+
+        /* Uploading & Parsing Spinner overlay */
+        .spinner-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(250, 247, 242, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-msg {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Feedback Success Checkmark animation */
+        .checkmark-icon {
+            width: 48px;
+            height: 48px;
+            stroke-width: 2;
+            stroke: var(--green);
+            stroke-miterlimit: 10;
+            fill: none;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: var(--green);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* Search input styling in transactions list */
+        .search-container {
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell" id="app">
+    <!-- Centered sticky Header -->
+    <header>
+        <div class="logo-text">DCR OBSERVATION</div>
+    </header>
+
+    <div class="screens-container">
+        
+        <!-- 1. OBSERVATION SCREEN -->
+        <div class="screen active" id="screen-dashboard">
+            <!-- Trajectory Forecast Card -->
+            <div class="card hero-card">
+                <div class="hero-lbl">60-Day Runway Forecast</div>
+                <div class="hero-val" id="val-forecast-remaining">£0.00</div>
+                <div class="hero-sub" id="lbl-forecast-sub">Projected Capital on Aug 31st</div>
+            </div>
+
+            <!-- KPI Metric Grid -->
+            <div class="metric-grid">
+                <div class="mini-card">
+                    <div class="mini-lbl">Weekly Velocity</div>
+                    <div class="mini-val" id="val-weekly-burn">£0.00</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-lbl">Daily Burn Rate</div>
+                    <div class="mini-val" id="val-daily-burn">£0.00</div>
+                </div>
+            </div>
+
+            <!-- Dynamic Upload Widget -->
+            <div class="upload-zone" id="upload-widget">
+                <div class="spinner-overlay" id="upload-spinner">
+                    <div class="spinner" id="spinner-circle"></div>
+                    <svg class="checkmark-icon" id="success-check" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
+                        <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                    <div class="spinner-msg" id="spinner-message">Parsing statement...</div>
+                </div>
+                <span class="upload-icon">📥</span>
+                <div class="upload-title">Upload Monzo Statement</div>
+                <div class="upload-subtitle">Supports CSV or PDF exports (haptic click)</div>
+                <input type="file" id="statement-file-input" class="hidden-file-input" accept=".csv,.pdf">
+            </div>
+
+            <!-- Clinical Analytics Table -->
+            <div class="card" style="padding: 18px;">
+                <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin-bottom: 12px;">Clinical Velocity Matrix</h3>
+                <table class="clinical-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Category</th>
+                            <th style="text-align: right;">Amount</th>
+                            <th style="text-align: right;">Forecast</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrix-table-body">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Smart Behavioral Insights Panel -->
+            <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin: 10px 0 14px 4px;">Smart Behavioral Insights</h3>
+            <div id="insights-container">
+                <!-- Insights filled dynamically -->
+            </div>
+        </div>
+
+        <!-- 2. TRANSACTIONS SCREEN -->
+        <div class="screen" id="screen-transactions">
+            <div class="search-container">
+                <input type="text" class="form-input" id="tx-search-input" placeholder="Search merchant or category...">
+            </div>
+            
+            <div id="tx-list-container">
+                <!-- Transactions filled dynamically -->
+            </div>
+        </div>
+
+        <!-- 3. CONFIG/SETTINGS SCREEN -->
+        <div class="screen" id="screen-settings">
+            <div class="card">
+                <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin-bottom: 18px;">Observation Window Parameters</h3>
+                
+                <div class="form-group">
+                    <label>Starting Capital (£)</label>
+                    <input type="number" class="form-input" id="setting-capital" placeholder="e.g. 10000">
+                </div>
+
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" class="form-input" id="setting-start-date">
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" class="form-input" id="setting-end-date">
+                </div>
+
+                <div class="form-group">
+                    <label>Local Server Sync URL (for phone connection)</label>
+                    <input type="text" class="form-input" id="setting-sync-url" placeholder="e.g. http://192.168.1.50:8080">
+                    <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px; display: block;">Leave empty if running locally on this machine.</span>
+                </div>
+
+                <button class="btn btn-gold" id="btn-save-settings" style="margin-top: 10px;">Save Parameters</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Tab Bar -->
+    <div class="nav-bar">
+        <div class="nav-item active" data-target="dashboard">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            Dashboard
+        </div>
+        <div class="nav-item" data-target="transactions">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-8h14V7H7v2z"/>
+            </svg>
+            Feed
+        </div>
+        <div class="nav-item" data-target="settings">
+            <svg viewBox="0 0 24 24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+            Settings
+        </div>
+    </div>
+</div>
+
+<script>
+    // State Store
+    let appState = {
+        start_date: "2026-07-01",
+        end_date: "2026-08-31",
+        starting_capital: 10000.0,
+        transactions: []
+    };
+
+    // Category mapping icons (matching standard categories)
+    const categoryIcons = {
+        "Dining": "🍔",
+        "Groceries": "🛒",
+        "Health": "🏋️",
+        "Transport": "🚗",
+        "Shopping": "🛍️",
+        "Entertainment": "🎬",
+        "Subscriptions": "📱",
+        "Personal care": "💈",
+        "Travel": "✈️",
+        "Misc": "📦",
+        "Rent": "🏠"
+    };
+
+    // DOM Elements
+    const screens = {
+        dashboard: document.getElementById('screen-dashboard'),
+        transactions: document.getElementById('screen-transactions'),
+        settings: document.getElementById('screen-settings')
+    };
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+        // Init navigation tabs
+        const navItems = document.querySelectorAll('.nav-bar .nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.getAttribute('data-target');
+                
+                // Set active tab styling
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Show screen
+                Object.keys(screens).forEach(key => {
+                    screens[key].classList.remove('active');
+                });
+                screens[target].classList.add('active');
+            });
+        });
+
+        // Click to upload statement handling
+        const uploadWidget = document.getElementById('upload-widget');
+        const fileInput = document.getElementById('statement-file-input');
+        
+        uploadWidget.addEventListener('click', (e) => {
+            // Prevent click propagation trigger loop if input clicked
+            if (e.target !== fileInput) {
+                fileInput.click();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFileUpload);
+
+        // Save Settings Click Handler
+        const btnSaveSettings = document.getElementById('btn-save-settings');
+        btnSaveSettings.addEventListener('click', saveParameters);
+
+        // Real-time search trigger
+        const searchInput = document.getElementById('tx-search-input');
+        searchInput.addEventListener('input', renderTransactionsFeed);
+
+        // Initial Data Fetch
+        fetchData();
+    });
+
+    // Helper to resolve API URLs (supports local server overrides for PWA phone connections)
+    function getApiUrl(endpoint) {
+        const syncUrl = localStorage.getItem('dcr_budget_sync_url') || '';
+        return syncUrl ? `${syncUrl.replace(/\/+$/, '')}${endpoint}` : endpoint;
+    }
+
+    // Fetch master state from python server api
+    async function fetchData() {
+        try {
+            // Populate sync URL field from local storage
+            const syncUrl = localStorage.getItem('dcr_budget_sync_url') || '';
+            document.getElementById('setting-sync-url').value = syncUrl;
+
+            const res = await fetch(getApiUrl('/api/data'));
+            const data = await res.json();
+            appState = data;
+            
+            // Populate form config settings fields
+            document.getElementById('setting-capital').value = appState.starting_capital;
+            document.getElementById('setting-start-date').value = appState.start_date;
+            document.getElementById('setting-end-date').value = appState.end_date;
+
+            // Recalculate metrics and update lists
+            calculateTrajectory();
+            renderTransactionsFeed();
+        } catch (e) {
+            console.error("Error fetching state data:", e);
+        }
+    }
+
+    // Trajectory Forecasting Calculations Engine
+    function calculateTrajectory() {
+        const start = new Date(appState.start_date);
+        const end = new Date(appState.end_date);
+        
+        // Define today relative to user system or lock to metadata context (June 30th, 2026)
+        let todayVal = new Date();
+        // If local time is significantly skewed, fall back to current 2026-06-30 date
+        if (todayVal.getFullYear() > 2026) {
+            todayVal = new Date("2026-06-30");
+        }
+
+        // Filter transactions within the observation window
+        const txsInWindow = appState.transactions.filter(t => {
+            return t.date >= appState.start_date && t.date <= appState.end_date;
+        });
+
+        // Spend in window (spends are positive values, refunds/offsets are negative values)
+        const totalNetSpend = txsInWindow.reduce((acc, t) => acc + t.amount, 0);
+
+        // Days elapsed in window
+        const msPerDay = 1000 * 60 * 60 * 24;
+        let daysElapsed = 1;
+        if (todayVal >= start) {
+            const currentLimit = todayVal > end ? end : todayVal;
+            daysElapsed = Math.max(1, Math.floor((currentLimit - start) / msPerDay) + 1);
+        } else {
+            // Today is before window. Project based on max transaction date in window, or default 1.
+            if (txsInWindow.length > 0) {
+                const txDates = txsInWindow.map(t => new Date(t.date));
+                const minTxDate = new Date(Math.min(...txDates));
+                const maxTxDate = new Date(Math.max(...txDates));
+                daysElapsed = Math.max(1, Math.floor((maxTxDate - minTxDate) / msPerDay) + 1);
+            } else {
+                daysElapsed = 1;
+            }
+        }
+
+        // Velocity Metrics
+        const dailyBurn = totalNetSpend / daysElapsed;
+        const weeklyBurn = dailyBurn * 7;
+        
+        // Projections
+        const totalDays = Math.max(1, Math.floor((end - start) / msPerDay) + 1);
+        const projectedSpend = dailyBurn * totalDays;
+        const forecastedRemaining = appState.starting_capital - projectedSpend;
+        
+        // Render metric summary cards
+        document.getElementById('val-forecast-remaining').innerText = fmtGBP(forecastedRemaining);
+        document.getElementById('val-weekly-burn').innerText = fmtGBP(weeklyBurn);
+        document.getElementById('val-daily-burn').innerText = fmtGBP(dailyBurn);
+        
+        // Update hero caption details
+        const daysLeft = Math.max(0, totalDays - daysElapsed);
+        document.getElementById('lbl-forecast-sub').innerText = `Projected Remaining Capital (based on ${daysElapsed} days of data)`;
+
+        // Calculate Category Breakdowns and Speeds
+        renderVelocityMatrix(txsInWindow, daysElapsed, totalDays);
+        
+        // Generate insights
+        generateBehavioralInsights(txsInWindow, dailyBurn, weeklyBurn, forecastedRemaining, totalDays);
+    }
+
+    // Render Clinical Matrix Table
+    function renderVelocityMatrix(txs, daysElapsed, totalDays) {
+        const tableBody = document.getElementById('matrix-table-body');
+        tableBody.innerHTML = '';
+
+        // 1. Group actual spend by category
+        const categoryActuals = {};
+        Object.keys(categoryIcons).forEach(cat => categoryActuals[cat] = 0.0);
+
+        txs.forEach(t => {
+            const cat = t.category;
+            if (cat in categoryActuals) {
+                categoryActuals[cat] += t.amount;
+            } else {
+                categoryActuals["Misc"] += t.amount;
+            }
+        });
+
+        // Render Table Row per category
+        Object.keys(categoryIcons).forEach(cat => {
+            const actual = categoryActuals[cat];
+            const dailyCatBurn = actual / daysElapsed;
+            const forecast60 = dailyCatBurn * totalDays;
+            
+            // Deduce clinical status
+            let status = 'NORMAL';
+            let badgeClass = 'badge-normal';
+            
+            if (cat === 'Rent' || cat === 'Subscriptions') {
+                status = 'FIXED';
+                badgeClass = 'badge-fixed';
+            } else if (actual < 0) {
+                status = 'OFFSET';
+                badgeClass = 'badge-offset';
+            } else if (actual > 0 && dailyCatBurn > getHistoricalAverage(cat)) {
+                status = 'SPIKE';
+                badgeClass = 'badge-spike';
+            }
+
+            // Exclude empty observation rows to keep analytics dense and neat
+            if (actual === 0) return;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="col-status"><span class="badge ${badgeClass}">${status}</span></td>
+                <td class="col-item">${categoryIcons[cat]} ${cat}</td>
+                <td class="col-amt">${fmtGBP(actual)}</td>
+                <td class="col-forecast">${fmtGBP(forecast60)}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+        
+        if (tableBody.innerHTML === '') {
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No transactions inside this window. Upload a statement.</td></tr>`;
+        }
+    }
+
+    // Helper: Static baseline historical average comparisons
+    function getHistoricalAverage(category) {
+        const averages = {
+            "Dining": 500 / 30,
+            "Groceries": 400 / 30,
+            "Health": 250 / 30,
+            "Transport": 250 / 30,
+            "Shopping": 300 / 30,
+            "Entertainment": 150 / 30,
+            "Subscriptions": 120 / 30,
+            "Personal care": 100 / 30,
+            "Travel": 300 / 30,
+            "Misc": 180 / 30,
+            "Rent": 3580 / 30
+        };
+        return averages[category] || 0;
+    }
+
+    // Generate Smart Behavioral Insights
+    function generateBehavioralInsights(txs, dailyBurn, weeklyBurn, forecastedRemaining, totalDays) {
+        const container = document.getElementById('insights-container');
+        container.innerHTML = '';
+
+        const insights = [];
+
+        // Insight 1: General Forecast
+        if (forecastedRemaining < 0) {
+            insights.push({
+                icon: "⚠️",
+                title: "Overage Projection Flag",
+                desc: `Based on your daily velocity of ${fmtGBP(dailyBurn)}/day, you will exceed your starting capital by ${fmtGBP(Math.abs(forecastedRemaining))} before the end of the 2-month period.`,
+                type: "warning"
+            });
+        } else {
+            insights.push({
+                icon: "📈",
+                title: "Capital Runway Projection",
+                desc: `On current run-rates, you are projected to successfully complete the 2-month observation with ${fmtGBP(forecastedRemaining)} remaining in reserve.`,
+                type: "info"
+            });
+        }
+
+        // Insight 2: Peak category calculation
+        const catTotals = {};
+        txs.forEach(t => {
+            catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
+        });
+
+        // Filter out rent for lifestyle comparison
+        delete catTotals['Rent'];
+        let peakCategory = null;
+        let peakAmt = -Infinity;
+        Object.keys(catTotals).forEach(cat => {
+            if (catTotals[cat] > peakAmt) {
+                peakAmt = catTotals[cat];
+                peakCategory = cat;
+            }
+        });
+
+        if (peakCategory && peakAmt > 0) {
+            const pct = (peakAmt / (dailyBurn * totalDays || 1)) * 100;
+            insights.push({
+                icon: categoryIcons[peakCategory] || "🔥",
+                title: `Peak Outflow Driver: ${peakCategory}`,
+                desc: `Your spending on ${peakCategory} totals ${fmtGBP(peakAmt)}, which represents approximately ${pct.toFixed(0)}% of your lifestyle velocity.`,
+                type: "info"
+            });
+        }
+
+        // Insight 3: Instant Refunds & Peer-to-Peer Offsets check
+        const refundTx = txs.filter(t => t.amount < 0);
+        const totalRefunds = Math.abs(refundTx.reduce((acc, t) => acc + t.amount, 0));
+        if (totalRefunds > 0) {
+            insights.push({
+                icon: "🔄",
+                title: "Active Spend Offsets Captured",
+                desc: `We detected ${fmtGBP(totalRefunds)} in Monzo refunds and peer split paybacks. This has reduced your weekly burn velocity by ${fmtGBP(totalRefunds / (totalDays / 7))}/week.`,
+                type: "success"
+            });
+        }
+
+        // Insight 4: Large Transaction Anomalies
+        const largeTxs = txs.filter(t => t.amount > 150 && t.category !== 'Rent');
+        if (largeTxs.length > 0) {
+            const topAnomaly = largeTxs.sort((a,b) => b.amount - a.amount)[0];
+            insights.push({
+                icon: "🚨",
+                title: "One-Off Anomaly Spotted",
+                desc: `An atypical lifestyle transaction of ${fmtGBP(topAnomaly.amount)} was logged at ${topAnomaly.merchant}. Note how one-offs affect your overall Runway forecast.`,
+                type: "warning"
+            });
+        }
+
+        // Render insights
+        insights.forEach(ins => {
+            const div = document.createElement('div');
+            div.className = 'insight-card';
+            div.innerHTML = `
+                <div class="insight-icon">${ins.icon}</div>
+                <div class="insight-body">
+                    <div class="insight-title">${ins.title}</div>
+                    <div class="insight-desc">${ins.desc}</div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        if (insights.length === 0) {
+            container.innerHTML = `<div class="insight-card"><div class="insight-body"><div class="insight-desc">No behavioral insights compiled yet. Upload transactions.</div></div></div>`;
+        }
+    }
+
+    // Render Transaction List Feed
+    function renderTransactionsFeed() {
+        const container = document.getElementById('tx-list-container');
+        const query = document.getElementById('tx-search-input').value.toLowerCase().trim();
+        container.innerHTML = '';
+
+        // Filter transactions based on search query
+        const filtered = appState.transactions.filter(t => {
+            const matchQuery = t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query);
+            return matchQuery;
+        });
+
+        filtered.forEach(t => {
+            const isRefund = t.amount < 0;
+            const amtClass = isRefund ? 'tx-amount-refund' : 'tx-amount-spend';
+            const amtPrefix = isRefund ? '-' : '';
+            const icon = categoryIcons[t.category] || "📦";
+            
+            const div = document.createElement('div');
+            div.className = 'tx-row';
+            div.innerHTML = `
+                <div class="tx-left">
+                    <div class="tx-merchant">${icon} ${t.merchant}</div>
+                    <div class="tx-meta">${formatDatePretty(t.date)} &nbsp;·&nbsp; ${t.category} &nbsp;·&nbsp; ${t.account}</div>
+                </div>
+                <div class="tx-right ${amtClass}">${amtPrefix}${fmtGBP(Math.abs(t.amount))}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:40px;">No matching transactions found.</div>`;
+        }
+    }
+
+    // Handle AJAX statement upload with status animations
+    async function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const overlay = document.getElementById('upload-spinner');
+        const spinner = document.getElementById('spinner-circle');
+        const checkmark = document.getElementById('success-check');
+        const message = document.getElementById('spinner-message');
+
+        // Show overlay with loading status
+        overlay.classList.add('active');
+        spinner.style.display = 'block';
+        checkmark.style.display = 'none';
+        message.innerText = "Parsing statement...";
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch(getApiUrl('/api/upload'), {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                appState = data;
+                
+                // Show success haptic animation
+                spinner.style.display = 'none';
+                checkmark.style.display = 'block';
+                message.innerText = `Successfully parsed ${data.added_count} new transactions!`;
+                
+                // Recalculate metrics
+                calculateTrajectory();
+                renderTransactionsFeed();
+                
+                // Reset file input value
+                e.target.value = '';
+                
+                // Fade out overlay after 2 seconds
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, 2000);
+            } else {
+                throw new Error(data.error || "Failed to parse");
+            }
+        } catch (err) {
+            spinner.style.display = 'none';
+            message.innerText = `Error: ${err.message}`;
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 3000);
+        }
+    }
+
+    // Update settings via POST
+    async function saveParameters() {
+        const capital = parseFloat(document.getElementById('setting-capital').value);
+        const start = document.getElementById('setting-start-date').value;
+        const end = document.getElementById('setting-end-date').value;
+        const syncUrl = document.getElementById('setting-sync-url').value.trim();
+
+        if (isNaN(capital) || !start || !end) {
+            alert("All configuration fields are required.");
+            return;
+        }
+
+        // Save local server sync URL to localStorage
+        if (syncUrl) {
+            localStorage.setItem('dcr_budget_sync_url', syncUrl);
+        } else {
+            localStorage.removeItem('dcr_budget_sync_url');
+        }
+
+        try {
+            const res = await fetch(getApiUrl('/api/config'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonStr = JSON.stringify({
+                    starting_capital: capital,
+                    start_date: start,
+                    end_date: end
+                })
+            });
+
+            const data = await res.json();
+            appState = data;
+            
+            // Recalculate and notify user
+            calculateTrajectory();
+            renderTransactionsFeed();
+            
+            alert("Configuration settings updated successfully.");
+            
+            // Jump back to dashboard tab
+            document.querySelector('[data-target="dashboard"]').click();
+        } catch (e) {
+            console.error("Error saving parameters:", e);
+            alert("Error updating configuration.");
+        }
+    }
+
+    // Helper: Format double precision floats to currency strings
+    function fmtGBP(val) {
+        if (val === Infinity || val === -Infinity || isNaN(val)) return "£0.00";
+        return new Intl.NumberFormat('en-GB', {
+            style: 'currency',
+            currency: 'GBP',
+            minimumFractionDigits: 2
+        }).format(val);
+    }
+
+    // Helper: ISO date to MMMM DD, YYYY
+    function formatDatePretty(isoStr) {
+        const parts = isoStr.split("-");
+        if (parts.length < 3) return isoStr;
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+</script>
+</body>
+</html>
