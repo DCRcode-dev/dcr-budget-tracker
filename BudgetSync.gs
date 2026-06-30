@@ -974,6 +974,12 @@ function setupTriggers() {
     .atHour(7)
     .create();
 
+  // Hourly Gmail alerts sync
+  ScriptApp.newTrigger("syncGmailAlerts")
+    .timeBased()
+    .everyHours(1)
+    .create();
+
   // Monthly brief on the 1st at 08:00
   ScriptApp.newTrigger("sendMonthlyBrief")
     .timeBased()
@@ -981,5 +987,223 @@ function setupTriggers() {
     .atHour(8)
     .create();
 
-  Logger.log("✅ Triggers registered: syncCSVs (daily 07:00) + sendMonthlyBrief (1st of month 08:00)");
+  Logger.log("✅ Triggers registered: syncCSVs (daily 07:00), syncGmailAlerts (hourly), + sendMonthlyBrief (1st of month 08:00)");
+}
+
+/**
+ * Scans emails labeled "Ledger-Alerts", parses transactions for BofA and Monzo,
+ * and appends them to the Transactions sheet.
+ */
+function syncGmailAlerts() {
+  const labelName = "Ledger-Alerts";
+  const label = GmailApp.getUserLabelByName(labelName);
+  if (!label) {
+    Logger.log("⚠️ Gmail label '" + labelName + "' does not exist. Please create it.");
+    return;
+  }
+
+  const threads = label.getThreads();
+  if (threads.length === 0) {
+    Logger.log("No new emails under label '" + labelName + "'.");
+    return;
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const txSheet = ss.getSheetByName(CONFIG.TABS.TRANSACTIONS);
+  const existingIds = getExistingTxIds_(txSheet);
+
+  let newRows = [];
+
+  for (let i = 0; i < threads.length; i++) {
+    const thread = threads[i];
+    const messages = thread.getMessages();
+    
+    for (let j = 0; j < messages.length; j++) {
+      const msg = messages[j];
+      const subject = msg.getSubject();
+      const body = msg.getPlainBody();
+      const date = msg.getDate();
+
+      let parsedTx = null;
+
+      // 1. Monzo Alert (IFTTT Email Alert)
+      // Subject format: Monzo Alert: MerchantName | Amount | Currency
+      if (subject.indexOf("Monzo Alert:") !== -1) {
+        try {
+          const parts = subject.replace("Monzo Alert:", "").split("|");
+          if (parts.length >= 3) {
+            const merchant = parts[0].trim();
+            const amountStr = parts[1].replace(/[^\d.-]/g, "").trim();
+            const currency = parts[2].trim();
+            const rawAmount = parseFloat(amountStr);
+
+            if (!isNaN(rawAmount)) {
+              // Standardize spend as positive, refund as negative
+              let amount = Math.abs(rawAmount);
+              let isRefund = rawAmount > 0; // standard IFTTT spend is negative, refund is positive
+              if (isRefund) {
+                amount = -Math.abs(rawAmount);
+              }
+
+              const cleanName = cleanMerchantName_(merchant);
+              const category = mapCategory_(cleanName);
+              const txId = "monzo_mail_" + Utilities.formatDate(date, "GMT", "yyyyMMdd_HHmmss") + "_" + Math.floor(Math.abs(amount) * 100);
+
+              parsedTx = {
+                date: date,
+                merchant: cleanName,
+                amount: amount,
+                category: category,
+                account: "Monzo Current",
+                txId: txId
+              };
+            }
+          }
+        } catch (err) {
+          Logger.log("Error parsing Monzo alert: " + err.message);
+        }
+      }
+      
+      // 2. Bank of America Transaction Alert
+      else if (msg.getFrom().indexOf("bankofamerica.com") !== -1 || subject.indexOf("Bank of America Alert") !== -1 || subject.indexOf("Bank of America Transaction") !== -1) {
+        try {
+          // BofA alert body has: "A transaction of $XX.XX occurred" or "withdrawal of $XX.XX"
+          const amtMatch = body.match(/\$([\d,]+\.\d{2})/);
+          if (amtMatch) {
+            const rawAmount = parseFloat(amtMatch[1].replace(/,/g, ""));
+            
+            // Extract description: usually "at [Merchant]" or "to [Merchant]"
+            let merchant = "Bank of America Withdrawal";
+            const descMatch = body.match(/(?:at|to|with)\s+([A-Za-z0-9\s#&*'-]+?)(?:\.\s|on\s|\nat\s|\n)/);
+            if (descMatch) {
+              merchant = descMatch[1].trim();
+            }
+
+            const cleanName = cleanMerchantName_(merchant);
+            let category = mapCategory_(cleanName);
+            
+            const txId = "bofa_mail_" + Utilities.formatDate(date, "GMT", "yyyyMMdd_HHmmss") + "_" + Math.floor(rawAmount * 100);
+
+            parsedTx = {
+              date: date,
+              merchant: cleanName,
+              amount: rawAmount,
+              category: category,
+              account: "Bank of America Checking",
+              txId: txId
+            };
+          }
+        } catch (err) {
+          Logger.log("Error parsing BofA alert: " + err.message);
+        }
+      }
+
+      if (parsedTx && !existingIds.has(parsedTx.txId)) {
+        const row = buildTxRow_(parsedTx.date, parsedTx.merchant, parsedTx.amount, parsedTx.category, parsedTx.account, parsedTx.txId);
+        newRows.push(row);
+        existingIds.add(parsedTx.txId);
+      }
+    }
+
+    // Remove the label so it is not scanned again
+    thread.removeLabel(label);
+  }
+
+  if (newRows.length > 0) {
+    appendTransactions_(newRows);
+    Logger.log("✅ syncGmailAlerts finished. Added " + newRows.length + " new transactions from Gmail alerts.");
+  } else {
+    Logger.log("No new transaction alerts found.");
+  }
+}
+
+/**
+ * Helper: Clean merchant name text formatting.
+ */
+function cleanMerchantName_(desc) {
+  let cleaned = desc.replace(/\s{2,}.*/, '').trim();
+  return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ');
+}
+
+/**
+ * Serves the transaction database as JSON for PWA integration.
+ * Deploy as a Web App: Extensions -> Apps Script -> Deploy -> New Deployment -> Web App (Anyone has access).
+ */
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    
+    // Read config
+    const cfg = ss.getSheetByName(CONFIG.TABS.CONFIG);
+    const startDateVal = cfg.getRange("C35").getValue();
+    const endDateVal = cfg.getRange("C36").getValue();
+    const startingCapital = parseFloat(cfg.getRange("C37").getValue());
+    
+    // Handle date formatting
+    let startDate = "2026-07-01";
+    let endDate = "2026-08-31";
+    if (startDateVal instanceof Date) {
+      startDate = Utilities.formatDate(startDateVal, "GMT", "yyyy-MM-dd");
+    } else if (startDateVal) {
+      startDate = startDateVal.toString();
+    }
+    if (endDateVal instanceof Date) {
+      endDate = Utilities.formatDate(endDateVal, "GMT", "yyyy-MM-dd");
+    } else if (endDateVal) {
+      endDate = endDateVal.toString();
+    }
+    
+    // Read transactions
+    const sheet = ss.getSheetByName(CONFIG.TABS.TRANSACTIONS);
+    const lastRow = sheet.getLastRow();
+    let txs = [];
+    
+    if (lastRow >= 3) {
+      const data = sheet.getRange(3, 1, lastRow - 2, 8).getValues();
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        if (!row[0]) continue;
+        
+        let dateStr = "";
+        if (row[0] instanceof Date) {
+          dateStr = Utilities.formatDate(row[0], "GMT", "yyyy-MM-dd");
+        } else {
+          dateStr = row[0].toString();
+        }
+        
+        const merchant = row[1];
+        const amount = parseFloat(row[2]);
+        const category = row[3];
+        const account = row[4];
+        const txId = row[7];
+        
+        // Deduce currency based on account name
+        const currency = account.indexOf("America") !== -1 ? "USD" : "GBP";
+        
+        txs.push({
+          date: dateStr,
+          merchant: merchant,
+          amount: amount,
+          category: category,
+          account: account,
+          currency: currency,
+          tx_id: txId
+        });
+      }
+    }
+    
+    const payload = {
+      start_date: startDate,
+      end_date: endDate,
+      starting_capital: startingCapital,
+      transactions: txs
+    };
+    
+    return ContentService.createTextOutput(JSON.stringify(payload))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }

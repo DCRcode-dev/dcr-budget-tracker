@@ -78,7 +78,7 @@
             overflow: hidden;
         }
 
-        /* Centered iOS Header */
+        /* Centered Header */
         header {
             position: sticky;
             top: 0;
@@ -190,7 +190,7 @@
             background: linear-gradient(145deg, #ffffff, #faf8f5);
             border: 1px solid var(--border);
             text-align: center;
-            padding: 34px 20px;
+            padding: 28px 20px;
         }
 
         .hero-lbl {
@@ -211,7 +211,7 @@
         }
 
         .hero-sub {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
         }
 
@@ -266,29 +266,11 @@
             border-color: var(--gold);
         }
 
-        .upload-icon {
-            font-size: 28px;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .upload-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .upload-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
         .hidden-file-input {
             display: none;
         }
 
-        /* Clinical deep dive metrics table */
+        /* Category metrics table */
         .clinical-table {
             width: 100%;
             border-collapse: collapse;
@@ -316,7 +298,7 @@
         .col-amt { width: 20%; text-align: right; font-variant-numeric: tabular-nums; }
         .col-forecast { width: 20%; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
 
-        /* Clinical Status Badges */
+        /* Badges */
         .badge {
             display: inline-block;
             font-size: 9px;
@@ -540,7 +522,6 @@
             color: var(--text);
         }
 
-        /* Feedback Success Checkmark SVG path animations */
         .checkmark-icon {
             width: 48px;
             height: 48px;
@@ -597,7 +578,7 @@
             border-color: var(--gold);
         }
 
-        /* Clinical Matrix Tier Headers */
+        /* Tier Headers */
         .tier-header-row td {
             background-color: var(--bg);
             font-size: 9px;
@@ -610,7 +591,7 @@
             border-top: 1px solid var(--border);
         }
 
-        /* Inline category edit drawer inside feed */
+        /* Inline category edit drawer */
         .tx-row-wrapper {
             border-bottom: 1px solid var(--border);
         }
@@ -640,6 +621,61 @@
             color: var(--gold);
             border-color: var(--gold);
         }
+
+        /* Floating Action Button (FAB) */
+        .fab {
+            position: fixed;
+            bottom: 95px;
+            right: 20px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background-color: var(--gold);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 16px rgba(201, 168, 76, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            transition: var(--transition);
+        }
+        .fab:active {
+            transform: scale(0.9) rotate(45deg);
+        }
+
+        /* Micro Quick Add Drawer */
+        .quick-add-drawer {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            background-color: var(--card);
+            border-top: 1px solid var(--border);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            z-index: 200;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -8px 30px rgba(42, 36, 33, 0.08);
+        }
+        .quick-add-drawer.active {
+            transform: translateY(0);
+        }
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(42, 36, 33, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .drawer-backdrop.active {
+            opacity: 1;
+            pointer-events: all;
+        }
     </style>
 </head>
 <body>
@@ -654,34 +690,88 @@
         
         <!-- 1. OBSERVATION SCREEN -->
         <div class="screen active" id="screen-dashboard">
+            
+            <!-- Weekly Digest stories Carousel -->
+            <div class="card" style="padding: 16px; background-color: var(--card); border: 1px solid var(--border); overflow: hidden; height: 130px; display: flex; flex-direction: column;">
+                <div style="flex: 1; position: relative; overflow: hidden; width: 100%;">
+                    <div style="display: flex; width: 300%; height: 100%; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);" id="carousel-slides-wrapper">
+                        <!-- Slide 1 -->
+                        <div class="carousel-slide" id="slide-story-1" style="width: 33.333%; padding-right: 10px;">
+                            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 1 · Weekly Outflow</div>
+                            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0;">This Week's Pace</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Analyzing transactions logged in the past 7 days...</div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="carousel-slide" id="slide-story-2" style="width: 33.333%; padding-right: 10px;">
+                            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 2 · Micro-Habits</div>
+                            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0;">Top Spot of the Week</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Identifying your most frequent spending merchants...</div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="carousel-slide" id="slide-story-3" style="width: 33.333%; padding-right: 10px;">
+                            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 3 · Sabbatical Runway</div>
+                            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0;">Cash Outlook</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Projecting your cash balance runway based on everyday spend...</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Dot indicators -->
+                <div style="display: flex; justify-content: center; gap: 6px; margin-top: 8px;" id="carousel-dots">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background-color: var(--gold); cursor: pointer;" onclick="moveCarousel(0)"></span>
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background-color: var(--border); cursor: pointer;" onclick="moveCarousel(1)"></span>
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background-color: var(--border); cursor: pointer;" onclick="moveCarousel(2)"></span>
+                </div>
+            </div>
+
             <!-- Forecasted Runway Card -->
             <div class="card hero-card" style="padding-bottom: 24px;">
-                <div class="hero-lbl">60-Day Runway Forecast</div>
+                <div class="hero-lbl">Estimated Cash Remaining</div>
                 <div class="hero-val" id="val-forecast-remaining">£0.00</div>
-                <div class="hero-sub" id="lbl-forecast-sub">Projected Capital on Aug 31st</div>
+                <div class="hero-sub" id="lbl-forecast-sub">Projected balance on August 31st</div>
+                
+                <!-- Trajectory Sparkline Graph -->
+                <div style="width: 100%; height: 110px; margin-top: 14px; position: relative;">
+                    <svg id="trajectory-svg" style="width: 100%; height: 100%; overflow: visible;"></svg>
+                </div>
                 
                 <!-- Velocity Filter Toggles -->
-                <div style="display: flex; justify-content: center; gap: 8px; margin-top: 18px;">
-                    <button class="toggle-pill active" id="btn-filter-all" onclick="changeVelocityFilter('all')">All Outflows</button>
-                    <button class="toggle-pill" id="btn-filter-baseline" onclick="changeVelocityFilter('baseline')">Baseline Lifestyle</button>
+                <div style="display: flex; justify-content: center; gap: 8px; margin-top: 16px;">
+                    <button class="toggle-pill active" id="btn-filter-all" onclick="changeVelocityFilter('all')">Show All Spending</button>
+                    <button class="toggle-pill" id="btn-filter-baseline" onclick="changeVelocityFilter('baseline')">Just Day-to-Day Habits</button>
                 </div>
             </div>
 
             <!-- KPI Metric Grid -->
             <div class="metric-grid">
                 <div class="mini-card">
-                    <div class="mini-lbl">Weekly Velocity</div>
+                    <div class="mini-lbl">Weekly Average</div>
                     <div class="mini-val" id="val-weekly-burn">£0.00</div>
                 </div>
                 <div class="mini-card">
-                    <div class="mini-lbl">Daily Burn Rate</div>
+                    <div class="mini-lbl">Daily Average</div>
                     <div class="mini-val" id="val-daily-burn">£0.00</div>
+                </div>
+            </div>
+
+            <!-- Custom Renovation Spotlight Card (only visible when Renovation category is active) -->
+            <div class="card" id="renovation-spotlight-card" style="padding: 18px; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="font-family: var(--font-hero); font-size: 1.2rem; font-weight: 600; color: var(--text);">🛠️ Renovation Spotlight</h3>
+                    <span style="font-size: 14px; font-weight: 700; color: var(--gold);" id="reno-val-total">£0.00</span>
+                </div>
+                <!-- Progress bar -->
+                <div style="width: 100%; height: 6px; background-color: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 6px;">
+                    <div id="reno-progress-bar" style="width: 0%; height: 100%; background-color: var(--gold); border-radius: 3px; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 14px;" id="reno-progress-label">0% of your capital consumed</div>
+                <div id="reno-recent-list">
+                    <!-- Recent hardware logs -->
                 </div>
             </div>
 
             <!-- Clinical Analytics Table -->
             <div class="card" style="padding: 18px;">
-                <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin-bottom: 12px;">Clinical Velocity Matrix</h3>
+                <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin-bottom: 12px;">Category Summary</h3>
                 <table class="clinical-table">
                     <thead>
                         <tr>
@@ -699,8 +789,8 @@
 
             <!-- Convenience Outflow Board -->
             <div class="card" style="padding: 18px; margin-bottom: 20px;">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 4px;">Convenience Outflow Board</h3>
-                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 12px;">High-frequency leakage areas and their velocities.</div>
+                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 4px;">Top Merchants</h3>
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 12px;">Where you spend money most frequently.</div>
                 <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch;" id="convenience-carousel">
                     <!-- Populated dynamically -->
                 </div>
@@ -724,7 +814,7 @@
                 </div>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
                     <span style="font-size: 18px;">📥</span>
-                    <span style="font-size: 13px; font-weight: 600; color: var(--text);">Upload Monzo Statement (CSV/PDF)</span>
+                    <span style="font-size: 13px; font-weight: 600; color: var(--text);">Upload Monzo or BofA Statement</span>
                 </div>
                 <input type="file" id="statement-file-input" class="hidden-file-input" accept=".csv,.pdf">
             </div>
@@ -747,8 +837,13 @@
                 <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin-bottom: 18px;">Observation Window Parameters</h3>
                 
                 <div class="form-group">
-                    <label>Starting Capital (£)</label>
+                    <label>Starting Capital (GBP £)</label>
                     <input type="number" class="form-input" id="setting-capital" placeholder="e.g. 10000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Starting Capital (USD $)</label>
+                    <input type="number" class="form-input" id="setting-capital-usd" placeholder="e.g. 5000">
                 </div>
 
                 <div class="form-group">
@@ -760,13 +855,69 @@
                     <label>End Date</label>
                     <input type="date" class="form-input" id="setting-end-date">
                 </div>
+                
+                <div class="form-group" style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 18px;">
+                    <label>Google Sheets Sync URL (Web App API)</label>
+                    <input type="text" class="form-input" id="setting-sheets-url" placeholder="https://script.google.com/macros/s/.../exec">
+                    <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px; display: block;">Enter Google Web App URL to sync Gmail transaction logs in real-time.</span>
+                </div>
 
                 <button class="btn btn-gold" id="btn-save-settings" style="margin-top: 10px;">Save Parameters</button>
-                
                 <button class="btn btn-danger" id="btn-reset-data">Clear All Data</button>
             </div>
         </div>
 
+    </div>
+
+    <!-- Floating Action Button for Quick Add -->
+    <div class="fab" id="floating-quick-add" onclick="openQuickAddDrawer()">+</div>
+
+    <!-- Quick Add Drawer Overlay -->
+    <div class="drawer-backdrop" id="quick-add-backdrop" onclick="closeQuickAddDrawer()"></div>
+    <div class="quick-add-drawer" id="quick-add-drawer">
+        <h3 style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Log Quick Expense</span>
+            <span style="cursor: pointer; font-size: 18px; color: var(--text-muted);" onclick="closeQuickAddDrawer()">✕</span>
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 8px; margin-bottom: 12px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Amount</label>
+                <input type="number" step="0.01" class="form-input" id="qa-amount" placeholder="0.00">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Currency</label>
+                <select class="form-input" id="qa-currency" style="padding: 10px;">
+                    <option value="GBP">GBP (£)</option>
+                    <option value="USD">USD ($)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Merchant / Place</label>
+            <input type="text" class="form-input" id="qa-merchant" placeholder="e.g. B&Q, Uber, Waitrose">
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <select class="form-input" id="qa-category">
+                <option value="Dining">🍔 Dining</option>
+                <option value="Groceries">🛒 Groceries</option>
+                <option value="Health">🏋️ Health</option>
+                <option value="Transport">🚗 Transport</option>
+                <option value="Shopping">🛍️ Shopping</option>
+                <option value="Entertainment">🎬 Entertainment</option>
+                <option value="Subscriptions">📱 Subscriptions</option>
+                <option value="Personal care">💈 Personal care</option>
+                <option value="Travel">✈️ Travel</option>
+                <option value="Renovation">🛠️ Renovation</option>
+                <option value="Rent">🏠 Rent</option>
+                <option value="Misc">📦 Misc</option>
+            </select>
+        </div>
+
+        <button class="btn btn-gold" onclick="submitQuickAdd(event)" style="margin-top: 10px;">Save Expense</button>
     </div>
 
     <!-- Navigation Tab Bar -->
@@ -4856,6 +5007,7 @@
         "Subscriptions": "📱",
         "Personal care": "💈",
         "Travel": "✈️",
+        "Renovation": "🛠️",
         "Misc": "📦",
         "Rent": "🏠"
     };
@@ -4907,6 +5059,9 @@
         "apple store": "Shopping", "nike": "Shopping", "adidas": "Shopping",
         "uniqlo": "Shopping", "batch baby": "Shopping", "weddingshop": "Shopping",
         "bold co": "Shopping",
+        "b&q": "Renovation", "screwfix": "Renovation", "homebase": "Renovation",
+        "ikea": "Renovation", "dulux": "Renovation", "decorating": "Renovation",
+        "timber": "Renovation", "builders": "Renovation", "hardware": "Renovation",
         "netflix": "Subscriptions", "spotify": "Subscriptions",
         "apple.com": "Subscriptions", "google one": "Subscriptions",
         "dropbox": "Subscriptions", "notion": "Subscriptions",
@@ -4939,8 +5094,45 @@
         settings: document.getElementById('screen-settings')
     };
 
+    // Global exchange rate variables
+    let usdToGbpRate = 0.79; // fallback
+
+    // Fetch live currency conversion rate (USD -> GBP)
+    async function fetchExchangeRate() {
+        try {
+            const res = await fetch('https://open.er-api.com/v6/latest/GBP');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.rates && data.rates.USD) {
+                    usdToGbpRate = 1 / data.rates.USD;
+                    console.log("Live rate updated: 1 USD = " + usdToGbpRate.toFixed(4) + " GBP");
+                }
+            }
+        } catch (e) {
+            console.warn("Failed to fetch live FX rates. Using default 0.79", e);
+        }
+    }
+
+    // Carousel state
+    let activeCarouselSlide = 0;
+
+    function moveCarousel(slideIdx) {
+        activeCarouselSlide = slideIdx;
+        const wrapper = document.getElementById('carousel-slides-wrapper');
+        const dots = document.getElementById('carousel-dots').children;
+        
+        wrapper.style.transform = `translateX(-${slideIdx * 33.333}%)`;
+        
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].style.backgroundColor = i === slideIdx ? 'var(--gold)' : 'var(--border)';
+        }
+    }
+
     // Initialize Page
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        // Fetch current exchange rate
+        await fetchExchangeRate();
+
         // Navigation Tabs Click handlers
         const navItems = document.querySelectorAll('.nav-bar .nav-item');
         navItems.forEach(item => {
@@ -4954,6 +5146,14 @@
                     screens[key].classList.remove('active');
                 });
                 screens[target].classList.add('active');
+                
+                // Show/hide floating action button
+                const fab = document.getElementById('floating-quick-add');
+                if (target === 'dashboard' || target === 'transactions') {
+                    fab.style.display = 'flex';
+                } else {
+                    fab.style.display = 'none';
+                }
             });
         });
 
@@ -4992,7 +5192,6 @@
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
-                // If stored transactions is empty but default has transactions (and user didn't explicitly clear it)
                 if ((!parsed.transactions || parsed.transactions.length === 0) && !cleared && appState.transactions.length > 0) {
                     parsed.transactions = appState.transactions;
                 }
@@ -5008,16 +5207,54 @@
         
         // Populate inputs
         document.getElementById('setting-capital').value = appState.starting_capital;
+        document.getElementById('setting-capital-usd').value = localStorage.getItem('dcr_budget_capital_usd') || "0";
         document.getElementById('setting-start-date').value = appState.start_date;
         document.getElementById('setting-end-date').value = appState.end_date;
+        document.getElementById('setting-sheets-url').value = localStorage.getItem('dcr_budget_sheets_url') || "";
 
-        calculateTrajectory();
-        renderTransactionsFeed();
+        // Trigger Google Sheets Sync in background if URL exists
+        const sheetsUrl = localStorage.getItem('dcr_budget_sheets_url');
+        if (sheetsUrl) {
+            syncWithGoogleSheets();
+        } else {
+            calculateTrajectory();
+            renderTransactionsFeed();
+        }
     }
 
     // Save state to localStorage
     function saveStateToStorage() {
         localStorage.setItem('dcr_budget_app_state', JSON.stringify(appState));
+    }
+
+    // Real-Time Google Sheets Sync fetch client
+    async function syncWithGoogleSheets() {
+        const url = localStorage.getItem('dcr_budget_sheets_url');
+        if (!url) return;
+
+        console.log("Synchronizing with Google Sheets API...");
+        try {
+            const res = await fetch(url);
+            if (res.ok) {
+                const sheetData = await res.json();
+                if (sheetData && sheetData.transactions) {
+                    // Merge external transactions list
+                    const added = mergeLocalTransactions(sheetData.transactions);
+                    console.log("Sync success. Added " + added + " new transactions from Sheets.");
+                    
+                    if (sheetData.starting_capital) appState.starting_capital = sheetData.starting_capital;
+                    if (sheetData.start_date) appState.start_date = sheetData.start_date;
+                    if (sheetData.end_date) appState.end_date = sheetData.end_date;
+                    
+                    saveStateToStorage();
+                }
+            }
+        } catch (e) {
+            console.warn("Google Sheets synchronization failed. Reverting to local storage state.", e);
+        }
+        
+        calculateTrajectory();
+        renderTransactionsFeed();
     }
 
     let currentVelocityFilter = 'all';
@@ -5050,10 +5287,33 @@
             return t.date >= appState.start_date && t.date <= appState.end_date;
         });
 
-        // Compute actual spend for rent, travel (sabbatical prep), and anomalies (still deducted from final runway forecast)
-        const rentSpend = txsInWindow.filter(t => t.category === 'Rent').reduce((acc, t) => acc + t.amount, 0);
-        const travelSpend = txsInWindow.filter(t => t.category === 'Travel').reduce((acc, t) => acc + t.amount, 0);
-        const anomalySpend = txsInWindow.filter(t => t.amount > 150 && t.category !== 'Rent' && t.category !== 'Travel').reduce((acc, t) => acc + t.amount, 0);
+        // Resolve total capital in GBP (starting GBP + USD converted)
+        const usdCapital = parseFloat(localStorage.getItem('dcr_budget_capital_usd')) || 0.0;
+        const totalStartingCapitalGbp = appState.starting_capital + (usdCapital * usdToGbpRate);
+
+        // Compute actual spend for rent, travel (sabbatical prep), and renovations
+        const rentSpend = txsInWindow.filter(t => t.category === 'Rent').reduce((acc, t) => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + val;
+        }, 0);
+        
+        const travelSpend = txsInWindow.filter(t => t.category === 'Travel').reduce((acc, t) => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + val;
+        }, 0);
+
+        const renoSpend = txsInWindow.filter(t => t.category === 'Renovation').reduce((acc, t) => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + val;
+        }, 0);
+
+        const anomalySpend = txsInWindow.filter(t => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return val > 150 && t.category !== 'Rent' && t.category !== 'Travel' && t.category !== 'Renovation';
+        }).reduce((acc, t) => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + val;
+        }, 0);
 
         const msPerDay = 1000 * 60 * 60 * 24;
         let daysElapsed = 1;
@@ -5077,37 +5337,47 @@
         let projectedSpend = 0;
 
         if (currentVelocityFilter === 'baseline') {
-            // Baseline lifestyle strips out rent, travel, and large variable anomalies
+            // Baseline lifestyle strips out rent, travel, renovations, and large variable anomalies
             const lifestyleTxs = txsInWindow.filter(t => {
-                return t.category !== 'Rent' && t.category !== 'Travel' && !(t.amount > 150);
+                const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+                return t.category !== 'Rent' && t.category !== 'Travel' && t.category !== 'Renovation' && !(val > 150);
             });
-            const lifestyleSpend = lifestyleTxs.reduce((acc, t) => acc + t.amount, 0);
+            const lifestyleSpend = lifestyleTxs.reduce((acc, t) => {
+                const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+                return acc + val;
+            }, 0);
             
             dailyBurn = lifestyleSpend / daysElapsed;
             weeklyBurn = dailyBurn * 7;
             
             // Forecast remains fully correct: deduct actuals spent to date + projected baseline over the remaining days
-            projectedSpend = rentSpend + travelSpend + anomalySpend + (dailyBurn * totalDays);
+            projectedSpend = rentSpend + travelSpend + renoSpend + anomalySpend + (dailyBurn * totalDays);
         } else {
             // All outflows mode
-            const totalNetSpend = txsInWindow.reduce((acc, t) => acc + t.amount, 0);
+            const totalNetSpend = txsInWindow.reduce((acc, t) => {
+                const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+                return acc + val;
+            }, 0);
             dailyBurn = totalNetSpend / daysElapsed;
             weeklyBurn = dailyBurn * 7;
             projectedSpend = dailyBurn * totalDays;
         }
 
-        const forecastedRemaining = appState.starting_capital - projectedSpend;
+        const forecastedRemaining = totalStartingCapitalGbp - projectedSpend;
         
         document.getElementById('val-forecast-remaining').innerText = fmtGBP(forecastedRemaining);
         document.getElementById('val-weekly-burn').innerText = fmtGBP(weeklyBurn);
         document.getElementById('val-daily-burn').innerText = fmtGBP(dailyBurn);
         
-        const filterText = currentVelocityFilter === 'baseline' ? "excl. Sabbatical Travel, Rent, & anomalies" : "all categories";
-        document.getElementById('lbl-forecast-sub').innerText = `Projected Runway Balance (${filterText})`;
+        const filterText = currentVelocityFilter === 'baseline' ? "excl. Sabbatical Travel, Rent, Renovations, & spikes" : "all accounts & currencies";
+        document.getElementById('lbl-forecast-sub').innerText = `Projected balance on August 31st (${filterText})`;
 
         renderVelocityMatrix(txsInWindow, daysElapsed, totalDays);
         renderConvenienceOutflows(txsInWindow);
+        renderRenovationSpotlight(txsInWindow);
+        generateWeeklyStories(txsInWindow, totalDays, daysElapsed);
         generateBehavioralInsights(txsInWindow, dailyBurn, weeklyBurn, forecastedRemaining, totalDays);
+        renderTrajectoryChart(txsInWindow, totalDays, daysElapsed, totalStartingCapitalGbp, start, end, msPerDay);
     }
 
     // Render Matrix table grouped in Three Tiers
@@ -5120,17 +5390,19 @@
 
         txs.forEach(t => {
             const cat = t.category;
+            // Convert to GBP for matrix summary values
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
             if (cat in categoryActuals) {
-                categoryActuals[cat] += t.amount;
+                categoryActuals[cat] += val;
             } else {
-                categoryActuals["Misc"] += t.amount;
+                categoryActuals["Misc"] += val;
             }
         });
 
         const tiers = {
-            "Fixed Commitments": ["Rent", "Subscriptions"],
-            "Daily Essentials": ["Groceries", "Transport", "Dining", "Health"],
-            "Discretionary & Spikes": ["Travel", "Shopping", "Entertainment", "Misc"]
+            "Fixed Bills & Subscriptions": ["Rent", "Subscriptions"],
+            "Everyday Living": ["Groceries", "Transport", "Dining", "Health"],
+            "Big Trips, Renovations & Spikes": ["Travel", "Renovation", "Shopping", "Entertainment", "Misc"]
         };
 
         Object.keys(tiers).forEach(tierName => {
@@ -5201,7 +5473,9 @@
         
         txs.forEach(t => {
             counts[t.merchant] = (counts[t.merchant] || 0) + 1;
-            amounts[t.merchant] = (amounts[t.merchant] || 0) + t.amount;
+            // Convert to GBP for carousel totals
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            amounts[t.merchant] = (amounts[t.merchant] || 0) + val;
             categories[t.merchant] = t.category;
         });
         
@@ -5237,6 +5511,232 @@
         }
     }
 
+    // Render custom Home Renovation progress card
+    function renderRenovationSpotlight(txs) {
+        const card = document.getElementById('renovation-spotlight-card');
+        if (!card) return;
+        
+        const renoTxs = txs.filter(t => t.category === 'Renovation');
+        const totalReno = renoTxs.reduce((acc, t) => {
+            const amt = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + amt;
+        }, 0);
+        
+        if (totalReno === 0) {
+            card.style.display = 'none';
+            return;
+        }
+        
+        card.style.display = 'block';
+        
+        const usdCapital = parseFloat(localStorage.getItem('dcr_budget_capital_usd')) || 0.0;
+        const totalCapital = appState.starting_capital + (usdCapital * usdToGbpRate);
+        const pct = (totalReno / (totalCapital || 1)) * 100;
+        
+        let recentHtml = "";
+        const sortedReno = renoTxs.slice(0, 3);
+        sortedReno.forEach(t => {
+            const isUSD = t.currency === 'USD';
+            const symbol = isUSD ? '$' : '£';
+            recentHtml += `
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; border-bottom: 1px dashed var(--border); padding-bottom: 4px;">
+                    <span style="color: var(--text); font-weight: 500;">🛠️ ${t.merchant}</span>
+                    <span style="color: var(--text-muted); font-variant-numeric: tabular-nums;">${symbol}${t.amount.toFixed(2)}</span>
+                </div>
+            `;
+        });
+        
+        document.getElementById('reno-val-total').innerText = fmtGBP(totalReno);
+        document.getElementById('reno-progress-bar').style.width = `${Math.min(pct, 100).toFixed(0)}%`;
+        document.getElementById('reno-progress-label').innerText = `${pct.toFixed(1)}% of total capital spent on home renovation`;
+        document.getElementById('reno-recent-list').innerHTML = recentHtml;
+    }
+
+    // Generate Weekly Stories Digest Summaries Carousel
+    function generateWeeklyStories(txs, totalDays, daysElapsed) {
+        const slides = [
+            document.getElementById('slide-story-1'),
+            document.getElementById('slide-story-2'),
+            document.getElementById('slide-story-3')
+        ];
+        if (!slides[0]) return;
+
+        let todayVal = new Date();
+        if (todayVal.getFullYear() > 2026) todayVal = new Date("2026-06-30");
+        
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const startOfWeek1 = new Date(todayVal - (7 * msPerDay));
+        const startOfWeek2 = new Date(todayVal - (14 * msPerDay));
+        
+        const week1Txs = txs.filter(t => new Date(t.date) >= startOfWeek1 && t.category !== 'Rent');
+        const week2Txs = txs.filter(t => new Date(t.date) >= startOfWeek2 && new Date(t.date) < startOfWeek1 && t.category !== 'Rent');
+        
+        const getTxsGbpSum = (list) => list.reduce((acc, t) => {
+            const amt = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + amt;
+        }, 0);
+        
+        const w1Sum = getTxsGbpSum(week1Txs);
+        const w2Sum = getTxsGbpSum(week2Txs);
+        
+        let paceText = "";
+        if (w2Sum > 0) {
+            const diffPct = ((w1Sum - w2Sum) / w2Sum) * 100;
+            if (diffPct < 0) {
+                paceText = `Your variable spend this week is ${fmtGBP(w1Sum)}, which is **${Math.abs(diffPct).toFixed(0)}% lower** than last week! Sleek savings.`;
+            } else {
+                paceText = `Your variable spend this week is ${fmtGBP(w1Sum)}, up **${diffPct.toFixed(0)}%** from last week. Keep an eye on everyday triggers.`;
+            }
+        } else {
+            paceText = `Your variable spend this week is ${fmtGBP(w1Sum)}. Track your next week to see velocity comparisons!`;
+        }
+        slides[0].innerHTML = `
+            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 1 · Weekly Outflow</div>
+            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0; color: var(--text);">This Week's Pace</div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${paceText}</div>
+        `;
+        
+        const merchCounts = {};
+        week1Txs.forEach(t => {
+            merchCounts[t.merchant] = (merchCounts[t.merchant] || 0) + 1;
+        });
+        const sortedM = Object.keys(merchCounts).sort((a,b) => merchCounts[b] - merchCounts[a]);
+        let frequencyText = "";
+        if (sortedM.length > 0) {
+            const topM = sortedM[0];
+            frequencyText = `You swiped at **${topM}** ${merchCounts[topM]} times this week. Micro-transactions at your favorite spots represent silent wallet leakages.`;
+        } else {
+            frequencyText = "No transactions logged in the past 7 days. Upload statements or quick-add expenses to populate insights.";
+        }
+        slides[1].innerHTML = `
+            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 2 · Micro-Habits</div>
+            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0; color: var(--text);">Top Spot of the Week</div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${frequencyText}</div>
+        `;
+        
+        const usdCapital = parseFloat(localStorage.getItem('dcr_budget_capital_usd')) || 0.0;
+        const totalCapital = appState.starting_capital + (usdCapital * usdToGbpRate);
+        const baselineTxs = txs.filter(t => t.category !== 'Rent' && t.category !== 'Travel' && t.category !== 'Renovation' && !((t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount) > 150));
+        const lifestyleSum = getTxsGbpSum(baselineTxs);
+        const baselineDailyBurn = lifestyleSum / daysElapsed;
+        
+        let outlookText = "";
+        const expectedRem = totalCapital - (baselineDailyBurn * totalDays);
+        if (expectedRem > totalCapital * 0.4) {
+            outlookText = `At your current everyday burn rate of **${fmtGBP(baselineDailyBurn)}/day**, your projected sabbatical runway looks secure.`;
+        } else {
+            outlookText = `At your everyday burn rate of **${fmtGBP(baselineDailyBurn)}/day**, you are depleting capital faster than targeted. Consider tightening everyday living.`;
+        }
+        slides[2].innerHTML = `
+            <div style="font-size: 9px; font-weight: 700; color: var(--gold); text-transform: uppercase;">Slide 3 · Sabbatical Runway</div>
+            <div style="font-family: var(--font-hero); font-size: 1.4rem; font-weight: 600; margin: 4px 0; color: var(--text);">Cash Outlook</div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">${outlookText}</div>
+        `;
+    }
+
+    // Render interactive SVG sparkline chart
+    function renderTrajectoryChart(txs, totalDays, daysElapsed, startingCapital, start, end, msPerDay) {
+        const svg = document.getElementById('trajectory-svg');
+        if (!svg) return;
+        
+        svg.innerHTML = '';
+        
+        const width = svg.clientWidth || 300;
+        const height = svg.clientHeight || 110;
+        
+        let daySpends = new Array(totalDays).fill(0);
+        txs.forEach(t => {
+            const txDate = new Date(t.date);
+            const dayIdx = Math.floor((txDate - start) / msPerDay);
+            if (dayIdx >= 0 && dayIdx < totalDays) {
+                const amtGBP = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+                daySpends[dayIdx] += amtGBP;
+            }
+        });
+        
+        let cashTrend = [];
+        let currentCash = startingCapital;
+        for (let i = 0; i < totalDays; i++) {
+            currentCash -= daySpends[i];
+            cashTrend.push(currentCash);
+        }
+        
+        const maxCash = startingCapital;
+        const minCash = Math.min(...cashTrend, startingCapital - (startingCapital * 0.5));
+        const cashRange = maxCash - minCash || 1;
+        
+        const getX = (i) => (i * (width - 20) / (totalDays - 1)) + 10;
+        const getY = (val) => height - 10 - ((val - minCash) * (height - 20) / cashRange);
+        
+        // Draw Safe Corridor target line
+        const dailyBaselineTarget = (startingCapital * 0.35) / totalDays; // target budget corridor
+        let targetTrend = [];
+        let targetCash = startingCapital;
+        for (let i = 0; i < totalDays; i++) {
+            targetCash -= dailyBaselineTarget;
+            targetTrend.push(targetCash);
+        }
+        
+        let corridorPath = `M ${getX(0)} ${getY(startingCapital)}`;
+        for (let i = 0; i < totalDays; i++) {
+            corridorPath += ` L ${getX(i)} ${getY(targetTrend[i])}`;
+        }
+        corridorPath += ` L ${getX(totalDays - 1)} ${getY(minCash)} L ${getX(0)} ${getY(minCash)} Z`;
+        
+        const corridorElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        corridorElement.setAttribute('d', corridorPath);
+        corridorElement.setAttribute('fill', 'rgba(201, 168, 76, 0.04)');
+        svg.appendChild(corridorElement);
+        
+        // Render Actual trend line
+        const limitDays = Math.min(daysElapsed, totalDays);
+        if (limitDays > 0) {
+            let actualPath = `M ${getX(0)} ${getY(startingCapital)}`;
+            for (let i = 1; i < limitDays; i++) {
+                actualPath += ` L ${getX(i)} ${getY(cashTrend[i])}`;
+            }
+            const actualElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            actualElement.setAttribute('d', actualPath);
+            actualElement.setAttribute('stroke', 'var(--gold)');
+            actualElement.setAttribute('stroke-width', '2.5');
+            actualElement.setAttribute('fill', 'none');
+            svg.appendChild(actualElement);
+            
+            // Pulse Dot
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('cx', getX(limitDays - 1));
+            dot.setAttribute('cy', getY(cashTrend[limitDays - 1]));
+            dot.setAttribute('r', '4');
+            dot.setAttribute('fill', 'var(--gold)');
+            svg.appendChild(dot);
+        }
+        
+        // Render Dotted Projection trend line
+        if (daysElapsed < totalDays) {
+            let projPath = `M ${getX(daysElapsed - 1)} ${getY(cashTrend[daysElapsed - 1])}`;
+            const baselineTxs = txs.filter(t => t.category !== 'Rent' && t.category !== 'Travel' && t.category !== 'Renovation' && !((t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount) > 150));
+            const lifestyleSpend = baselineTxs.reduce((acc, t) => {
+                const amt = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+                return acc + amt;
+            }, 0);
+            const baselineDailyBurn = lifestyleSpend / daysElapsed;
+            
+            let projCash = cashTrend[daysElapsed - 1];
+            for (let i = daysElapsed; i < totalDays; i++) {
+                projCash -= baselineDailyBurn;
+                projPath += ` L ${getX(i)} ${getY(projCash)}`;
+            }
+            
+            const projElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            projElement.setAttribute('d', projPath);
+            projElement.setAttribute('stroke', 'var(--text-muted)');
+            projElement.setAttribute('stroke-width', '1.5');
+            projElement.setAttribute('stroke-dasharray', '3,3');
+            projElement.setAttribute('fill', 'none');
+            svg.appendChild(projElement);
+        }
+    }
+
     function getHistoricalAverage(category) {
         const averages = {
             "Dining": 500 / 30,
@@ -5248,13 +5748,14 @@
             "Subscriptions": 120 / 30,
             "Personal care": 100 / 30,
             "Travel": 300 / 30,
+            "Renovation": 500 / 30,
             "Misc": 180 / 30,
             "Rent": 3580 / 30
         };
         return averages[category] || 0;
     }
 
-    // Generate Insights Engine
+    // Generate Smart Behavioral Insights
     function generateBehavioralInsights(txs, dailyBurn, weeklyBurn, forecastedRemaining, totalDays) {
         const container = document.getElementById('insights-container');
         container.innerHTML = '';
@@ -5279,7 +5780,8 @@
 
         const catTotals = {};
         txs.forEach(t => {
-            catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            catTotals[t.category] = (catTotals[t.category] || 0) + val;
         });
         delete catTotals['Rent'];
         
@@ -5303,7 +5805,10 @@
         }
 
         const refundTx = txs.filter(t => t.amount < 0);
-        const totalRefunds = Math.abs(refundTx.reduce((acc, t) => acc + t.amount, 0));
+        const totalRefunds = Math.abs(refundTx.reduce((acc, t) => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return acc + val;
+        }, 0));
         if (totalRefunds > 0) {
             insights.push({
                 icon: "🔄",
@@ -5313,13 +5818,21 @@
             });
         }
 
-        const largeTxs = txs.filter(t => t.amount > 150 && t.category !== 'Rent');
+        const largeTxs = txs.filter(t => {
+            const val = t.currency === 'USD' ? t.amount * usdToGbpRate : t.amount;
+            return val > 150 && t.category !== 'Rent' && t.category !== 'Travel' && t.category !== 'Renovation';
+        });
         if (largeTxs.length > 0) {
-            const topAnomaly = largeTxs.sort((a,b) => b.amount - a.amount)[0];
+            const topAnomaly = largeTxs.sort((a,b) => {
+                const vA = a.currency === 'USD' ? a.amount * usdToGbpRate : a.amount;
+                const vB = b.currency === 'USD' ? b.amount * usdToGbpRate : b.amount;
+                return vB - vA;
+            })[0];
+            const topVal = topAnomaly.currency === 'USD' ? topAnomaly.amount * usdToGbpRate : topAnomaly.amount;
             insights.push({
                 icon: "🚨",
                 title: "One-Off Outflow Spike",
-                desc: `Logged a single purchase of ${fmtGBP(topAnomaly.amount)} at ${topAnomaly.merchant}. Note how anomalies skew your runway.`,
+                desc: `Logged a single purchase of ${fmtGBP(topVal)} at ${topAnomaly.merchant}. Note how anomalies skew your runway.`,
                 type: "warning"
             });
         }
@@ -5361,6 +5874,9 @@
             const rowId = `tx-row-${t.tx_id || idx}`;
             const editId = `tx-edit-${t.tx_id || idx}`;
             
+            const isUSD = t.currency === 'USD';
+            const currencySymbol = isUSD ? '$' : '£';
+            
             const div = document.createElement('div');
             div.className = 'tx-row-wrapper';
             div.innerHTML = `
@@ -5369,7 +5885,7 @@
                         <div class="tx-merchant">${icon} ${t.merchant}</div>
                         <div class="tx-meta">${formatDatePretty(t.date)} &nbsp;·&nbsp; ${t.category} &nbsp;·&nbsp; ${t.account}</div>
                     </div>
-                    <div class="tx-right ${amtClass}">${amtPrefix}${fmtGBP(Math.abs(t.amount))}</div>
+                    <div class="tx-right ${amtClass}">${amtPrefix}${currencySymbol}${fmtAmount(Math.abs(t.amount))}</div>
                 </div>
                 <div class="tx-edit-panel" id="${editId}" style="display: none; padding: 12px 14px; background-color: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
                     <label style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em;">Assign Category</label>
@@ -5418,6 +5934,65 @@
         }
     }
 
+    // Open/Close Quick Add Drawer
+    function openQuickAddDrawer() {
+        document.getElementById('quick-add-drawer').classList.add('active');
+        document.getElementById('quick-add-backdrop').classList.add('active');
+        // Set default date to today
+        let today = new Date();
+        if (today.getFullYear() > 2026) today = new Date("2026-06-30");
+        document.getElementById('qa-amount').value = '';
+        document.getElementById('qa-merchant').value = '';
+    }
+
+    function closeQuickAddDrawer() {
+        document.getElementById('quick-add-drawer').classList.remove('active');
+        document.getElementById('quick-add-backdrop').classList.remove('active');
+    }
+
+    // Manual Transaction Quick Logger
+    function submitQuickAdd(event) {
+        event.preventDefault();
+        
+        const amt = parseFloat(document.getElementById('qa-amount').value);
+        const currency = document.getElementById('qa-currency').value;
+        const merchant = document.getElementById('qa-merchant').value.trim();
+        const category = document.getElementById('qa-category').value;
+        
+        if (isNaN(amt) || !merchant) {
+            alert("Amount and Merchant name are required.");
+            return;
+        }
+
+        let today = new Date();
+        if (today.getFullYear() > 2026) today = new Date("2026-06-30");
+        const isoDate = today.toISOString().split('T')[0];
+
+        const cleanName = cleanMerchant(merchant);
+        const account = currency === 'USD' ? "Bank of America Checking" : "Monzo Current";
+        
+        // Generate random unique ID for manual entries
+        const txId = "manual_" + isoDate.replace(/-/g, '') + "_" + cleanName.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 10) + "_" + Math.floor(Math.random() * 100000);
+        
+        const newTx = {
+            date: isoDate,
+            merchant: cleanName,
+            amount: Math.round(amt * 100) / 100,
+            category: category,
+            account: account,
+            currency: currency,
+            tx_id: txId
+        };
+        
+        appState.transactions.unshift(newTx);
+        saveStateToStorage();
+        calculateTrajectory();
+        renderTransactionsFeed();
+        
+        closeQuickAddDrawer();
+        alert("Transaction logged successfully!");
+    }
+
     // Handle Client-Side File Upload Parsing
     function handleLocalFileUpload(e) {
         const file = e.target.files[0];
@@ -5440,16 +6015,25 @@
             reader.onload = function(evt) {
                 try {
                     const text = evt.target.result;
-                    const parsedTxs = parseMonzoCSVData(text, filename);
-                    const added = mergeLocalTransactions(parsedTxs);
+                    let parsedTxs = [];
                     
+                    // Deduce parser: BofA vs Monzo
+                    if (text.indexOf("Posting Date") !== -1 || text.indexOf("Checking/Savings") !== -1 || text.indexOf("Transaction Date") !== -1) {
+                        // Bank of America
+                        parsedTxs = parseBofACSVData(text);
+                    } else {
+                        // Monzo
+                        parsedTxs = parseMonzoCSVData(text, filename);
+                    }
+                    
+                    const added = mergeLocalTransactions(parsedTxs);
                     showSuccessFeedback(added);
                 } catch (err) {
                     showErrorFeedback(err.message);
                 }
             };
             reader.readAsText(file);
-        } else if (filename.toLowerCase().endswith(".pdf")) {
+        } else if (filename.toLowerCase().endsWith(".pdf")) {
             const reader = new FileReader();
             reader.onload = async function(evt) {
                 try {
@@ -5502,12 +6086,11 @@
         }, 3200);
     }
 
-    // Client-Side CSV Parser
+    // Client-Side CSV Parser for Monzo
     function parseMonzoCSVData(text, filename) {
         const lines = text.split(/\r?\n/);
         if (lines.length < 2) throw new Error("File empty or invalid CSV");
 
-        // Simple CSV splitter handling quotes
         const splitCSVRow = (txt) => {
             let p = '', r = [];
             let q = false;
@@ -5548,12 +6131,9 @@
             if (row.length < headers.length) continue;
 
             const tx_type = row[typeIdx] ? row[typeIdx].trim().toLowerCase() : "";
-            
-            // Skip internal pot/savings/transfers
             const skipTypes = ["pot transfer", "monzo-to-monzo", "bacs (direct credit)", "bank transfer"];
             if (skipTypes.includes(tx_type)) continue;
 
-            // Skip credit card pay-offs (Amex)
             const merchantRaw = row[nameIdx] ? row[nameIdx].trim().toLowerCase() : "";
             const skipMerchants = ["american express", "amex", "monzo"];
             if (skipMerchants.some(s => merchantRaw.includes(s))) continue;
@@ -5612,28 +6192,125 @@
                 amount: Math.round(amount * 100) / 100,
                 category: category,
                 account: account,
+                currency: "GBP",
                 tx_id: tx_id
             });
         }
         return rows;
     }
 
-    // Client-Side PDF Parser using pdf.js text layout grouping
+    // Client-Side CSV Parser for Bank of America (MM/DD/YYYY, Description, Amount)
+    function parseBofACSVData(text) {
+        const lines = text.split(/\r?\n/);
+        if (lines.length < 2) throw new Error("File empty or invalid CSV");
+
+        const splitCSVRow = (txt) => {
+            let p = '', r = [];
+            let q = false;
+            for (let i = 0; i < txt.length; i++) {
+                let c = txt[i];
+                if (c === '"') {
+                    q = !q;
+                } else if (c === ',' && !q) {
+                    r.push(p);
+                    p = '';
+                } else {
+                    p += c;
+                }
+            }
+            r.push(p);
+            return r;
+        };
+
+        let headerLineIdx = -1;
+        let headers = [];
+        
+        for (let i = 0; i < Math.min(lines.length, 12); i++) {
+            const row = splitCSVRow(lines[i]).map(h => h.replace(/^"|"$/g, '').trim());
+            if (row.indexOf("Description") !== -1 && (row.indexOf("Date") !== -1 || row.indexOf("Posting Date") !== -1 || row.indexOf("Transaction Date") !== -1) && row.indexOf("Amount") !== -1) {
+                headerLineIdx = i;
+                headers = row;
+                break;
+            }
+        }
+
+        if (headerLineIdx === -1) {
+            throw new Error("Could not parse Bank of America CSV headers (Date, Description, Amount).");
+        }
+
+        const dateIdx = headers.indexOf("Date") !== -1 ? headers.indexOf("Date") : (headers.indexOf("Posting Date") !== -1 ? headers.indexOf("Posting Date") : headers.indexOf("Transaction Date"));
+        const descIdx = headers.indexOf("Description");
+        const amtIdx = headers.indexOf("Amount");
+
+        const rows = [];
+        for (let i = headerLineIdx + 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            const row = splitCSVRow(line);
+            if (row.length < headers.length) continue;
+
+            const rawDate = row[dateIdx].trim();
+            const dateParts = rawDate.split("/");
+            if (dateParts.length < 3) continue;
+            const isoDate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}`;
+
+            const rawAmt = row[amtIdx].replace(/[$,]/g, '').trim();
+            const amountVal = parseFloat(rawAmt);
+            if (isNaN(amountVal)) continue;
+
+            let amount = 0;
+            let isSpend = amountVal < 0;
+            let isOffset = false;
+
+            const merchantRaw = row[descIdx].trim();
+            const merchant = cleanMerchant(merchantRaw);
+
+            if (amountVal > 0) {
+                const mLower = merchant.toLowerCase();
+                if (mLower.includes("refund") || mLower.includes("credit") || mLower.includes("reversal")) {
+                    isOffset = true;
+                }
+            }
+
+            if (isSpend) {
+                amount = Math.abs(amountVal);
+            } else if (isOffset) {
+                amount = -Math.abs(amountVal);
+            } else {
+                // skip checks/deposits
+                continue;
+            }
+
+            let category = mapCategory(merchant, "");
+            const tx_id = "bofa_" + isoDate.replace(/-/g, '') + "_" + merchant.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 10) + "_" + Math.floor(Math.abs(amount) * 100);
+
+            rows.push({
+                date: isoDate,
+                merchant: merchant,
+                amount: Math.round(amount * 100) / 100,
+                category: category,
+                account: "Bank of America Checking",
+                currency: "USD",
+                tx_id: tx_id
+            });
+        }
+        return rows;
+    }
+
+    // Client-Side PDF Parser for Monzo
     async function parseMonzoPDFData(typedarray) {
         const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
         const rows = [];
-        
-        // Regex pattern matches DD/MM/YYYY Description Amount Balance
         const linePattern = /^(\d{2}\/\d{2}\/\d{4})\s+(.+?)\s+(-?£?[\d,]+\.\d{2})\s+(£?[\d,]+\.\d{2})\s*$/;
 
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
             
-            // Reconstruct visual lines by sorting items by Y coordinate (descending) and X coordinate (ascending)
             const linesMap = {};
             textContent.items.forEach(item => {
-                const y = Math.round(item.transform[5] * 2) / 2; // round to nearest 0.5px
+                const y = Math.round(item.transform[5] * 2) / 2;
                 let foundY = null;
                 for (let key in linesMap) {
                     if (Math.abs(parseFloat(key) - y) < 4) {
@@ -5705,6 +6382,7 @@
                     amount: Math.round(amount * 100) / 100,
                     category: category,
                     account: "Monzo Current",
+                    currency: "GBP",
                     tx_id: tx_id
                 });
             }
@@ -5712,12 +6390,28 @@
         return rows;
     }
 
-    // Merge transactions into state list (no duplicates)
+    // Merge transactions into state list (no duplicates or manual replacement overrides)
     function mergeLocalTransactions(newTxs) {
         const existingIds = new Set(appState.transactions.map(t => t.tx_id));
         let added = 0;
 
         newTxs.forEach(tx => {
+            // Deduplication matching for manual quick entries (checks match by date, amount, and merchant name prefix)
+            if (tx.tx_id.indexOf("manual_") === -1) {
+                const manualMatchIdx = appState.transactions.findIndex(t => {
+                    return t.tx_id.indexOf("manual_") !== -1 && 
+                           t.date === tx.date && 
+                           Math.abs(t.amount - tx.amount) < 0.01 && 
+                           (t.merchant.toLowerCase().startsWith(tx.merchant.toLowerCase()) || tx.merchant.toLowerCase().startsWith(t.merchant.toLowerCase()));
+                });
+                
+                if (manualMatchIdx !== -1) {
+                    // Replace manual transaction with clean statement transaction
+                    appState.transactions.splice(manualMatchIdx, 1);
+                    existingIds.delete(tx.tx_id);
+                }
+            }
+
             if (!existingIds.has(tx.tx_id)) {
                 appState.transactions.push(tx);
                 existingIds.add(tx.tx_id);
@@ -5754,11 +6448,13 @@
     // Save parameters locally
     function saveParametersLocal() {
         const capital = parseFloat(document.getElementById('setting-capital').value);
+        const capitalUsd = parseFloat(document.getElementById('setting-capital-usd').value) || 0.0;
         const start = document.getElementById('setting-start-date').value;
         const end = document.getElementById('setting-end-date').value;
+        const sheetsUrl = document.getElementById('setting-sheets-url').value.trim();
 
         if (isNaN(capital) || !start || !end) {
-            alert("All fields are required.");
+            alert("Starting Capital, Start Date, and End Date are required.");
             return;
         }
 
@@ -5766,11 +6462,24 @@
         appState.start_date = start;
         appState.end_date = end;
 
-        saveStateToStorage();
-        calculateTrajectory();
-        renderTransactionsFeed();
+        localStorage.setItem('dcr_budget_capital_usd', capitalUsd.toString());
         
-        alert("Observation parameters saved successfully!");
+        if (sheetsUrl) {
+            localStorage.setItem('dcr_budget_sheets_url', sheetsUrl);
+        } else {
+            localStorage.removeItem('dcr_budget_sheets_url');
+        }
+
+        saveStateToStorage();
+        
+        if (sheetsUrl) {
+            syncWithGoogleSheets();
+        } else {
+            calculateTrajectory();
+            renderTransactionsFeed();
+        }
+        
+        alert("Parameters saved successfully!");
         document.querySelector('[data-target="dashboard"]').click();
     }
 
@@ -5784,13 +6493,15 @@
                 transactions: []
             };
             localStorage.setItem('dcr_budget_cleared', 'true');
+            localStorage.setItem('dcr_budget_capital_usd', '0');
+            localStorage.removeItem('dcr_budget_sheets_url');
             saveStateToStorage();
             loadStateFromStorage();
             alert("Application data wiped successfully.");
         }
     }
 
-    // Format double to currency string
+    // Format double to currency string (GBP)
     function fmtGBP(val) {
         if (val === Infinity || val === -Infinity || isNaN(val)) return "£0.00";
         return new Intl.NumberFormat('en-GB', {
@@ -5798,6 +6509,12 @@
             currency: 'GBP',
             minimumFractionDigits: 2
         }).format(val);
+    }
+
+    // Format raw amount
+    function fmtAmount(val) {
+        if (val === Infinity || val === -Infinity || isNaN(val)) return "0.00";
+        return val.toFixed(2);
     }
 
     // Format date string pretty
