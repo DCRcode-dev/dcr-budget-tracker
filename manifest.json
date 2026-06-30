@@ -1,7 +1,7 @@
 {
-  "name": "DCR Budget",
-  "short_name": "DCR Budget",
-  "description": "Premium mobile budgeting and spend observation tracker",
+  "name": "DCR Ledger",
+  "short_name": "DCR Ledger",
+  "description": "Premium mobile budgeting and spend observation ledger",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
