@@ -16,11 +16,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- PDF.js library for client-side PDF parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    
     <style>
         :root {
             /* Soho House / Lux-Tech Light Sepia Palette */
-            --bg: #FAF7F2;          /* vellum paper */
-            --card: #FFFFFF;        /* high-contrast clean white */
+            --bg: #FAF7F2;          /* vellum paper background */
+            --card: #FFFFFF;        /* clean high-contrast white card */
             --border: #EDE8E0;      /* warm division line */
             --text: #2A2421;        /* warm espresso charcoal */
             --text-muted: #6B6259;  /* sand/taupe */
@@ -56,7 +59,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Tactical micro-noise grain overlay from Gym/Travel apps */
+        /* Tactile micro-noise grain overlay */
         body::after {
             content: '';
             position: fixed; inset: 0; z-index: 999; pointer-events: none;
@@ -66,7 +69,6 @@
             background-size: 128px 128px;
         }
 
-        /* App Layout Shell */
         .app-shell {
             display: flex;
             flex-direction: column;
@@ -76,7 +78,7 @@
             overflow: hidden;
         }
 
-        /* Sticky Glass Header */
+        /* Centered iOS Header */
         header {
             position: sticky;
             top: 0;
@@ -101,7 +103,7 @@
             text-align: center;
         }
 
-        /* Navigation Bottom Tab Bar */
+        /* Tab Navigation Bar */
         .nav-bar {
             position: absolute;
             bottom: 0;
@@ -147,7 +149,6 @@
             transform: scale(0.9);
         }
 
-        /* Screens Container */
         .screens-container {
             flex: 1;
             position: relative;
@@ -159,7 +160,7 @@
             position: absolute;
             inset: 0;
             padding: 20px;
-            padding-bottom: 95px; /* offset for bottom tab bar */
+            padding-bottom: 95px; /* offset bottom navigation bar */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             display: none;
@@ -174,7 +175,7 @@
             transform: translateY(0);
         }
 
-        /* UI Cards - Clean, high contrast */
+        /* Clean Structural Cards */
         .card {
             background-color: var(--card);
             border: 1px solid var(--border);
@@ -185,7 +186,6 @@
             overflow: hidden;
         }
 
-        /* Trajectory Hero Card styling */
         .hero-card {
             background: linear-gradient(145deg, #ffffff, #faf8f5);
             border: 1px solid var(--border);
@@ -215,7 +215,6 @@
             color: var(--text-muted);
         }
 
-        /* Metric Grid styling */
         .metric-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -244,12 +243,11 @@
             color: var(--text);
         }
 
-        /* native-feel scrollbar overrides */
         .screen::-webkit-scrollbar {
             display: none;
         }
 
-        /* Premium File Upload Interface */
+        /* Drag and Drop upload target */
         .upload-zone {
             border: 2px dashed var(--border);
             background-color: var(--card);
@@ -290,7 +288,7 @@
             display: none;
         }
 
-        /* Clinical Analytics Table styling */
+        /* Clinical deep dive metrics table */
         .clinical-table {
             width: 100%;
             border-collapse: collapse;
@@ -383,7 +381,7 @@
             line-height: 1.5;
         }
 
-        /* Transaction row item styling */
+        /* Transaction feed row */
         .tx-row {
             display: flex;
             justify-content: space-between;
@@ -428,7 +426,7 @@
             color: var(--green);
         }
 
-        /* Settings Forms & Inputs styling */
+        /* Settings Forms & Inputs */
         .form-group {
             margin-bottom: 16px;
         }
@@ -490,7 +488,18 @@
             background-color: #bfa044;
         }
 
-        /* Uploading & Parsing Spinner overlay */
+        .btn-danger {
+            background-color: transparent;
+            color: var(--red);
+            border: 1px solid var(--red);
+            margin-top: 15px;
+        }
+
+        .btn-danger:active {
+            background-color: var(--red-light);
+        }
+
+        /* Uploading & Parsing loading Spinner overlay */
         .spinner-overlay {
             position: absolute;
             inset: 0;
@@ -531,7 +540,7 @@
             color: var(--text);
         }
 
-        /* Feedback Success Checkmark animation */
+        /* Feedback Success Checkmark SVG path animations */
         .checkmark-icon {
             width: 48px;
             height: 48px;
@@ -564,7 +573,6 @@
             100% { stroke-dashoffset: 0; }
         }
 
-        /* Search input styling in transactions list */
         .search-container {
             margin-bottom: 14px;
         }
@@ -573,7 +581,7 @@
 <body>
 
 <div class="app-shell" id="app">
-    <!-- Centered sticky Header -->
+    <!-- Centered Header -->
     <header>
         <div class="logo-text">DCR OBSERVATION</div>
     </header>
@@ -582,7 +590,7 @@
         
         <!-- 1. OBSERVATION SCREEN -->
         <div class="screen active" id="screen-dashboard">
-            <!-- Trajectory Forecast Card -->
+            <!-- Forecasted Runway Card -->
             <div class="card hero-card">
                 <div class="hero-lbl">60-Day Runway Forecast</div>
                 <div class="hero-val" id="val-forecast-remaining">£0.00</div>
@@ -601,7 +609,7 @@
                 </div>
             </div>
 
-            <!-- Dynamic Upload Widget -->
+            <!-- Client-Side Upload Widget -->
             <div class="upload-zone" id="upload-widget">
                 <div class="spinner-overlay" id="upload-spinner">
                     <div class="spinner" id="spinner-circle"></div>
@@ -613,7 +621,7 @@
                 </div>
                 <span class="upload-icon">📥</span>
                 <div class="upload-title">Upload Monzo Statement</div>
-                <div class="upload-subtitle">Supports CSV or PDF exports (haptic click)</div>
+                <div class="upload-subtitle">Supports CSV or PDF exports (client-side parse)</div>
                 <input type="file" id="statement-file-input" class="hidden-file-input" accept=".csv,.pdf">
             </div>
 
@@ -630,7 +638,7 @@
                         </tr>
                     </thead>
                     <tbody id="matrix-table-body">
-                        <!-- Populated dynamically -->
+                        <!-- Filled dynamically -->
                     </tbody>
                 </table>
             </div>
@@ -673,13 +681,9 @@
                     <input type="date" class="form-input" id="setting-end-date">
                 </div>
 
-                <div class="form-group">
-                    <label>Local Server Sync URL (for phone connection)</label>
-                    <input type="text" class="form-input" id="setting-sync-url" placeholder="e.g. http://192.168.1.50:8080">
-                    <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px; display: block;">Leave empty if running locally on this machine.</span>
-                </div>
-
                 <button class="btn btn-gold" id="btn-save-settings" style="margin-top: 10px;">Save Parameters</button>
+                
+                <button class="btn btn-danger" id="btn-reset-data">Clear All Data</button>
             </div>
         </div>
 
@@ -709,7 +713,10 @@
 </div>
 
 <script>
-    // State Store
+    // Initialize PDF.js worker Src
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    // State Store (Backed by localStorage)
     let appState = {
         start_date: "2026-07-01",
         end_date: "2026-08-31",
@@ -717,7 +724,7 @@
         transactions: []
     };
 
-    // Category mapping icons (matching standard categories)
+    // Category mapping icons
     const categoryIcons = {
         "Dining": "🍔",
         "Groceries": "🛒",
@@ -732,7 +739,79 @@
         "Rent": "🏠"
     };
 
-    // DOM Elements
+    // Categorization Mappings
+    const MERCHANT_MAP = {
+        "savills": "Rent",
+        "deliveroo": "Dining", "uber eats": "Dining", "just eat": "Dining",
+        "dishoom": "Dining", "pizza": "Dining", "restaurant": "Dining",
+        "cafe": "Dining", "coffee": "Dining", "starbucks": "Dining",
+        "costa": "Dining", "pret": "Dining", "mcdonalds": "Dining",
+        "nando": "Dining", "wagamama": "Dining", "salad": "Dining",
+        "dumpling": "Dining", "patisserie": "Dining", "guinea": "Dining",
+        "climpson": "Dining", "digby": "Dining", "teresa": "Dining",
+        "zettle": "Dining", "bullgogi": "Dining", "black bear": "Dining",
+        "kati roll": "Dining", "brilliant corners": "Dining", "albion": "Dining",
+        "gunmaker": "Dining", "cock and bottle": "Dining", "gail": "Dining",
+        "oseyo": "Dining", "jcb kanazawa": "Dining", "dojo*": "Dining",
+        "crown bow": "Dining", "tst-": "Dining", "five guys": "Dining",
+        "barrafina": "Dining", "wetherspoon": "Dining", "marlborough": "Dining",
+        "pelican": "Dining", "pub": "Dining", "arms": "Dining",
+        "bar": "Dining", "inn": "Dining", "tavern": "Dining", "casa": "Dining",
+        "soho house": "Entertainment", "pitchgolf": "Entertainment",
+        "cinema": "Entertainment", "odeon": "Entertainment", "vue": "Entertainment",
+        "ticketmaster": "Entertainment", "eventbrite": "Entertainment",
+        "theatre": "Entertainment", "bowling": "Entertainment",
+        "gocardless": "Entertainment", "golf": "Entertainment",
+        "tesco": "Groceries", "sainsbury": "Groceries", "waitrose": "Groceries",
+        "m&s": "Groceries", "ms city": "Groceries", "ocado": "Groceries",
+        "lidl": "Groceries", "aldi": "Groceries", "whole foods": "Groceries",
+        "co-op": "Groceries", "morrisons": "Groceries",
+        "gym": "Health", "fitness": "Health", "pharmacy": "Health",
+        "boots": "Health", "dentist": "Health", "dental": "Health",
+        "doctor": "Health", "physio": "Health", "nuffield": "Health",
+        "barry": "Health", "equinox": "Health", "well being": "Health",
+        "ryft": "Health", "index medical": "Health", "medical": "Health",
+        "jimmy fairly": "Health", "stretch life": "Health",
+        "best buy": "Shopping",
+        "tfl": "Transport", "uber": "Transport", "bolt": "Transport",
+        "addison": "Transport", "national rail": "Transport",
+        "trainline": "Transport", "heathrow": "Transport",
+        "gatwick": "Transport", "hertz": "Transport", "avis": "Transport",
+        "zipcar": "Transport", "lime": "Transport",
+        "airbnb": "Travel", "british airways": "Travel", "ryanair": "Travel",
+        "easyjet": "Travel", "turkish airlines": "Travel", "jetblue": "Travel",
+        "airlines": "Travel", "airways": "Travel",
+        "amazon": "Shopping", "asos": "Shopping", "zara": "Shopping",
+        "h&m": "Shopping", "selfridges": "Shopping", "john lewis": "Shopping",
+        "apple store": "Shopping", "nike": "Shopping", "adidas": "Shopping",
+        "uniqlo": "Shopping", "batch baby": "Shopping", "weddingshop": "Shopping",
+        "bold co": "Shopping",
+        "netflix": "Subscriptions", "spotify": "Subscriptions",
+        "apple.com": "Subscriptions", "google one": "Subscriptions",
+        "dropbox": "Subscriptions", "notion": "Subscriptions",
+        "claude": "Subscriptions", "chatgpt": "Subscriptions",
+        "openai": "Subscriptions", "linkedin": "Subscriptions",
+        "islington council": "Subscriptions", "do energy": "Subscriptions",
+        "barber": "Personal care", "salon": "Personal care", "spa": "Personal care",
+        "hairdresser": "Personal care", "true gents": "Personal care",
+        "massage": "Personal care",
+        "rent": "Rent", "psv and co": "Rent"
+    };
+
+    const MONZO_CAT_MAP = {
+        "eating out": "Dining", "restaurants": "Dining",
+        "groceries": "Groceries", "supermarkets": "Groceries",
+        "transport": "Transport", "travel": "Transport",
+        "shopping": "Shopping", "clothing": "Shopping",
+        "health": "Health", "medical": "Health",
+        "entertainment": "Entertainment", "hobbies": "Entertainment",
+        "bills": "Subscriptions", "subscriptions": "Subscriptions",
+        "personal care": "Personal care",
+        "housing": "Rent", "rent": "Rent",
+        "general": "Misc", "savings": null
+    };
+
+    // DOM Screens
     const screens = {
         dashboard: document.getElementById('screen-dashboard'),
         transactions: document.getElementById('screen-transactions'),
@@ -741,17 +820,15 @@
 
     // Initialize Page
     document.addEventListener("DOMContentLoaded", () => {
-        // Init navigation tabs
+        // Navigation Tabs Click handlers
         const navItems = document.querySelectorAll('.nav-bar .nav-item');
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 const target = item.getAttribute('data-target');
                 
-                // Set active tab styling
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 
-                // Show screen
                 Object.keys(screens).forEach(key => {
                     screens[key].classList.remove('active');
                 });
@@ -759,89 +836,83 @@
             });
         });
 
-        // Click to upload statement handling
+        // Click upload handling
         const uploadWidget = document.getElementById('upload-widget');
         const fileInput = document.getElementById('statement-file-input');
         
         uploadWidget.addEventListener('click', (e) => {
-            // Prevent click propagation trigger loop if input clicked
             if (e.target !== fileInput) {
                 fileInput.click();
             }
         });
 
-        fileInput.addEventListener('change', handleFileUpload);
+        fileInput.addEventListener('change', handleLocalFileUpload);
 
-        // Save Settings Click Handler
+        // Parameters Save handler
         const btnSaveSettings = document.getElementById('btn-save-settings');
-        btnSaveSettings.addEventListener('click', saveParameters);
+        btnSaveSettings.addEventListener('click', saveParametersLocal);
 
-        // Real-time search trigger
+        // Data Reset handler
+        const btnResetData = document.getElementById('btn-reset-data');
+        btnResetData.addEventListener('click', resetAllData);
+
+        // Search trigger
         const searchInput = document.getElementById('tx-search-input');
         searchInput.addEventListener('input', renderTransactionsFeed);
 
-        // Initial Data Fetch
-        fetchData();
+        // Initialize state from localstorage
+        loadStateFromStorage();
     });
 
-    // Helper to resolve API URLs (supports local server overrides for PWA phone connections)
-    function getApiUrl(endpoint) {
-        const syncUrl = localStorage.getItem('dcr_budget_sync_url') || '';
-        return syncUrl ? `${syncUrl.replace(/\/+$/, '')}${endpoint}` : endpoint;
-    }
-
-    // Fetch master state from python server api
-    async function fetchData() {
-        try {
-            // Populate sync URL field from local storage
-            const syncUrl = localStorage.getItem('dcr_budget_sync_url') || '';
-            document.getElementById('setting-sync-url').value = syncUrl;
-
-            const res = await fetch(getApiUrl('/api/data'));
-            const data = await res.json();
-            appState = data;
-            
-            // Populate form config settings fields
-            document.getElementById('setting-capital').value = appState.starting_capital;
-            document.getElementById('setting-start-date').value = appState.start_date;
-            document.getElementById('setting-end-date').value = appState.end_date;
-
-            // Recalculate metrics and update lists
-            calculateTrajectory();
-            renderTransactionsFeed();
-        } catch (e) {
-            console.error("Error fetching state data:", e);
+    // Load state from localStorage
+    function loadStateFromStorage() {
+        const stored = localStorage.getItem('dcr_budget_app_state');
+        if (stored) {
+            try {
+                appState = JSON.parse(stored);
+            } catch (e) {
+                console.error("Error parsing stored state, resetting.", e);
+            }
         }
+        
+        // Populate inputs
+        document.getElementById('setting-capital').value = appState.starting_capital;
+        document.getElementById('setting-start-date').value = appState.start_date;
+        document.getElementById('setting-end-date').value = appState.end_date;
+
+        calculateTrajectory();
+        renderTransactionsFeed();
     }
 
-    // Trajectory Forecasting Calculations Engine
+    // Save state to localStorage
+    function saveStateToStorage() {
+        localStorage.setItem('dcr_budget_app_state', JSON.stringify(appState));
+    }
+
+    // Client-Side Trajectory Calculator
     function calculateTrajectory() {
         const start = new Date(appState.start_date);
         const end = new Date(appState.end_date);
         
-        // Define today relative to user system or lock to metadata context (June 30th, 2026)
         let todayVal = new Date();
-        // If local time is significantly skewed, fall back to current 2026-06-30 date
+        // Fallback context locking to metadata date context
         if (todayVal.getFullYear() > 2026) {
             todayVal = new Date("2026-06-30");
         }
 
-        // Filter transactions within the observation window
+        // Filter transactions in window
         const txsInWindow = appState.transactions.filter(t => {
             return t.date >= appState.start_date && t.date <= appState.end_date;
         });
 
-        // Spend in window (spends are positive values, refunds/offsets are negative values)
         const totalNetSpend = txsInWindow.reduce((acc, t) => acc + t.amount, 0);
 
-        // Days elapsed in window
         const msPerDay = 1000 * 60 * 60 * 24;
         let daysElapsed = 1;
         if (todayVal >= start) {
             const currentLimit = todayVal > end ? end : todayVal;
             daysElapsed = Math.max(1, Math.floor((currentLimit - start) / msPerDay) + 1);
         } else {
-            // Today is before window. Project based on max transaction date in window, or default 1.
             if (txsInWindow.length > 0) {
                 const txDates = txsInWindow.map(t => new Date(t.date));
                 const minTxDate = new Date(Math.min(...txDates));
@@ -852,37 +923,28 @@
             }
         }
 
-        // Velocity Metrics
         const dailyBurn = totalNetSpend / daysElapsed;
         const weeklyBurn = dailyBurn * 7;
         
-        // Projections
         const totalDays = Math.max(1, Math.floor((end - start) / msPerDay) + 1);
         const projectedSpend = dailyBurn * totalDays;
         const forecastedRemaining = appState.starting_capital - projectedSpend;
         
-        // Render metric summary cards
         document.getElementById('val-forecast-remaining').innerText = fmtGBP(forecastedRemaining);
         document.getElementById('val-weekly-burn').innerText = fmtGBP(weeklyBurn);
         document.getElementById('val-daily-burn').innerText = fmtGBP(dailyBurn);
         
-        // Update hero caption details
-        const daysLeft = Math.max(0, totalDays - daysElapsed);
         document.getElementById('lbl-forecast-sub').innerText = `Projected Remaining Capital (based on ${daysElapsed} days of data)`;
 
-        // Calculate Category Breakdowns and Speeds
         renderVelocityMatrix(txsInWindow, daysElapsed, totalDays);
-        
-        // Generate insights
         generateBehavioralInsights(txsInWindow, dailyBurn, weeklyBurn, forecastedRemaining, totalDays);
     }
 
-    // Render Clinical Matrix Table
+    // Render Matrix table
     function renderVelocityMatrix(txs, daysElapsed, totalDays) {
         const tableBody = document.getElementById('matrix-table-body');
         tableBody.innerHTML = '';
 
-        // 1. Group actual spend by category
         const categoryActuals = {};
         Object.keys(categoryIcons).forEach(cat => categoryActuals[cat] = 0.0);
 
@@ -895,13 +957,11 @@
             }
         });
 
-        // Render Table Row per category
         Object.keys(categoryIcons).forEach(cat => {
             const actual = categoryActuals[cat];
             const dailyCatBurn = actual / daysElapsed;
             const forecast60 = dailyCatBurn * totalDays;
             
-            // Deduce clinical status
             let status = 'NORMAL';
             let badgeClass = 'badge-normal';
             
@@ -916,8 +976,7 @@
                 badgeClass = 'badge-spike';
             }
 
-            // Exclude empty observation rows to keep analytics dense and neat
-            if (actual === 0) return;
+            if (actual === 0) return; // skip empty lines
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -930,11 +989,10 @@
         });
         
         if (tableBody.innerHTML === '') {
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No transactions inside this window. Upload a statement.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No transactions found. Upload your CSV/PDF statement.</td></tr>`;
         }
     }
 
-    // Helper: Static baseline historical average comparisons
     function getHistoricalAverage(category) {
         const averages = {
             "Dining": 500 / 30,
@@ -952,38 +1010,35 @@
         return averages[category] || 0;
     }
 
-    // Generate Smart Behavioral Insights
+    // Generate Insights Engine
     function generateBehavioralInsights(txs, dailyBurn, weeklyBurn, forecastedRemaining, totalDays) {
         const container = document.getElementById('insights-container');
         container.innerHTML = '';
 
         const insights = [];
 
-        // Insight 1: General Forecast
         if (forecastedRemaining < 0) {
             insights.push({
                 icon: "⚠️",
-                title: "Overage Projection Flag",
-                desc: `Based on your daily velocity of ${fmtGBP(dailyBurn)}/day, you will exceed your starting capital by ${fmtGBP(Math.abs(forecastedRemaining))} before the end of the 2-month period.`,
+                title: "Runway Overage Forecast",
+                desc: `Based on your current speed of ${fmtGBP(dailyBurn)}/day, you will exceed your capital before 60 days by ${fmtGBP(Math.abs(forecastedRemaining))}.`,
                 type: "warning"
             });
         } else {
             insights.push({
                 icon: "📈",
-                title: "Capital Runway Projection",
-                desc: `On current run-rates, you are projected to successfully complete the 2-month observation with ${fmtGBP(forecastedRemaining)} remaining in reserve.`,
+                title: "Runway Trajectory Safe",
+                desc: `You are projected to finish the 2-month observation period with ${fmtGBP(forecastedRemaining)} of capital left.`,
                 type: "info"
             });
         }
 
-        // Insight 2: Peak category calculation
         const catTotals = {};
         txs.forEach(t => {
             catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
         });
-
-        // Filter out rent for lifestyle comparison
         delete catTotals['Rent'];
+        
         let peakCategory = null;
         let peakAmt = -Infinity;
         Object.keys(catTotals).forEach(cat => {
@@ -998,36 +1053,33 @@
             insights.push({
                 icon: categoryIcons[peakCategory] || "🔥",
                 title: `Peak Outflow Driver: ${peakCategory}`,
-                desc: `Your spending on ${peakCategory} totals ${fmtGBP(peakAmt)}, which represents approximately ${pct.toFixed(0)}% of your lifestyle velocity.`,
+                desc: `Your spending on ${peakCategory} is ${fmtGBP(peakAmt)} (${pct.toFixed(0)}% of variable velocity).`,
                 type: "info"
             });
         }
 
-        // Insight 3: Instant Refunds & Peer-to-Peer Offsets check
         const refundTx = txs.filter(t => t.amount < 0);
         const totalRefunds = Math.abs(refundTx.reduce((acc, t) => acc + t.amount, 0));
         if (totalRefunds > 0) {
             insights.push({
                 icon: "🔄",
-                title: "Active Spend Offsets Captured",
-                desc: `We detected ${fmtGBP(totalRefunds)} in Monzo refunds and peer split paybacks. This has reduced your weekly burn velocity by ${fmtGBP(totalRefunds / (totalDays / 7))}/week.`,
+                title: "Active Refunds & Splits",
+                desc: `Captured ${fmtGBP(totalRefunds)} in Monzo refunds and paybacks, reducing overall velocity by ${fmtGBP(totalRefunds / (totalDays / 7))}/week.`,
                 type: "success"
             });
         }
 
-        // Insight 4: Large Transaction Anomalies
         const largeTxs = txs.filter(t => t.amount > 150 && t.category !== 'Rent');
         if (largeTxs.length > 0) {
             const topAnomaly = largeTxs.sort((a,b) => b.amount - a.amount)[0];
             insights.push({
                 icon: "🚨",
-                title: "One-Off Anomaly Spotted",
-                desc: `An atypical lifestyle transaction of ${fmtGBP(topAnomaly.amount)} was logged at ${topAnomaly.merchant}. Note how one-offs affect your overall Runway forecast.`,
+                title: "One-Off Outflow Spike",
+                desc: `Logged a single purchase of ${fmtGBP(topAnomaly.amount)} at ${topAnomaly.merchant}. Note how anomalies skew your runway.`,
                 type: "warning"
             });
         }
 
-        // Render insights
         insights.forEach(ins => {
             const div = document.createElement('div');
             div.className = 'insight-card';
@@ -1040,22 +1092,20 @@
             `;
             container.appendChild(div);
         });
-        
+
         if (insights.length === 0) {
-            container.innerHTML = `<div class="insight-card"><div class="insight-body"><div class="insight-desc">No behavioral insights compiled yet. Upload transactions.</div></div></div>`;
+            container.innerHTML = `<div class="insight-card"><div class="insight-body"><div class="insight-desc">No behavioral insights compiled yet. Upload statement data.</div></div></div>`;
         }
     }
 
-    // Render Transaction List Feed
+    // Render local feed list
     function renderTransactionsFeed() {
         const container = document.getElementById('tx-list-container');
         const query = document.getElementById('tx-search-input').value.toLowerCase().trim();
         container.innerHTML = '';
 
-        // Filter transactions based on search query
         const filtered = appState.transactions.filter(t => {
-            const matchQuery = t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query);
-            return matchQuery;
+            return t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query);
         });
 
         filtered.forEach(t => {
@@ -1081,8 +1131,8 @@
         }
     }
 
-    // Handle AJAX statement upload with status animations
-    async function handleFileUpload(e) {
+    // Handle Client-Side File Upload Parsing
+    function handleLocalFileUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -1091,104 +1141,368 @@
         const checkmark = document.getElementById('success-check');
         const message = document.getElementById('spinner-message');
 
-        // Show overlay with loading status
         overlay.classList.add('active');
         spinner.style.display = 'block';
         checkmark.style.display = 'none';
         message.innerText = "Parsing statement...";
 
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const res = await fetch(getApiUrl('/api/upload'), {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await res.json();
-            
-            if (res.ok) {
-                appState = data;
-                
-                // Show success haptic animation
-                spinner.style.display = 'none';
-                checkmark.style.display = 'block';
-                message.innerText = `Successfully parsed ${data.added_count} new transactions!`;
-                
-                // Recalculate metrics
-                calculateTrajectory();
-                renderTransactionsFeed();
-                
-                // Reset file input value
-                e.target.value = '';
-                
-                // Fade out overlay after 2 seconds
-                setTimeout(() => {
-                    overlay.classList.remove('active');
-                }, 2000);
-            } else {
-                throw new Error(data.error || "Failed to parse");
-            }
-        } catch (err) {
-            spinner.style.display = 'none';
-            message.innerText = `Error: ${err.message}`;
-            setTimeout(() => {
-                overlay.classList.remove('active');
-            }, 3000);
+        const filename = file.name;
+        
+        if (filename.toLowerCase().endsWith(".csv")) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const text = evt.target.result;
+                    const parsedTxs = parseMonzoCSVData(text, filename);
+                    const added = mergeLocalTransactions(parsedTxs);
+                    
+                    showSuccessFeedback(added);
+                } catch (err) {
+                    showErrorFeedback(err.message);
+                }
+            };
+            reader.readAsText(file);
+        } else if (filename.toLowerCase().endswith(".pdf")) {
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                try {
+                    const typedarray = new Uint8Array(evt.target.result);
+                    const parsedTxs = await parseMonzoPDFData(typedarray);
+                    const added = mergeLocalTransactions(parsedTxs);
+                    
+                    showSuccessFeedback(added);
+                } catch (err) {
+                    showErrorFeedback(err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        } else {
+            showErrorFeedback("Unsupported format (CSV or PDF only)");
         }
     }
 
-    // Update settings via POST
-    async function saveParameters() {
+    function showSuccessFeedback(addedCount) {
+        const overlay = document.getElementById('upload-spinner');
+        const spinner = document.getElementById('spinner-circle');
+        const checkmark = document.getElementById('success-check');
+        const message = document.getElementById('spinner-message');
+
+        spinner.style.display = 'none';
+        checkmark.style.display = 'block';
+        message.innerText = `Parsed statement. Added ${addedCount} new unique transactions!`;
+        
+        saveStateToStorage();
+        calculateTrajectory();
+        renderTransactionsFeed();
+        
+        document.getElementById('statement-file-input').value = '';
+        setTimeout(() => {
+            overlay.classList.remove('active');
+        }, 2200);
+    }
+
+    function showErrorFeedback(errMsg) {
+        const overlay = document.getElementById('upload-spinner');
+        const spinner = document.getElementById('spinner-circle');
+        const message = document.getElementById('spinner-message');
+        
+        spinner.style.display = 'none';
+        message.innerText = `Error: ${errMsg}`;
+        document.getElementById('statement-file-input').value = '';
+        
+        setTimeout(() => {
+            overlay.classList.remove('active');
+        }, 3200);
+    }
+
+    // Client-Side CSV Parser
+    function parseMonzoCSVData(text, filename) {
+        const lines = text.split(/\r?\n/);
+        if (lines.length < 2) throw new Error("File empty or invalid CSV");
+
+        // Simple CSV splitter handling quotes
+        const splitCSVRow = (txt) => {
+            let p = '', r = [];
+            let q = false;
+            for (let i = 0; i < txt.length; i++) {
+                let c = txt[i];
+                if (c === '"') {
+                    q = !q;
+                } else if (c === ',' && !q) {
+                    r.push(p);
+                    p = '';
+                } else {
+                    p += c;
+                }
+            }
+            r.push(p);
+            return r;
+        };
+
+        const headers = splitCSVRow(lines[0]).map(h => h.replace(/^"|"$/g, '').trim());
+        const txIdIdx = headers.indexOf("Transaction ID");
+        const dateIdx = headers.indexOf("Date");
+        const typeIdx = headers.indexOf("Type");
+        const nameIdx = headers.indexOf("Name");
+        const catIdx = headers.indexOf("Category");
+        const amtIdx = headers.indexOf("Amount");
+        
+        if (dateIdx === -1 || amtIdx === -1) {
+            throw new Error("Missing required Monzo headers (Date, Amount)");
+        }
+
+        const rows = [];
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+
+            const row = splitCSVRow(line);
+            if (row.length < headers.length) continue;
+
+            const tx_type = row[typeIdx] ? row[typeIdx].trim().toLowerCase() : "";
+            
+            // Skip internal pot/savings/transfers
+            const skipTypes = ["pot transfer", "monzo-to-monzo", "bacs (direct credit)", "bank transfer"];
+            if (skipTypes.includes(tx_type)) continue;
+
+            // Skip credit card pay-offs (Amex)
+            const merchantRaw = row[nameIdx] ? row[nameIdx].trim().toLowerCase() : "";
+            const skipMerchants = ["american express", "amex", "monzo"];
+            if (skipMerchants.some(s => merchantRaw.includes(s))) continue;
+
+            // Parse Date
+            const rawDate = row[dateIdx].trim();
+            const dateParts = rawDate.split("/");
+            if (dateParts.length < 3) continue;
+            const isoDate = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
+
+            // Parse Amount
+            const rawAmt = row[amtIdx].replace(/[£,]/g, '').trim();
+            const amountVal = parseFloat(rawAmt);
+            if (isNaN(amountVal)) continue;
+
+            let isSpend = amountVal < 0;
+            let isOffset = false;
+            const monzo_cat = row[catIdx] ? row[catIdx].trim().toLowerCase() : "";
+
+            if (amountVal > 0) {
+                if (["card payment", "flex", "refund"].includes(tx_type)) {
+                    if (monzo_cat !== "savings" && monzo_cat !== "transfers") {
+                        isOffset = true;
+                    }
+                } else if (["monzo-to-monzo", "faster payment"].includes(tx_type)) {
+                    const mappedCat = mapCategory(cleanMerchant(row[nameIdx] || ""), monzo_cat);
+                    if (mappedCat && mappedCat !== "Misc" && mappedCat !== "Rent") {
+                        isOffset = true;
+                    }
+                }
+            }
+
+            if (!isSpend && !isOffset) continue;
+
+            let amount = 0;
+            if (isOffset) {
+                amount = -Math.abs(amountVal);
+            } else {
+                amount = Math.abs(amountVal);
+            }
+
+            const merchant = cleanMerchant(row[nameIdx] || row[headers.indexOf("Description")] || "Unknown");
+            const category = mapCategory(merchant, monzo_cat);
+            if (category === null) continue;
+
+            let tx_id = row[txIdIdx] ? row[txIdIdx].trim() : "";
+            if (!tx_id) {
+                tx_id = "monzo_" + isoDate.replace(/-/g, '') + "_" + merchant.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 10) + "_" + Math.floor(Math.abs(amount) * 100);
+            }
+
+            const account = (tx_type === "flex" || filename.toLowerCase().includes("flex")) ? "Monzo Flex" : "Monzo Current";
+
+            rows.push({
+                date: isoDate,
+                merchant: merchant,
+                amount: Math.round(amount * 100) / 100,
+                category: category,
+                account: account,
+                tx_id: tx_id
+            });
+        }
+        return rows;
+    }
+
+    // Client-Side PDF Parser using pdf.js text layout grouping
+    async function parseMonzoPDFData(typedarray) {
+        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+        const rows = [];
+        
+        // Regex pattern matches DD/MM/YYYY Description Amount Balance
+        const linePattern = /^(\d{2}\/\d{2}\/\d{4})\s+(.+?)\s+(-?£?[\d,]+\.\d{2})\s+(£?[\d,]+\.\d{2})\s*$/;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            
+            // Reconstruct visual lines by sorting items by Y coordinate (descending) and X coordinate (ascending)
+            const linesMap = {};
+            textContent.items.forEach(item => {
+                const y = Math.round(item.transform[5] * 2) / 2; // round to nearest 0.5px
+                let foundY = null;
+                for (let key in linesMap) {
+                    if (Math.abs(parseFloat(key) - y) < 4) {
+                        foundY = key;
+                        break;
+                    }
+                }
+                if (foundY !== null) {
+                    linesMap[foundY].push(item);
+                } else {
+                    linesMap[y] = [item];
+                }
+            });
+
+            const sortedKeys = Object.keys(linesMap).map(Number).sort((a, b) => b - a);
+
+            for (let y of sortedKeys) {
+                const lineItems = linesMap[y].sort((a, b) => a.transform[4] - b.transform[4]);
+                const lineText = lineItems.map(item => item.str).join(" ").trim();
+                if (!lineText) continue;
+
+                const match = lineText.match(linePattern);
+                if (!match) continue;
+
+                const rawDate = match[1];
+                const merchantRaw = match[2].trim();
+                const rawAmt = match[3].replace(/[£,]/g, '').trim();
+
+                const dateParts = rawDate.split("/");
+                const isoDate = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
+
+                const amountVal = parseFloat(rawAmt);
+                if (isNaN(amountVal)) continue;
+
+                let isSpend = amountVal < 0;
+                let isOffset = false;
+
+                if (amountVal > 0) {
+                    const merchantCleaned = cleanMerchant(merchantRaw);
+                    const mLower = merchantCleaned.toLowerCase();
+                    if (mLower.includes("refund") || mLower.includes("reversal") || mLower.includes("reversed")) {
+                        isOffset = true;
+                    } else {
+                        const mappedCat = mapCategory(merchantCleaned, "");
+                        if (mappedCat && mappedCat !== "Misc" && mappedCat !== "Rent") {
+                            isOffset = true;
+                        }
+                    }
+                }
+
+                if (!isSpend && !isOffset) continue;
+
+                let amount = 0;
+                if (isOffset) {
+                    amount = -Math.abs(amountVal);
+                } else {
+                    amount = Math.abs(amountVal);
+                }
+
+                const merchant = cleanMerchant(merchantRaw);
+                const category = mapCategory(merchant, "");
+                if (category === null) continue;
+
+                const tx_id = "monzo_" + isoDate.replace(/-/g, '') + "_" + merchant.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 10) + "_" + Math.floor(Math.abs(amount) * 100);
+
+                rows.push({
+                    date: isoDate,
+                    merchant: merchant,
+                    amount: Math.round(amount * 100) / 100,
+                    category: category,
+                    account: "Monzo Current",
+                    tx_id: tx_id
+                });
+            }
+        }
+        return rows;
+    }
+
+    // Merge transactions into state list (no duplicates)
+    function mergeLocalTransactions(newTxs) {
+        const existingIds = new Set(appState.transactions.map(t => t.tx_id));
+        let added = 0;
+
+        newTxs.forEach(tx => {
+            if (!existingIds.has(tx.tx_id)) {
+                appState.transactions.push(tx);
+                existingIds.add(tx.tx_id);
+                added++;
+            }
+        });
+
+        // Sort by date descending
+        appState.transactions.sort((a, b) => b.date.localeCompare(a.date));
+        return added;
+    }
+
+    // Clean description helper
+    function cleanMerchant(desc) {
+        let cleaned = desc.replace(/\s{2,}.*/, '').trim();
+        return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ');
+    }
+
+    // Categorization logic
+    function mapCategory(merchant, monzoCat) {
+        const m = merchant.toLowerCase();
+        for (let keyword in MERCHANT_MAP) {
+            if (m.includes(keyword)) {
+                return MERCHANT_MAP[keyword];
+            }
+        }
+        if (monzoCat) {
+            const mapped = MONZO_CAT_MAP[monzoCat.toLowerCase()];
+            return mapped !== undefined ? mapped : "Misc";
+        }
+        return "Misc";
+    }
+
+    // Save parameters locally
+    function saveParametersLocal() {
         const capital = parseFloat(document.getElementById('setting-capital').value);
         const start = document.getElementById('setting-start-date').value;
         const end = document.getElementById('setting-end-date').value;
-        const syncUrl = document.getElementById('setting-sync-url').value.trim();
 
         if (isNaN(capital) || !start || !end) {
-            alert("All configuration fields are required.");
+            alert("All fields are required.");
             return;
         }
 
-        // Save local server sync URL to localStorage
-        if (syncUrl) {
-            localStorage.setItem('dcr_budget_sync_url', syncUrl);
-        } else {
-            localStorage.removeItem('dcr_budget_sync_url');
-        }
+        appState.starting_capital = capital;
+        appState.start_date = start;
+        appState.end_date = end;
 
-        try {
-            const res = await fetch(getApiUrl('/api/config'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: jsonStr = JSON.stringify({
-                    starting_capital: capital,
-                    start_date: start,
-                    end_date: end
-                })
-            });
+        saveStateToStorage();
+        calculateTrajectory();
+        renderTransactionsFeed();
+        
+        alert("Observation parameters saved successfully!");
+        document.querySelector('[data-target="dashboard"]').click();
+    }
 
-            const data = await res.json();
-            appState = data;
-            
-            // Recalculate and notify user
-            calculateTrajectory();
-            renderTransactionsFeed();
-            
-            alert("Configuration settings updated successfully.");
-            
-            // Jump back to dashboard tab
-            document.querySelector('[data-target="dashboard"]').click();
-        } catch (e) {
-            console.error("Error saving parameters:", e);
-            alert("Error updating configuration.");
+    // Wipe out state
+    function resetAllData() {
+        if (confirm("Are you sure you want to delete all transactions and reset configuration? This cannot be undone.")) {
+            appState = {
+                start_date: "2026-07-01",
+                end_date: "2026-08-31",
+                starting_capital: 10000.0,
+                transactions: []
+            };
+            saveStateToStorage();
+            loadStateFromStorage();
+            alert("Application data wiped successfully.");
         }
     }
 
-    // Helper: Format double precision floats to currency strings
+    // Format double to currency string
     function fmtGBP(val) {
         if (val === Infinity || val === -Infinity || isNaN(val)) return "£0.00";
         return new Intl.NumberFormat('en-GB', {
@@ -1198,7 +1512,7 @@
         }).format(val);
     }
 
-    // Helper: ISO date to MMMM DD, YYYY
+    // Format date string pretty
     function formatDatePretty(isoStr) {
         const parts = isoStr.split("-");
         if (parts.length < 3) return isoStr;
