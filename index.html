@@ -576,6 +576,70 @@
         .search-container {
             margin-bottom: 14px;
         }
+
+        /* Velocity Filter Toggles */
+        .toggle-pill {
+            background-color: var(--bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+        }
+        
+        .toggle-pill.active {
+            background-color: var(--gold);
+            color: #ffffff;
+            border-color: var(--gold);
+        }
+
+        /* Clinical Matrix Tier Headers */
+        .tier-header-row td {
+            background-color: var(--bg);
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 8px 10px !important;
+            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Inline category edit drawer inside feed */
+        .tx-row-wrapper {
+            border-bottom: 1px solid var(--border);
+        }
+        .tx-row-wrapper .tx-row {
+            border-bottom: none;
+        }
+        .tx-edit-panel {
+            animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cat-pill {
+            background-color: #ffffff;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .cat-pill.active {
+            background-color: var(--gold-light);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
     </style>
 </head>
 <body>
@@ -591,10 +655,16 @@
         <!-- 1. OBSERVATION SCREEN -->
         <div class="screen active" id="screen-dashboard">
             <!-- Forecasted Runway Card -->
-            <div class="card hero-card">
+            <div class="card hero-card" style="padding-bottom: 24px;">
                 <div class="hero-lbl">60-Day Runway Forecast</div>
                 <div class="hero-val" id="val-forecast-remaining">£0.00</div>
                 <div class="hero-sub" id="lbl-forecast-sub">Projected Capital on Aug 31st</div>
+                
+                <!-- Velocity Filter Toggles -->
+                <div style="display: flex; justify-content: center; gap: 8px; margin-top: 18px;">
+                    <button class="toggle-pill active" id="btn-filter-all" onclick="changeVelocityFilter('all')">All Outflows</button>
+                    <button class="toggle-pill" id="btn-filter-baseline" onclick="changeVelocityFilter('baseline')">Baseline Lifestyle</button>
+                </div>
             </div>
 
             <!-- KPI Metric Grid -->
@@ -607,22 +677,6 @@
                     <div class="mini-lbl">Daily Burn Rate</div>
                     <div class="mini-val" id="val-daily-burn">£0.00</div>
                 </div>
-            </div>
-
-            <!-- Client-Side Upload Widget -->
-            <div class="upload-zone" id="upload-widget">
-                <div class="spinner-overlay" id="upload-spinner">
-                    <div class="spinner" id="spinner-circle"></div>
-                    <svg class="checkmark-icon" id="success-check" viewBox="0 0 52 52">
-                        <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
-                        <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                    </svg>
-                    <div class="spinner-msg" id="spinner-message">Parsing statement...</div>
-                </div>
-                <span class="upload-icon">📥</span>
-                <div class="upload-title">Upload Monzo Statement</div>
-                <div class="upload-subtitle">Supports CSV or PDF exports (client-side parse)</div>
-                <input type="file" id="statement-file-input" class="hidden-file-input" accept=".csv,.pdf">
             </div>
 
             <!-- Clinical Analytics Table -->
@@ -643,10 +697,36 @@
                 </table>
             </div>
 
+            <!-- Convenience Outflow Board -->
+            <div class="card" style="padding: 18px; margin-bottom: 20px;">
+                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 4px;">Convenience Outflow Board</h3>
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 12px;">High-frequency leakage areas and their velocities.</div>
+                <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch;" id="convenience-carousel">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
             <!-- Smart Behavioral Insights Panel -->
             <h3 style="font-family: var(--font-hero); font-size: 1.25rem; font-weight: 600; margin: 10px 0 14px 4px;">Smart Behavioral Insights</h3>
-            <div id="insights-container">
+            <div id="insights-container" style="margin-bottom: 20px;">
                 <!-- Insights filled dynamically -->
+            </div>
+
+            <!-- Compressed Client-Side Upload Widget at the bottom -->
+            <div class="upload-zone" id="upload-widget" style="padding: 16px 20px; border-style: solid; border-width: 1px; margin-bottom: 10px;">
+                <div class="spinner-overlay" id="upload-spinner">
+                    <div class="spinner" id="spinner-circle"></div>
+                    <svg class="checkmark-icon" id="success-check" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
+                        <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                    <div class="spinner-msg" id="spinner-message">Parsing statement...</div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <span style="font-size: 18px;">📥</span>
+                    <span style="font-size: 13px; font-weight: 600; color: var(--text);">Upload Monzo Statement (CSV/PDF)</span>
+                </div>
+                <input type="file" id="statement-file-input" class="hidden-file-input" accept=".csv,.pdf">
             </div>
         </div>
 
@@ -723,6 +803,494 @@
         "starting_capital": 12500.0,
         "transactions": [
                 {
+                        "date": "2026-05-31",
+                        "merchant": "Uber",
+                        "amount": 17.13,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6qFbS8vlZvaaiqdY9"
+                },
+                {
+                        "date": "2026-05-31",
+                        "merchant": "Uber Eats",
+                        "amount": 13.73,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6r2ks6FWaf0zmiudr"
+                },
+                {
+                        "date": "2026-05-29",
+                        "merchant": "Uber",
+                        "amount": 82.13,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6m17KPllAzHmJyUAE"
+                },
+                {
+                        "date": "2026-05-29",
+                        "merchant": "Uber",
+                        "amount": -82.13,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6m1HdvQ4j40O43Lla"
+                },
+                {
+                        "date": "2026-05-28",
+                        "merchant": "Uber",
+                        "amount": 37.99,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6lkGYBYEQmG4FbNQJ"
+                },
+                {
+                        "date": "2026-05-27",
+                        "merchant": "Hampstead Heath",
+                        "amount": 5.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6iorFNAxJpNgAkt3y"
+                },
+                {
+                        "date": "2026-05-27",
+                        "merchant": "La Cr\u00eaperie",
+                        "amount": 7.0,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6j9WdeTadGKa54DsB"
+                },
+                {
+                        "date": "2026-05-26",
+                        "merchant": "Islington Council",
+                        "amount": 161.0,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6fwFuj0yfBry9ZpZ4"
+                },
+                {
+                        "date": "2026-05-25",
+                        "merchant": "Flex",
+                        "amount": 738.09,
+                        "category": "Misc",
+                        "account": "Monzo Flex",
+                        "tx_id": "tx_0000B6eGf3MBdCJV4XCpqm"
+                },
+                {
+                        "date": "2026-05-25",
+                        "merchant": "Minisowindsor",
+                        "amount": 5.59,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6eTKgwsX8GEf8ghJi"
+                },
+                {
+                        "date": "2026-05-24",
+                        "merchant": "O2",
+                        "amount": 15.0,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6chGdnTJsivaNWA6t"
+                },
+                {
+                        "date": "2026-05-24",
+                        "merchant": "Costa Coffee",
+                        "amount": 5.8,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6codesq94PAgE6W8Z"
+                },
+                {
+                        "date": "2026-05-23",
+                        "merchant": "London Bridge Railway Station (Lbg)",
+                        "amount": 1.5,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6aMOkZfWE178L58Md"
+                },
+                {
+                        "date": "2026-05-23",
+                        "merchant": "The Black Eel",
+                        "amount": 7.7,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6aoCSHOVf92ITwLez"
+                },
+                {
+                        "date": "2026-05-23",
+                        "merchant": "The Black Eel",
+                        "amount": 6.6,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6ar7Pb9Lq95XLa84P"
+                },
+                {
+                        "date": "2026-05-21",
+                        "merchant": "O2",
+                        "amount": 10.0,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6WVzEpAeIdMermLmz"
+                },
+                {
+                        "date": "2026-05-21",
+                        "merchant": "True Gents Barber",
+                        "amount": 27.0,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6WFRjDBZ4o96RBMaP"
+                },
+                {
+                        "date": "2026-05-20",
+                        "merchant": "Savills (Uk) Limited",
+                        "amount": 3580.0,
+                        "category": "Rent",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6U9ERP1TmQTYQhcH5"
+                },
+                {
+                        "date": "2026-05-18",
+                        "merchant": "Paypal",
+                        "amount": 75.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6PMMbVS7p2r0U79b4"
+                },
+                {
+                        "date": "2026-05-16",
+                        "merchant": "Ms Thedeerparkcountr",
+                        "amount": 24.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6MdpMMgcBgEt6BthJ"
+                },
+                {
+                        "date": "2026-05-16",
+                        "merchant": "Ms Thedeerparkcountr",
+                        "amount": 12.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6MoO86MdW5xOCL46b"
+                },
+                {
+                        "date": "2026-05-14",
+                        "merchant": "Do Energy",
+                        "amount": 273.92,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6H4eVSbzOqpxgByxX"
+                },
+                {
+                        "date": "2026-05-12",
+                        "merchant": "Geraint Hampton",
+                        "amount": 125.0,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6DdSQZV3mYF9NCsIT"
+                },
+                {
+                        "date": "2026-05-11",
+                        "merchant": "Produco Srl",
+                        "amount": 2.6,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6BOwfVAEAvimqJCdt"
+                },
+                {
+                        "date": "2026-05-11",
+                        "merchant": "Transport For London",
+                        "amount": 12.45,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6BmCjFGNIoHJKDYa9"
+                },
+                {
+                        "date": "2026-05-11",
+                        "merchant": "Ms City Store",
+                        "amount": 2.3,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B6BrbRmmvOTzZvGriM"
+                },
+                {
+                        "date": "2026-05-10",
+                        "merchant": "Amazon Prime",
+                        "amount": 95.0,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B69pvoJeHPoVjZGfAZ"
+                },
+                {
+                        "date": "2026-05-08",
+                        "merchant": "Ditta Artigianale",
+                        "amount": 6.92,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B657wK4z0jTdQULWx0"
+                },
+                {
+                        "date": "2026-05-08",
+                        "merchant": "Trattoria Marione",
+                        "amount": 35.04,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B65HzokiQNf7f3S2V8"
+                },
+                {
+                        "date": "2026-05-08",
+                        "merchant": "La Sorbetteria",
+                        "amount": 2.6,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B65KytC4j5Jfh7kfKd"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Ditta Artigianale",
+                        "amount": 6.92,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B636iNjg8BteSgTH8N"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Osteria Nuvoli",
+                        "amount": 11.25,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B63DRovwSMrPqlHKCY"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Trainline",
+                        "amount": 8.22,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B63lYoQ0AQbrqfxZxs"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Vip S",
+                        "amount": 60.56,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B63uPHx4PIxRviG5In"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Trattoria Giovanni",
+                        "amount": 54.51,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B644r5Xb8vQxL5xkuX"
+                },
+                {
+                        "date": "2026-05-07",
+                        "merchant": "Spirituum",
+                        "amount": 25.96,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B648XYv6bOVqK6NE0Y"
+                },
+                {
+                        "date": "2026-05-06",
+                        "merchant": "Enoteca Alla Sosta Pap",
+                        "amount": 4.33,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B61f0DJOdNXvm74V61"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Radiotaxi 4390",
+                        "amount": 26.29,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5z9BJFvHzl8hSX3TN"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Uber",
+                        "amount": 23.35,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5z6q0LmBWLxgPn53h"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Uber",
+                        "amount": -23.35,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5zBzTBgpxqEyfHnoQ"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Volume Piazza S.Spirit",
+                        "amount": 15.57,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5zZch5LOiZQbxnh3K"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Trattoria Marione",
+                        "amount": 42.5,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5zwKXiLnVgzQyzA4A"
+                },
+                {
+                        "date": "2026-05-05",
+                        "merchant": "Purple Haze Smoke Shop",
+                        "amount": 6.49,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B601gtLSYStHlgH8GA"
+                },
+                {
+                        "date": "2026-05-04",
+                        "merchant": "Trainline",
+                        "amount": 6.35,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5wnsZabqlkZbVHuyI"
+                },
+                {
+                        "date": "2026-05-04",
+                        "merchant": "Trainline",
+                        "amount": 6.15,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5xMmvHZmPq1I0K1q5"
+                },
+                {
+                        "date": "2026-05-03",
+                        "merchant": "Quintero Foods",
+                        "amount": 7.0,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5vCScnxNmeD251dwH"
+                },
+                {
+                        "date": "2026-05-03",
+                        "merchant": "Quintero Foods Ltd",
+                        "amount": 14.0,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5vZ3fR2lOiIQpQiNc"
+                },
+                {
+                        "date": "2026-05-03",
+                        "merchant": "Distri Local",
+                        "amount": 5.0,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5vZBpjINCA5NQvCuA"
+                },
+                {
+                        "date": "2026-05-02",
+                        "merchant": "Trainline",
+                        "amount": 5.65,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5sndAgROGeBifpyFu"
+                },
+                {
+                        "date": "2026-05-02",
+                        "merchant": "Tw1 Food And Wine Ltd",
+                        "amount": 1.5,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5tOJoSTUoR7lDxoK9"
+                },
+                {
+                        "date": "2026-05-02",
+                        "merchant": "Trainline",
+                        "amount": 3.85,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5tPC8aOsSJWrQzvMn"
+                },
+                {
+                        "date": "2026-05-01",
+                        "merchant": "Gocardless",
+                        "amount": 30.0,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5qFlhZRDR7vq1l0D4"
+                },
+                {
+                        "date": "2026-04-29",
+                        "merchant": "Jetblue",
+                        "amount": -85.44,
+                        "category": "Travel",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5ljvTf5oCmzdIWtF4"
+                },
+                {
+                        "date": "2026-04-29",
+                        "merchant": "True Gents Barber",
+                        "amount": 27.0,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5mY1pXoMHHHLrnvc2"
+                },
+                {
+                        "date": "2026-04-28",
+                        "merchant": "London Heathrow T3 Air",
+                        "amount": 15.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5kRPhClvZA7TF3rXv"
+                },
+                {
+                        "date": "2026-04-28",
+                        "merchant": "Trainline",
+                        "amount": 11.54,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5kRjzPLxW3rFi4dnC"
+                },
+                {
+                        "date": "2026-04-27",
+                        "merchant": "Islington Council",
+                        "amount": 161.22,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5hpLTjprxc4wYaFvt"
+                },
+                {
+                        "date": "2026-04-27",
+                        "merchant": "Specsavers",
+                        "amount": 28.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5hpr9AHtbN7yeKyEI"
+                },
+                {
+                        "date": "2026-04-27",
+                        "merchant": "All Ways 99 Parada 18",
+                        "amount": 30.97,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5iy8qWyuPb1OINcog"
+                },
+                {
+                        "date": "2026-04-27",
+                        "merchant": "El Meson Sandwiches Ta",
+                        "amount": 3.98,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5j4MVsh53P6vSu2Cn"
+                },
+                {
+                        "date": "2026-04-27",
+                        "merchant": "Sju Airport Conv Store",
+                        "amount": 5.4,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5j7cq0CL2mJhYPNze"
+                },
+                {
                         "date": "2026-04-26",
                         "merchant": "Netflix.Com 203832",
                         "amount": 5.99,
@@ -731,12 +1299,100 @@
                         "tx_id": "amex_20260426_netflixcom20_599"
                 },
                 {
+                        "date": "2026-04-26",
+                        "merchant": "Savills (Uk) Limited",
+                        "amount": 3580.0,
+                        "category": "Rent",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5hGMBvA6Ogb3WRDz0"
+                },
+                {
+                        "date": "2026-04-26",
+                        "merchant": "Jetblue",
+                        "amount": 85.54,
+                        "category": "Travel",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5hIeI1ULzg9BdlwY8"
+                },
+                {
+                        "date": "2026-04-26",
+                        "merchant": "Lyft",
+                        "amount": 0.02,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5fZSLMhPb2PRngTWl"
+                },
+                {
+                        "date": "2026-04-26",
+                        "merchant": "Lyft",
+                        "amount": 4.46,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5g8k8u1ywhJLTPnN3"
+                },
+                {
                         "date": "2026-04-25",
                         "merchant": "Airbnb * Hmjkqd28Dd",
                         "amount": 77.07,
                         "category": "Travel",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260425_airbnbhmjkqd_7706"
+                },
+                {
+                        "date": "2026-04-25",
+                        "merchant": "Flex",
+                        "amount": 603.74,
+                        "category": "Misc",
+                        "account": "Monzo Flex",
+                        "tx_id": "tx_0000B5e5oubVsp3NpM4HyL"
+                },
+                {
+                        "date": "2026-04-25",
+                        "merchant": "Lyft",
+                        "amount": 2.2,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5dSwlZjRJ6rOtpTd4"
+                },
+                {
+                        "date": "2026-04-25",
+                        "merchant": "Condadi Vanderbilt F&B",
+                        "amount": 9.41,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5eyeQ6xtX28e0kwMr"
+                },
+                {
+                        "date": "2026-04-25",
+                        "merchant": "Condadi Vanderbilt F&B",
+                        "amount": 21.39,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5f327CkEyzlV8wkDM"
+                },
+                {
+                        "date": "2026-04-24",
+                        "merchant": "Uber Eats",
+                        "amount": 20.74,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5bp0V0mm2WUoZTuly"
+                },
+                {
+                        "date": "2026-04-24",
+                        "merchant": "Hr Convenience And Liq",
+                        "amount": 16.54,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5cpVhSQkEB5CFjtDt"
+                },
+                {
+                        "date": "2026-04-24",
+                        "merchant": "Condadi Vanderbilt F&B",
+                        "amount": 15.5,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5dCTndz4SjGxIBzXf"
                 },
                 {
                         "date": "2026-04-21",
@@ -779,6 +1435,78 @@
                         "tx_id": "amex_20260420_whsmithheath_2927"
                 },
                 {
+                        "date": "2026-04-20",
+                        "merchant": "Alicia Perez Gomez",
+                        "amount": 37.4,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Uax6ew6Ha4MIoFWr"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Jetblue",
+                        "amount": 55.68,
+                        "category": "Travel",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Uk40B9UZ1puVvC1h"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Bolt",
+                        "amount": 12.78,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5TfoVghyracXQOEIj"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Uber",
+                        "amount": 11.93,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5TfpKsrdQyxzcrLWN"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Bolt",
+                        "amount": -12.78,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5TftcHqsAKWMm2a5D"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Trainline",
+                        "amount": 13.15,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5TgMLHlA9rcLIcgvy"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Uber",
+                        "amount": 12.2,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Th8SsQF2k0YSd077"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Uber",
+                        "amount": -11.93,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Th8d5CIPRBGskcc5"
+                },
+                {
+                        "date": "2026-04-20",
+                        "merchant": "Farmer'S Fridge",
+                        "amount": 9.94,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5UlcORPtKWAeLwiQ5"
+                },
+                {
                         "date": "2026-04-19",
                         "merchant": "Jetblue Airways 9010124 Forest Hills",
                         "amount": 90.0,
@@ -793,6 +1521,14 @@
                         "category": "Misc",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260419_londonbridge_899"
+                },
+                {
+                        "date": "2026-04-19",
+                        "merchant": "Dandan",
+                        "amount": 13.86,
+                        "category": "Shopping",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5S82WMSgMqEuhtSba"
                 },
                 {
                         "date": "2026-04-18",
@@ -833,6 +1569,70 @@
                         "category": "Groceries",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260418_waitroseisli_1095"
+                },
+                {
+                        "date": "2026-04-18",
+                        "merchant": "All Good Islington",
+                        "amount": 2.99,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5PcQENHcfDaZk1zCk"
+                },
+                {
+                        "date": "2026-04-18",
+                        "merchant": "Soho House Electric Fn",
+                        "amount": 16.03,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Q8yD81xVoCqrErz9"
+                },
+                {
+                        "date": "2026-04-18",
+                        "merchant": "Rococo News And Magazi",
+                        "amount": 2.98,
+                        "category": "Groceries",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5QCakljdHi9B3w3a0"
+                },
+                {
+                        "date": "2026-04-17",
+                        "merchant": "Trainline",
+                        "amount": 8.25,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5NYKWi3kglnY1UGo6"
+                },
+                {
+                        "date": "2026-04-17",
+                        "merchant": "O2",
+                        "amount": 10.0,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5NeJCWJvgLsxOCdNO"
+                },
+                {
+                        "date": "2026-04-17",
+                        "merchant": "Burhill Gc",
+                        "amount": 8.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5NpPze1IaGjpGv83F"
+                },
+                {
+                        "date": "2026-04-17",
+                        "merchant": "Burhill Gc",
+                        "amount": 3.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5OAsqUQVrHLAgu3VK"
+                },
+                {
+                        "date": "2026-04-17",
+                        "merchant": "Big Belly Bar & Co",
+                        "amount": 4.9,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5OcnBFDETWmNMy75F"
                 },
                 {
                         "date": "2026-04-16",
@@ -915,6 +1715,14 @@
                         "tx_id": "amex_20260414_waitroseisli_160"
                 },
                 {
+                        "date": "2026-04-14",
+                        "merchant": "Do Energy",
+                        "amount": 273.92,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5GtBpMNmMRUexKecV"
+                },
+                {
                         "date": "2026-04-13",
                         "merchant": "Amazon Markeplace Na Pa",
                         "amount": 66.8,
@@ -955,12 +1763,60 @@
                         "tx_id": "amex_20260413_tiantianmark_299"
                 },
                 {
+                        "date": "2026-04-13",
+                        "merchant": "Trainline",
+                        "amount": 6.35,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5FJqpsywDI16m64VY"
+                },
+                {
+                        "date": "2026-04-13",
+                        "merchant": "Dim Sum Duck",
+                        "amount": 15.3,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5FUTotLZDj56OaZ4V"
+                },
+                {
+                        "date": "2026-04-13",
+                        "merchant": "Trainline",
+                        "amount": 5.05,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5FVgFoHPYm2UbtX8r"
+                },
+                {
+                        "date": "2026-04-13",
+                        "merchant": "Trainline",
+                        "amount": 6.35,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5FaUCnHIbUaH0ceub"
+                },
+                {
                         "date": "2026-04-12",
                         "merchant": "Pret A Manger",
                         "amount": 0.75,
                         "category": "Dining",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260412_pretamangerl_75"
+                },
+                {
+                        "date": "2026-04-12",
+                        "merchant": "Nicolas Malagardis",
+                        "amount": 14.0,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5DzXUwOOVf8nqNDiz"
+                },
+                {
+                        "date": "2026-04-12",
+                        "merchant": "Trainline",
+                        "amount": 5.05,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5DMyvP2DlFOQUN9hC"
                 },
                 {
                         "date": "2026-04-11",
@@ -985,6 +1841,22 @@
                         "category": "Groceries",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260411_waitrosecler_1445"
+                },
+                {
+                        "date": "2026-04-11",
+                        "merchant": "Nicolas Malagardis",
+                        "amount": 40.5,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5Bzjome3ZT8353rSD"
+                },
+                {
+                        "date": "2026-04-11",
+                        "merchant": "The Talbot",
+                        "amount": 16.5,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B5C0HWvmwEAAGGPFP2"
                 },
                 {
                         "date": "2026-04-10",
@@ -1027,6 +1899,22 @@
                         "tx_id": "amex_20260408_tfltravelcha_1040"
                 },
                 {
+                        "date": "2026-04-08",
+                        "merchant": "Trainline",
+                        "amount": 24.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B54rPTN1njrZ67Egip"
+                },
+                {
+                        "date": "2026-04-08",
+                        "merchant": "Trainline",
+                        "amount": 16.65,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B55RwLDiilGVnD552i"
+                },
+                {
                         "date": "2026-04-07",
                         "merchant": "Sainsbury'S Supermarket London",
                         "amount": 32.27,
@@ -1051,6 +1939,54 @@
                         "tx_id": "amex_20260406_gailsvictori_385"
                 },
                 {
+                        "date": "2026-04-06",
+                        "merchant": "Fay'S Cake Boutique",
+                        "amount": 12.0,
+                        "category": "Misc",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B514nYl5wQ6yrGCZA9"
+                },
+                {
+                        "date": "2026-04-06",
+                        "merchant": "Human Forest",
+                        "amount": 0.6,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B51Rf4MjM719ytMYlN"
+                },
+                {
+                        "date": "2026-04-06",
+                        "merchant": "Human Forest",
+                        "amount": 2.99,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B51RfvYFc0MyzgtZoH"
+                },
+                {
+                        "date": "2026-04-06",
+                        "merchant": "Human Forest",
+                        "amount": 5.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B51RiQZLGClgFVxho2"
+                },
+                {
+                        "date": "2026-04-06",
+                        "merchant": "Human Forest",
+                        "amount": -0.6,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B51RmhcLofdKHaPLmt"
+                },
+                {
+                        "date": "2026-04-06",
+                        "merchant": "Human Forest",
+                        "amount": -5.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B51Rpdk6gBtmYdYtEY"
+                },
+                {
                         "date": "2026-04-05",
                         "merchant": "Sainsbury'S Sprmrkts Lt London",
                         "amount": 11.0,
@@ -1065,6 +2001,14 @@
                         "category": "Transport",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260405_tfltravelcha_300"
+                },
+                {
+                        "date": "2026-04-05",
+                        "merchant": "Trainline",
+                        "amount": 6.15,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4ylEHt4OFGStg31gf"
                 },
                 {
                         "date": "2026-04-04",
@@ -1107,12 +2051,36 @@
                         "tx_id": "amex_20260403_tfltravelcha_300"
                 },
                 {
+                        "date": "2026-04-03",
+                        "merchant": "Trainline",
+                        "amount": 5.05,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4ureDFG5tHDmOwmWJ"
+                },
+                {
+                        "date": "2026-04-03",
+                        "merchant": "Smith Amusements",
+                        "amount": 6.0,
+                        "category": "Dining",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4vAqJUObPiBH86Uu9"
+                },
+                {
                         "date": "2026-04-02",
                         "merchant": "Waitrose Clerkenwell",
                         "amount": 26.0,
                         "category": "Groceries",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260402_waitrosecler_2600"
+                },
+                {
+                        "date": "2026-04-02",
+                        "merchant": "Gocardless",
+                        "amount": 30.0,
+                        "category": "Entertainment",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4s1azkGFKksu8fku3"
                 },
                 {
                         "date": "2026-04-01",
@@ -1257,6 +2225,14 @@
                         "category": "Groceries",
                         "account": "Monzo Current",
                         "tx_id": "tx_0000B4guVkRUsRy0M8tR2I"
+                },
+                {
+                        "date": "2026-03-27",
+                        "merchant": "Refund Globalblue.Com",
+                        "amount": -25.5,
+                        "category": "Subscriptions",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4fNCpEfLDSpiudhBZ"
                 },
                 {
                         "date": "2026-03-26",
@@ -1515,6 +2491,22 @@
                         "tx_id": "tx_0000B4PMKkFoXNllFrRuYD"
                 },
                 {
+                        "date": "2026-03-19",
+                        "merchant": "Human Forest",
+                        "amount": -5.0,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4PLC5MkZi5zVZAlEX"
+                },
+                {
+                        "date": "2026-03-19",
+                        "merchant": "Human Forest",
+                        "amount": -0.6,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4PLCrOrz7oEvEhYZO"
+                },
+                {
                         "date": "2026-03-18",
                         "merchant": "Uber Trip",
                         "amount": 15.21,
@@ -1705,6 +2697,14 @@
                         "category": "Groceries",
                         "account": "Amex BA Black",
                         "tx_id": "amex_20260313_waitrosecler_4120"
+                },
+                {
+                        "date": "2026-03-13",
+                        "merchant": "Pok",
+                        "amount": -7.03,
+                        "category": "Transport",
+                        "account": "Monzo Current",
+                        "tx_id": "tx_0000B4CZ1oF4G8IIv0QM0Q"
                 },
                 {
                         "date": "2026-03-12",
@@ -4020,6 +5020,20 @@
         localStorage.setItem('dcr_budget_app_state', JSON.stringify(appState));
     }
 
+    let currentVelocityFilter = 'all';
+
+    // Switch velocity calculation mode
+    function changeVelocityFilter(mode) {
+        currentVelocityFilter = mode;
+        
+        // Update UI pill active states
+        document.getElementById('btn-filter-all').classList.toggle('active', mode === 'all');
+        document.getElementById('btn-filter-baseline').classList.toggle('active', mode === 'baseline');
+        
+        // Recalculate
+        calculateTrajectory();
+    }
+
     // Client-Side Trajectory Calculator
     function calculateTrajectory() {
         const start = new Date(appState.start_date);
@@ -4036,7 +5050,10 @@
             return t.date >= appState.start_date && t.date <= appState.end_date;
         });
 
-        const totalNetSpend = txsInWindow.reduce((acc, t) => acc + t.amount, 0);
+        // Compute actual spend for rent, travel (sabbatical prep), and anomalies (still deducted from final runway forecast)
+        const rentSpend = txsInWindow.filter(t => t.category === 'Rent').reduce((acc, t) => acc + t.amount, 0);
+        const travelSpend = txsInWindow.filter(t => t.category === 'Travel').reduce((acc, t) => acc + t.amount, 0);
+        const anomalySpend = txsInWindow.filter(t => t.amount > 150 && t.category !== 'Rent' && t.category !== 'Travel').reduce((acc, t) => acc + t.amount, 0);
 
         const msPerDay = 1000 * 60 * 60 * 24;
         let daysElapsed = 1;
@@ -4054,24 +5071,46 @@
             }
         }
 
-        const dailyBurn = totalNetSpend / daysElapsed;
-        const weeklyBurn = dailyBurn * 7;
-        
         const totalDays = Math.max(1, Math.floor((end - start) / msPerDay) + 1);
-        const projectedSpend = dailyBurn * totalDays;
+        let dailyBurn = 0;
+        let weeklyBurn = 0;
+        let projectedSpend = 0;
+
+        if (currentVelocityFilter === 'baseline') {
+            // Baseline lifestyle strips out rent, travel, and large variable anomalies
+            const lifestyleTxs = txsInWindow.filter(t => {
+                return t.category !== 'Rent' && t.category !== 'Travel' && !(t.amount > 150);
+            });
+            const lifestyleSpend = lifestyleTxs.reduce((acc, t) => acc + t.amount, 0);
+            
+            dailyBurn = lifestyleSpend / daysElapsed;
+            weeklyBurn = dailyBurn * 7;
+            
+            // Forecast remains fully correct: deduct actuals spent to date + projected baseline over the remaining days
+            projectedSpend = rentSpend + travelSpend + anomalySpend + (dailyBurn * totalDays);
+        } else {
+            // All outflows mode
+            const totalNetSpend = txsInWindow.reduce((acc, t) => acc + t.amount, 0);
+            dailyBurn = totalNetSpend / daysElapsed;
+            weeklyBurn = dailyBurn * 7;
+            projectedSpend = dailyBurn * totalDays;
+        }
+
         const forecastedRemaining = appState.starting_capital - projectedSpend;
         
         document.getElementById('val-forecast-remaining').innerText = fmtGBP(forecastedRemaining);
         document.getElementById('val-weekly-burn').innerText = fmtGBP(weeklyBurn);
         document.getElementById('val-daily-burn').innerText = fmtGBP(dailyBurn);
         
-        document.getElementById('lbl-forecast-sub').innerText = `Projected Remaining Capital (based on ${daysElapsed} days of data)`;
+        const filterText = currentVelocityFilter === 'baseline' ? "excl. Sabbatical Travel, Rent, & anomalies" : "all categories";
+        document.getElementById('lbl-forecast-sub').innerText = `Projected Runway Balance (${filterText})`;
 
         renderVelocityMatrix(txsInWindow, daysElapsed, totalDays);
+        renderConvenienceOutflows(txsInWindow);
         generateBehavioralInsights(txsInWindow, dailyBurn, weeklyBurn, forecastedRemaining, totalDays);
     }
 
-    // Render Matrix table
+    // Render Matrix table grouped in Three Tiers
     function renderVelocityMatrix(txs, daysElapsed, totalDays) {
         const tableBody = document.getElementById('matrix-table-body');
         tableBody.innerHTML = '';
@@ -4088,39 +5127,113 @@
             }
         });
 
-        Object.keys(categoryIcons).forEach(cat => {
-            const actual = categoryActuals[cat];
-            const dailyCatBurn = actual / daysElapsed;
-            const forecast60 = dailyCatBurn * totalDays;
-            
-            let status = 'NORMAL';
-            let badgeClass = 'badge-normal';
-            
-            if (cat === 'Rent' || cat === 'Subscriptions') {
-                status = 'FIXED';
-                badgeClass = 'badge-fixed';
-            } else if (actual < 0) {
-                status = 'OFFSET';
-                badgeClass = 'badge-offset';
-            } else if (actual > 0 && dailyCatBurn > getHistoricalAverage(cat)) {
-                status = 'SPIKE';
-                badgeClass = 'badge-spike';
+        const tiers = {
+            "Fixed Commitments": ["Rent", "Subscriptions"],
+            "Daily Essentials": ["Groceries", "Transport", "Dining", "Health"],
+            "Discretionary & Spikes": ["Travel", "Shopping", "Entertainment", "Misc"]
+        };
+
+        Object.keys(tiers).forEach(tierName => {
+            let tierRowsHtml = "";
+            let tierHasData = false;
+
+            tiers[tierName].forEach(cat => {
+                const actual = categoryActuals[cat] || 0.0;
+                
+                // Exclude empty categories to keep metrics dense
+                if (actual === 0) return;
+
+                tierHasData = true;
+                const dailyCatBurn = actual / daysElapsed;
+                const forecast60 = dailyCatBurn * totalDays;
+                
+                let status = 'NORMAL';
+                let badgeClass = 'badge-normal';
+                
+                if (cat === 'Rent' || cat === 'Subscriptions') {
+                    status = 'FIXED';
+                    badgeClass = 'badge-fixed';
+                } else if (actual < 0) {
+                    status = 'OFFSET';
+                    badgeClass = 'badge-offset';
+                } else if (actual > 0 && dailyCatBurn > getHistoricalAverage(cat)) {
+                    status = 'SPIKE';
+                    badgeClass = 'badge-spike';
+                }
+
+                tierRowsHtml += `
+                    <tr>
+                        <td class="col-status"><span class="badge ${badgeClass}">${status}</span></td>
+                        <td class="col-item">${categoryIcons[cat]} ${cat}</td>
+                        <td class="col-amt">${fmtGBP(actual)}</td>
+                        <td class="col-forecast">${fmtGBP(forecast60)}</td>
+                    </tr>
+                `;
+            });
+
+            if (tierHasData) {
+                const headerTr = document.createElement('tr');
+                headerTr.className = 'tier-header-row';
+                headerTr.innerHTML = `<td colspan="4">${tierName}</td>`;
+                tableBody.appendChild(headerTr);
+                
+                const tempDiv = document.createElement('tbody');
+                tempDiv.innerHTML = tierRowsHtml;
+                while (tempDiv.firstChild) {
+                    tableBody.appendChild(tempDiv.firstChild);
+                }
             }
-
-            if (actual === 0) return; // skip empty lines
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="col-status"><span class="badge ${badgeClass}">${status}</span></td>
-                <td class="col-item">${categoryIcons[cat]} ${cat}</td>
-                <td class="col-amt">${fmtGBP(actual)}</td>
-                <td class="col-forecast">${fmtGBP(forecast60)}</td>
-            `;
-            tableBody.appendChild(tr);
         });
         
         if (tableBody.innerHTML === '') {
             tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No transactions found. Upload your CSV/PDF statement.</td></tr>`;
+        }
+    }
+
+    // Render high-frequency merchant leakage cards
+    function renderConvenienceOutflows(txs) {
+        const carousel = document.getElementById('convenience-carousel');
+        carousel.innerHTML = '';
+        
+        const counts = {};
+        const amounts = {};
+        const categories = {};
+        
+        txs.forEach(t => {
+            counts[t.merchant] = (counts[t.merchant] || 0) + 1;
+            amounts[t.merchant] = (amounts[t.merchant] || 0) + t.amount;
+            categories[t.merchant] = t.category;
+        });
+        
+        const sortedMerchants = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        
+        let rendered = 0;
+        sortedMerchants.forEach(m => {
+            // Show merchants used 3+ times, skip Rent
+            if (counts[m] < 3 || m.toLowerCase() === 'rent') return;
+            if (rendered >= 5) return;
+            
+            const icon = categoryIcons[categories[m]] || "📦";
+            const card = document.createElement('div');
+            card.style.cssText = `
+                background-color: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 12px 14px;
+                min-width: 140px;
+                flex-shrink: 0;
+            `;
+            card.innerHTML = `
+                <div style="font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${icon} ${m}</div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text);">${counts[m]} times</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Total: ${fmtGBP(amounts[m])}</div>
+            `;
+            carousel.appendChild(card);
+            rendered++;
+        });
+        
+        if (carousel.innerHTML === '') {
+            carousel.innerHTML = `<div style="font-size: 11px; color: var(--text-muted); width: 100%; text-align: center; padding: 10px;">No high-frequency leakages detected.</div>`;
         }
     }
 
@@ -4229,7 +5342,7 @@
         }
     }
 
-    // Render local feed list
+    // Render local feed list with expandable category edit panel
     function renderTransactionsFeed() {
         const container = document.getElementById('tx-list-container');
         const query = document.getElementById('tx-search-input').value.toLowerCase().trim();
@@ -4239,26 +5352,69 @@
             return t.merchant.toLowerCase().includes(query) || t.category.toLowerCase().includes(query);
         });
 
-        filtered.forEach(t => {
+        filtered.forEach((t, idx) => {
             const isRefund = t.amount < 0;
             const amtClass = isRefund ? 'tx-amount-refund' : 'tx-amount-spend';
             const amtPrefix = isRefund ? '-' : '';
             const icon = categoryIcons[t.category] || "📦";
             
+            const rowId = `tx-row-${t.tx_id || idx}`;
+            const editId = `tx-edit-${t.tx_id || idx}`;
+            
             const div = document.createElement('div');
-            div.className = 'tx-row';
+            div.className = 'tx-row-wrapper';
             div.innerHTML = `
-                <div class="tx-left">
-                    <div class="tx-merchant">${icon} ${t.merchant}</div>
-                    <div class="tx-meta">${formatDatePretty(t.date)} &nbsp;·&nbsp; ${t.category} &nbsp;·&nbsp; ${t.account}</div>
+                <div class="tx-row" onclick="toggleTxEdit('${editId}')" style="cursor: pointer;">
+                    <div class="tx-left">
+                        <div class="tx-merchant">${icon} ${t.merchant}</div>
+                        <div class="tx-meta">${formatDatePretty(t.date)} &nbsp;·&nbsp; ${t.category} &nbsp;·&nbsp; ${t.account}</div>
+                    </div>
+                    <div class="tx-right ${amtClass}">${amtPrefix}${fmtGBP(Math.abs(t.amount))}</div>
                 </div>
-                <div class="tx-right ${amtClass}">${amtPrefix}${fmtGBP(Math.abs(t.amount))}</div>
+                <div class="tx-edit-panel" id="${editId}" style="display: none; padding: 12px 14px; background-color: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                    <label style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; letter-spacing: 0.05em;">Assign Category</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        ${Object.keys(categoryIcons).map(cat => {
+                            const activeClass = t.category === cat ? 'active' : '';
+                            return `<button class="cat-pill ${activeClass}" onclick="updateTxCategory('${t.tx_id}', '${cat}', event)">${categoryIcons[cat]} ${cat}</button>`;
+                        }).join('')}
+                    </div>
+                </div>
             `;
             container.appendChild(div);
         });
 
         if (filtered.length === 0) {
             container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:40px;">No matching transactions found.</div>`;
+        }
+    }
+
+    // Toggle category panel display
+    function toggleTxEdit(panelId) {
+        const panel = document.getElementById(panelId);
+        const isHidden = panel.style.display === 'none';
+        
+        // Close other panels
+        document.querySelectorAll('.tx-edit-panel').forEach(p => {
+            p.style.display = 'none';
+        });
+        
+        if (isHidden) {
+            panel.style.display = 'block';
+        }
+    }
+
+    // Assign new category client-side
+    function updateTxCategory(txId, newCategory, event) {
+        event.stopPropagation();
+        
+        const tx = appState.transactions.find(t => t.tx_id === txId);
+        if (tx) {
+            tx.category = newCategory;
+            
+            saveStateToStorage();
+            calculateTrajectory();
+            renderTransactionsFeed();
         }
     }
 
