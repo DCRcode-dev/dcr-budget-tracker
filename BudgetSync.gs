@@ -221,7 +221,6 @@ function syncCSVs() {
 
   if (imported > 0) {
     Logger.log("Sync completed. Total new transactions: " + imported);
-    checkBudgetAlerts_();
   } else {
     Logger.log("No new transactions found.");
   }
@@ -967,27 +966,35 @@ function setupTriggers() {
   // Delete existing triggers to avoid duplicates
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
 
-  // Daily CSV sync at 07:00
+  // Daily CSV sync at 07:00 (silent)
   ScriptApp.newTrigger("syncCSVs")
     .timeBased()
     .everyDays(1)
     .atHour(7)
     .create();
 
-  // Hourly Gmail alerts sync
+  // Hourly Gmail alerts sync (silent)
   ScriptApp.newTrigger("syncGmailAlerts")
     .timeBased()
     .everyHours(1)
     .create();
 
-  // Monthly brief on the 1st at 08:00
-  ScriptApp.newTrigger("sendMonthlyBrief")
+  // Weekly Brief email on Mondays at 08:00
+  ScriptApp.newTrigger("sendWeeklyBrief")
     .timeBased()
-    .onMonthDay(1)
+    .onWeekDay(ScriptApp.WeekDay.MONDAY)
     .atHour(8)
     .create();
 
-  Logger.log("✅ Triggers registered: syncCSVs (daily 07:00), syncGmailAlerts (hourly), + sendMonthlyBrief (1st of month 08:00)");
+  // Weekly Budget alerts check on Mondays at 08:15
+  ScriptApp.newTrigger("runAlertCheck")
+    .timeBased()
+    .onWeekDay(ScriptApp.WeekDay.MONDAY)
+    .atHour(8)
+    .nearMinute(15)
+    .create();
+
+  Logger.log("✅ Triggers registered: syncCSVs (daily 07:00), syncGmailAlerts (hourly), sendWeeklyBrief (weekly Monday 08:00), and runAlertCheck (weekly Monday 08:15)");
 }
 
 /**
@@ -1206,4 +1213,97 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({ error: err.message }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+/**
+ * Run weekly on Monday at 08:00 — sends the Weekly CFO Brief
+ */
+function sendWeeklyBrief() {
+  const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+  const txSheet = ss.getSheetByName(CONFIG.TABS.TRANSACTIONS);
+  const now = new Date();
+  
+  // Past 7 days
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const oneWeekAgo = new Date(now.getTime() - (7 * msPerDay));
+  
+  // Read all transactions
+  const lastRow = txSheet.getLastRow();
+  let weekTxs = [];
+  let totalSpent = 0;
+  let categorySpends = {};
+  
+  if (lastRow >= 3) {
+    const data = txSheet.getRange(3, 1, lastRow - 2, 8).getValues();
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      if (!row[0]) continue;
+      const txDate = new Date(row[0]);
+      if (txDate >= oneWeekAgo && txDate <= now) {
+        const amount = parseFloat(row[2]);
+        const merchant = row[1];
+        const category = row[3];
+        const account = row[4];
+        
+        weekTxs.push({ date: txDate, merchant: merchant, amount: amount, category: category, account: account });
+        
+        // Exclude rent from weekly averages
+        if (category !== 'Rent') {
+          totalSpent += amount;
+          categorySpends[category] = (categorySpends[category] || 0) + amount;
+        }
+      }
+    }
+  }
+  
+  // Build HTML email brief
+  let catHtml = "";
+  Object.keys(categorySpends).sort((a,b) => categorySpends[b] - categorySpends[a]).forEach(cat => {
+    catHtml += `<tr>
+      <td style="padding: 8px 0; border-bottom: 1px solid #EDE8E0; font-weight: 600;">${cat}</td>
+      <td style="padding: 8px 0; border-bottom: 1px solid #EDE8E0; text-align: right; font-family: monospace;">£${categorySpends[cat].toFixed(2)}</td>
+    </tr>`;
+  });
+  
+  const formattedDate = Utilities.formatDate(now, "GMT", "dd MMM yyyy");
+  
+  const html = `
+    <div style="font-family: sans-serif; background-color: #FAF7F2; padding: 30px; color: #2A2421; max-width: 600px; margin: 0 auto; border: 1px solid #EDE8E0; border-radius: 16px;">
+      <div style="text-align: center; border-bottom: 2px solid #C9A84C; padding-bottom: 15px; margin-bottom: 20px;">
+        <h1 style="font-family: Georgia, serif; font-size: 24px; font-weight: 700; color: #2A2421; margin: 0;">DCR LEDGER</h1>
+        <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #6B6259; margin: 4px 0 0 0;">Weekly CFO Brief — ${formattedDate}</p>
+      </div>
+      
+      <p style="font-size: 14px; line-height: 1.5; color: #6B6259;">Here is your weekly financial summary for the last 7 days of observation:</p>
+      
+      <div style="background-color: #FFFFFF; border: 1px solid #EDE8E0; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+        <span style="font-size: 10px; text-transform: uppercase; color: #6B6259; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Total Variable Outflow</span>
+        <span style="font-family: Georgia, serif; font-size: 36px; font-weight: 500; color: #2A2421;">£${totalSpent.toFixed(2)}</span>
+      </div>
+      
+      <h3 style="font-family: Georgia, serif; font-size: 16px; color: #2A2421; margin-bottom: 10px; border-bottom: 1px solid #C9A84C; padding-bottom: 4px;">Outflows by Category</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <tbody>
+          ${catHtml || '<tr><td colspan="2" style="text-align: center; color: #6B6259; padding: 20px;">No variable transactions logged this week.</td></tr>'}
+        </tbody>
+      </table>
+      
+      <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #6B6259; border-top: 1px solid #EDE8E0; padding-top: 15px;">
+        <p>This email is sent automatically by your DCR Ledger App.</p>
+        <p><a href="https://DCRcode-dev.github.io/dcr-budget-tracker" style="color: #C9A84C; text-decoration: none; font-weight: 600;">Open Dashboard →</a></p>
+      </div>
+    </div>
+  `;
+  
+  GmailApp.sendEmail(
+    CONFIG.ALERT_EMAIL,
+    "📊 Weekly Budget Brief — DCR Ledger",
+    "Please view this email in HTML format.",
+    {
+      htmlBody: html,
+      name: "DCR Budget System"
+    }
+  );
+  
+  Logger.log("Weekly brief email sent successfully.");
 }
