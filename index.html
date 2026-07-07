@@ -5189,13 +5189,33 @@
     function loadStateFromStorage() {
         const stored = localStorage.getItem('dcr_budget_app_state');
         const cleared = localStorage.getItem('dcr_budget_cleared');
+        const embeddedTxs = appState.transactions;
+
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
-                if ((!parsed.transactions || parsed.transactions.length === 0) && !cleared && appState.transactions.length > 0) {
-                    parsed.transactions = appState.transactions;
-                }
                 appState = parsed;
+
+                // Merge any missing embedded transactions into local storage
+                if (!cleared && embeddedTxs && embeddedTxs.length > 0) {
+                    if (!appState.transactions) appState.transactions = [];
+                    const existingIds = new Set(appState.transactions.map(t => t.tx_id));
+                    let mergedCount = 0;
+
+                    embeddedTxs.forEach(t => {
+                        if (!existingIds.has(t.tx_id)) {
+                            appState.transactions.push(t);
+                            existingIds.add(t.tx_id);
+                            mergedCount++;
+                        }
+                    });
+
+                    if (mergedCount > 0) {
+                        appState.transactions.sort((a, b) => b.date.localeCompare(a.date));
+                        saveStateToStorage();
+                        console.log("Merged " + mergedCount + " embedded transactions into cached local storage.");
+                    }
+                }
             } catch (e) {
                 console.error("Error parsing stored state, resetting.", e);
             }
