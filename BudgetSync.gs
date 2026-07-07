@@ -1307,3 +1307,56 @@ function sendWeeklyBrief() {
   
   Logger.log("Weekly brief email sent successfully.");
 }
+
+/**
+ * Handles HTTP POST requests for adding transactions in real-time.
+ */
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    const txSheet = ss.getSheetByName(CONFIG.TABS.TRANSACTIONS);
+    
+    // 1. Handle Real-Time Category Editing
+    if (data.action === "update_category") {
+      const lastRow = txSheet.getLastRow();
+      if (lastRow >= 3) {
+        const ids = txSheet.getRange(3, CONFIG.TX_COLS.TX_ID, lastRow - 2, 1).getValues();
+        for (let i = 0; i < ids.length; i++) {
+          if (ids[i][0] === data.tx_id) {
+            txSheet.getRange(3 + i, CONFIG.TX_COLS.CATEGORY).setValue(data.category);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ success: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // 2. Handle Real-Time Quick Expenses Addition
+    const existingIds = getExistingTxIds_(txSheet);
+    if (data.tx_id && existingIds.has(data.tx_id)) {
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Duplicate bypassed" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const dateObj = new Date(data.date);
+    const row = buildTxRow_(
+      dateObj,
+      data.merchant,
+      parseFloat(data.amount),
+      data.category,
+      data.account,
+      data.tx_id
+    );
+    
+    appendTransactions_([row]);
+    
+    return ContentService.createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}

@@ -941,6 +941,12 @@
             Settings
         </div>
     </div>
+    
+    <!-- Live Update Alert Toast -->
+    <div id="update-toast" style="position: fixed; bottom: 95px; left: 20px; right: 20px; background-color: var(--text); color: #ffffff; padding: 14px 20px; border-radius: 16px; display: none; align-items: center; justify-content: space-between; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+        <span style="font-size: 12px; font-weight: 500;">New version available!</span>
+        <button onclick="activateAppUpdate()" style="background-color: var(--gold); border: none; border-radius: 8px; color: #ffffff; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; outline: none;">Restart & Update</button>
+    </div>
 </div>
 
 <script>
@@ -5129,9 +5135,33 @@
     }
 
     // Initialize Page
+    let newWorker;
     document.addEventListener("DOMContentLoaded", async () => {
         // Fetch current exchange rate
         await fetchExchangeRate();
+
+        // Register Service Worker with live update checks
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                    newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // Display the live update toast
+                            document.getElementById('update-toast').style.display = 'flex';
+                        }
+                    });
+                });
+            });
+            
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    window.location.reload();
+                    refreshing = true;
+                }
+            });
+        }
 
         // Navigation Tabs Click handlers
         const navItems = document.querySelectorAll('.nav-bar .nav-item');
@@ -5185,6 +5215,13 @@
         loadStateFromStorage();
     });
 
+    // Activate the service worker updates skipping
+    function activateAppUpdate() {
+        if (newWorker) {
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+    }
+
     // Load state from localStorage
     function loadStateFromStorage() {
         const stored = localStorage.getItem('dcr_budget_app_state');
@@ -5196,8 +5233,9 @@
                 const parsed = JSON.parse(stored);
                 appState = parsed;
 
-                // Merge any missing embedded transactions into local storage
-                if (!cleared && embeddedTxs && embeddedTxs.length > 0) {
+                // Merge any missing embedded transactions into local storage ONLY if not syncing with Google Sheets
+                const sheetsUrl = localStorage.getItem('dcr_budget_sheets_url');
+                if (!sheetsUrl && !cleared && embeddedTxs && embeddedTxs.length > 0) {
                     if (!appState.transactions) appState.transactions = [];
                     const existingIds = new Set(appState.transactions.map(t => t.tx_id));
                     let mergedCount = 0;
@@ -5258,9 +5296,10 @@
             if (res.ok) {
                 const sheetData = await res.json();
                 if (sheetData && sheetData.transactions) {
-                    // Merge external transactions list
-                    const added = mergeLocalTransactions(sheetData.transactions);
-                    console.log("Sync success. Added " + added + " new transactions from Sheets.");
+                    // Overwrite local transactions with cloud list to make sheet the absolute source of truth
+                    appState.transactions = sheetData.transactions;
+                    appState.transactions.sort((a, b) => b.date.localeCompare(a.date));
+                    console.log("Sync success. Loaded " + sheetData.transactions.length + " transactions from Sheets.");
                     
                     if (sheetData.starting_capital) appState.starting_capital = sheetData.starting_capital;
                     if (sheetData.start_date) appState.start_date = sheetData.start_date;
@@ -5270,7 +5309,7 @@
                 }
             }
         } catch (e) {
-            console.warn("Google Sheets synchronization failed. Reverting to local storage state.", e);
+            console.warn("Google Sheets synchronization failed. Reverting to cached state.", e);
         }
         
         calculateTrajectory();
@@ -5940,7 +5979,7 @@
         }
     }
 
-    // Assign new category client-side
+    // Assign new category client-side & write to Google Sheets
     function updateTxCategory(txId, newCategory, event) {
         event.stopPropagation();
         
@@ -5951,6 +5990,25 @@
             saveStateToStorage();
             calculateTrajectory();
             renderTransactionsFeed();
+            
+            const sheetsUrl = localStorage.getItem('dcr_budget_sheets_url');
+            if (sheetsUrl) {
+                console.log("Updating category on Google Sheets Cloud...");
+                fetch(sheetsUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'update_category',
+                        tx_id: txId,
+                        category: newCategory
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors'
+                }).then(() => {
+                    console.log("Category updated on Google Sheets.");
+                }).catch(err => {
+                    console.warn("Google Sheets category update failed.", err);
+                });
+            }
         }
     }
 
@@ -6004,13 +6062,52 @@
             tx_id: txId
         };
         
-        appState.transactions.unshift(newTx);
-        saveStateToStorage();
-        calculateTrajectory();
-        renderTransactionsFeed();
-        
-        closeQuickAddDrawer();
-        alert("Transaction logged successfully!");
+        const sheetsUrl = localStorage.getItem('dcr_budget_sheets_url');
+        if (sheetsUrl) {
+            console.log("Posting quick transaction to Google Sheets Cloud...");
+            closeQuickAddDrawer();
+            
+            // Show sync overlays
+            const overlay = document.getElementById('upload-spinner');
+            const spinner = document.getElementById('spinner-circle');
+            const checkmark = document.getElementById('success-check');
+            const message = document.getElementById('spinner-message');
+            
+            overlay.classList.add('active');
+            spinner.style.display = 'block';
+            checkmark.style.display = 'none';
+            message.innerText = "Saving to Google Sheets...";
+            
+            fetch(sheetsUrl, {
+                method: 'POST',
+                body: JSON.stringify(newTx),
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors'
+            }).then(() => {
+                // Wait 2 seconds for Sheets write, then sync fresh state
+                setTimeout(async () => {
+                    await syncWithGoogleSheets();
+                    spinner.style.display = 'none';
+                    checkmark.style.display = 'block';
+                    message.innerText = "Saved to Cloud successfully!";
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                    }, 1500);
+                }, 2000);
+            }).catch(err => {
+                console.error("POST failed", err);
+                overlay.classList.remove('active');
+                alert("Failed to sync to cloud: " + err.message);
+            });
+        } else {
+            // Offline fallback
+            appState.transactions.unshift(newTx);
+            saveStateToStorage();
+            calculateTrajectory();
+            renderTransactionsFeed();
+            closeQuickAddDrawer();
+            alert("Transaction logged locally!");
+        }
     }
 
     // Handle Client-Side File Upload Parsing

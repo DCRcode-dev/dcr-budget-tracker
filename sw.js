@@ -1,23 +1,39 @@
-const CACHE = 'dcr-budget-v1';
-const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'dcr-ledger-v4';
+const ASSETS = [
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
   self.clients.claim();
 });
 
-// Fetch strategy: network-first for navigations, stale-while-revalidate for local assets
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// Fetch strategy: network-first for index.html, stale-while-revalidate for local assets
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET') return;
 
-  const isNav = e.request.mode === 'navigate' || url.pathname.endsWith('/index.html');
+  const isNav = e.request.mode === 'navigate' || url.pathname.endsWith('/index.html') || url.pathname === '/';
   if (isNav) {
     e.respondWith(
       fetch(e.request)
@@ -44,6 +60,5 @@ self.addEventListener('fetch', e => {
         return cached || refetch;
       })
     );
-    return;
   }
 });
