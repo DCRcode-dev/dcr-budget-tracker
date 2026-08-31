@@ -748,15 +748,15 @@
             <div class="cash-grid" style="margin-bottom: 14px;">
                 <div class="cash-tile">
                     <div class="cash-lbl">Paid to Date</div>
-                    <div class="cash-val" style="color: var(--green);">$10,700</div>
+                    <div class="cash-val" style="color: var(--green);" id="home-paid-val">$10,700</div>
                 </div>
                 <div class="cash-tile">
                     <div class="cash-lbl">Still to Pay</div>
-                    <div class="cash-val" style="color: var(--red);">$17,440</div>
+                    <div class="cash-val" style="color: var(--red);" id="home-still-val">$18,318</div>
                 </div>
                 <div class="cash-tile">
-                    <div class="cash-lbl">All-in Priced</div>
-                    <div class="cash-val">$39,229</div>
+                    <div class="cash-lbl">All-in Project Est.</div>
+                    <div class="cash-val" id="home-allin-val">$40,107</div>
                 </div>
             </div>
 
@@ -799,20 +799,20 @@
 
             <!-- Furniture Summary -->
             <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Furniture Status Summary</h3>
+                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Furniture Status & Estimates</h3>
                 <table class="clean-table">
                     <tbody>
                         <tr>
-                            <td>Ordered Fixed (5 items)</td>
+                            <td>Ordered Fixed (5 committed items)</td>
                             <td style="text-align: right; font-weight: 600;">$11,089.00</td>
                         </tr>
                         <tr>
-                            <td>Option Groups (Mid Selected)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">$3,401.00</td>
+                            <td>Pending Options (Max Estimated Selection)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">$7,618.00</td>
                         </tr>
-                        <tr>
-                            <td>Standalone Options (Wanted)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">$3,339.00</td>
+                        <tr style="border-top: 1px solid var(--border);">
+                            <td><strong>Total Estimated Furniture Spend</strong></td>
+                            <td style="text-align: right; font-weight: 700; color: var(--text); font-size: 13px;">$18,707.00</td>
                         </tr>
                         <tr>
                             <td>Unpriced Pending Items</td>
@@ -822,7 +822,7 @@
                 </table>
 
                 <div class="ask-callout" style="margin-top: 12px;">
-                    ⚠️ The source file's headline of $32,489 counts only the 5 ordered furniture items and ignores every priced option. Realistic all-in is about $39,200, and 50 items still carry no price at all.
+                    💡 <strong>Conservative Max Pricing Active</strong>: Every pending furniture category calculates using its highest-priced option ($7,618.00 max options + $11,089.00 ordered = <strong>$18,707.00</strong> total furniture). 50 decorative items still carry no price.
                 </div>
             </div>
         </div>
@@ -957,10 +957,12 @@
         salary_start_date: "2026-09-08",
         first_paycheck: 5136.67,
         
+        reno_building_contract: 21400.00,
         reno_building_outstanding: 10700.00,
-        reno_furniture_options_mid: 3401.00,
-        reno_furniture_standalone: 3339.00,
-        reno_paid_to_date: 10700.00,
+        reno_building_paid: 10700.00,
+        reno_furniture_ordered: 11089.00,
+        reno_furniture_options_max: 7618.00,
+        reno_furniture_total_est: 18707.00,
         reno_unpriced_count: 50,
         
         accounts: [
@@ -1095,9 +1097,13 @@
         const availableCash = Math.max(0, totalCash - runwayHold);
         const cashDeficit = Math.max(0, runwayHold - totalCash);
 
-        // 4. Renovation Totals
-        const furnitureOutstanding = appState.reno_furniture_options_mid + appState.reno_furniture_standalone;
-        const renoOutstanding = appState.reno_building_outstanding + furnitureOutstanding; // $17,440
+        // 4. Renovation Totals (Using Max Option Selection for pending items)
+        const furnitureOrdered = appState.reno_furniture_ordered || 11089.00;
+        const furnitureOptionsMax = appState.reno_furniture_options_max || 7618.00;
+        const totalFurnitureEst = furnitureOrdered + furnitureOptionsMax; // $18,707.00
+        const renoOutstanding = (appState.reno_building_outstanding || 10700.00) + furnitureOptionsMax; // $18,318.00
+        const renoAllIn = (appState.reno_building_contract || 21400.00) + totalFurnitureEst; // $40,107.00
+        const renoPaid = appState.reno_building_paid || 10700.00;
 
         // 5. The Ask (Funding Gap)
         const fundingGap = Math.max(0, renoOutstanding - availableCash);
