@@ -594,7 +594,7 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Income & Cash Flow</h3>
-                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">✅ Net +$1,019/mo</span>
+                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">✅ Net +$519/mo</span>
                 </div>
                 <table class="clean-table">
                     <tbody>
@@ -607,17 +607,17 @@
                             <td style="text-align: right; font-weight: 600; color: var(--text);">$5,136.67</td>
                         </tr>
                         <tr>
-                            <td>📊 Total Commitments (Mortgage + HOA + Living)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">−$5,680.55</td>
+                            <td>📊 Total Commitments (Mortgage + HOA + Utilities + Living)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">−$6,180.55</td>
                         </tr>
                         <tr style="border-top: 2px solid var(--border);">
                             <td><strong>Net Monthly Cash Flow</strong></td>
-                            <td style="text-align: right; font-weight: 700; color: var(--green); font-size: 14px;">+$1,019.45 / mo</td>
+                            <td style="text-align: right; font-weight: 700; color: var(--green); font-size: 14px;">+$519.45 / mo</td>
                         </tr>
                     </tbody>
                 </table>
                 <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
-                    First paycheck arrives early October (~$5,136.67). Ongoing $6,700/mo fully covers your $3,305.55 November mortgage + $375 HOA + $2,000 Living budget with +$1,019.45 surplus every month.
+                    First paycheck arrives early October (~$5,136.67). Ongoing $6,700/mo fully covers your $3,305.55 November mortgage + $375 HOA + $500 utilities ($400 power + $100 water) + $2,000 Living budget with +$519.45 surplus every month.
                 </div>
             </div>
 
@@ -635,12 +635,16 @@
                             <td style="text-align: right; font-weight: 600; color: var(--text);" id="dash-hoa-val">$375.00</td>
                         </tr>
                         <tr>
-                            <td>⚡ Utilities</td>
-                            <td style="text-align: right; color: #7F6000; font-weight: 600;" id="dash-util-val">⚠️ not set</td>
+                            <td>⚡ Electricity (LUMA est.)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--text);">$400.00</td>
+                        </tr>
+                        <tr>
+                            <td>💧 Water (AAA / Acueductos est.)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--text);">$100.00</td>
                         </tr>
                         <tr style="border-top: 1px solid var(--border);">
                             <td><strong>Total Fixed Expected</strong></td>
-                            <td style="text-align: right; font-weight: 700;">$3,680.55</td>
+                            <td style="text-align: right; font-weight: 700;">$4,180.55</td>
                         </tr>
                     </tbody>
                 </table>
@@ -930,7 +934,7 @@
         living_ceiling: 2000.00,
         mortgage_payment: 3305.55,
         mortgage_first_payment_date: "2026-11-01",
-        utilities_est: 0.00,
+        utilities_est: 500.00,
         hoa_amount: 375.00,
         runway_months: 3,
         gbp_usd_rate: 1.27,

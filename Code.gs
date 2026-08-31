@@ -154,7 +154,7 @@ function buildConfigTab_(sheet, ss) {
     ["MORTGAGE_LOAN_AMOUNT", "Mortgage loan amount (USD)", 550000, "$#,##0.00", true, "50% LTV."],
     ["MORTGAGE_RATE", "Mortgage interest rate", 0.0475, "0.000%", true, "FHA 30-yr fixed."],
     ["MORTGAGE_APR", "Mortgage APR", 0.05137, "0.000%", true, "Annual Percentage Rate."],
-    ["UTILITIES_EST", "Utilities monthly estimate (USD)", 0, "$#,##0.00", true, "NOT SET. Electricity + water + internet + phone."],
+    ["UTILITIES_EST", "Utilities monthly estimate (USD)", 500, "$#,##0.00", true, "Electricity ($400) + Water ($100). Adjusted moving forward."],
     ["HOA_AMOUNT", "Victoria Court HOA monthly (USD)", 375, "$#,##0.00", true, "Recurring $375/mo. Home insurance is INSIDE the HOA."],
     ["RUNWAY_MONTHS", "Months of runway to hold back", 3, "#,##0", true, "Owner's choice over recommended 6."],
     ["RENO_TOTAL_BUDGET", "Renovation total project budget (USD)", 0, "$#,##0.00", true, "DORMANT. When > 0, burn-down activates."],
