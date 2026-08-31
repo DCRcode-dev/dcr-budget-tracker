@@ -756,27 +756,38 @@ function syncBankData() {
     return;
   }
 
-  const ninetyDaysAgo = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
   const parsed = parseSimpleFinUrl_(accessUrl);
-  const fetchUrl = `${parsed.url}/accounts?start-date=${ninetyDaysAgo}`;
+  // Safe 60-day window (avoids SimpleFIN's strict 90-day cap error)
+  const safeStart = Math.floor(Date.now() / 1000) - (60 * 24 * 60 * 60);
+  let fetchUrl = `${parsed.url}/accounts?start-date=${safeStart}`;
 
   let responseData;
   try {
-    const res = UrlFetchApp.fetch(fetchUrl, {
+    let res = UrlFetchApp.fetch(fetchUrl, {
       headers: parsed.headers,
       muteHttpExceptions: true
     });
-    const code = res.getResponseCode();
+    let code = res.getResponseCode();
+
     if (code !== 200) {
-      const errorSnippet = res.getContentText().substring(0, 120);
+      Logger.log(`Retrying plain /accounts without date param. First attempt returned HTTP ${code}`);
+      res = UrlFetchApp.fetch(`${parsed.url}/accounts`, {
+        headers: parsed.headers,
+        muteHttpExceptions: true
+      });
+      code = res.getResponseCode();
+    }
+
+    if (code !== 200) {
+      const errorSnippet = res.getContentText().substring(0, 160);
       Logger.log(`SimpleFIN API error: HTTP ${code} - ${errorSnippet}`);
-      SpreadsheetApp.getActiveSpreadsheet().toast(`⚠️ Bank sync returned HTTP ${code}: ${errorSnippet}`, "Sync Error", 8);
+      SpreadsheetApp.getActiveSpreadsheet().toast(`⚠️ SimpleFIN returned HTTP ${code}: ${errorSnippet}`, "Sync Error", 10);
       return;
     }
     responseData = JSON.parse(res.getContentText());
   } catch (err) {
     Logger.log("SimpleFIN Network Exception: " + err.message);
-    SpreadsheetApp.getActiveSpreadsheet().toast("⚠️ Bank sync failed — showing last good data.", "Sync Error", 5);
+    SpreadsheetApp.getActiveSpreadsheet().toast("⚠️ Bank sync error: " + err.message, "Sync Error", 8);
     return;
   }
 
