@@ -155,7 +155,7 @@ function buildConfigTab_(sheet, ss) {
     ["MORTGAGE_RATE", "Mortgage interest rate", 0.0475, "0.000%", true, "FHA 30-yr fixed."],
     ["MORTGAGE_APR", "Mortgage APR", 0.05137, "0.000%", true, "Annual Percentage Rate."],
     ["UTILITIES_EST", "Utilities monthly estimate (USD)", 0, "$#,##0.00", true, "NOT SET. Electricity + water + internet + phone."],
-    ["HOA_AMOUNT", "Victoria Court HOA monthly (USD)", 0, "$#,##0.00", true, "NOT SET. Home insurance is INSIDE the HOA."],
+    ["HOA_AMOUNT", "Victoria Court HOA monthly (USD)", 375, "$#,##0.00", true, "Recurring $375/mo. Home insurance is INSIDE the HOA."],
     ["RUNWAY_MONTHS", "Months of runway to hold back", 3, "#,##0", true, "Owner's choice over recommended 6."],
     ["RENO_TOTAL_BUDGET", "Renovation total project budget (USD)", 0, "$#,##0.00", true, "DORMANT. When > 0, burn-down activates."],
     ["MONTHLY_SALARY", "Monthly salary (USD)", 6700, "$#,##0.00", true, "Expected in Banco Popular."],
@@ -1233,6 +1233,8 @@ function doGet(e) {
       config: {
         living_ceiling: ss.getRangeByName("LIVING_CEILING").getValue(),
         mortgage_payment: ss.getRangeByName("MORTGAGE_PAYMENT").getValue(),
+        hoa_amount: ss.getRangeByName("HOA_AMOUNT").getValue() || 375,
+        utilities_est: ss.getRangeByName("UTILITIES_EST").getValue() || 0,
         runway_months: ss.getRangeByName("RUNWAY_MONTHS").getValue(),
         move_in_date: ss.getRangeByName("MOVE_IN_DATE").getValue(),
         monthly_salary: 6700,
