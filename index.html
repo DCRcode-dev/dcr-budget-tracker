@@ -911,8 +911,8 @@
             { id: "acc_1", name: "Banco Popular", institution: "Banco Popular", type: "Checking", currency: "USD", balance: 0.00, status: "Active", include_in_available: true, feed: "SimpleFIN" },
             { id: "acc_2", name: "Capital One Venture X", institution: "Capital One", type: "Credit Card", currency: "USD", balance: 0.00, status: "Active", include_in_available: false, feed: "SimpleFIN" },
             { id: "acc_3", name: "Bank of America", institution: "Bank of America", type: "Checking", currency: "USD", balance: 0.00, status: "Winding Down", include_in_available: true, feed: "None" },
-            { id: "acc_4", name: "Monzo Current", institution: "Monzo", type: "Checking", currency: "GBP", balance: 0.00, status: "Winding Down", include_in_available: true, feed: "CSV" },
-            { id: "acc_5", name: "Monzo Flex", institution: "Monzo", type: "Credit Card", currency: "GBP", balance: 0.00, status: "Closed", include_in_available: false, feed: "CSV" }
+            { id: "acc_4", name: "Monzo Current", institution: "Monzo", type: "Checking", currency: "GBP", balance: 15000.00, status: "Winding Down", include_in_available: true, feed: "Manual" },
+            { id: "acc_5", name: "Monzo Flex", institution: "Monzo", type: "Credit Card", currency: "GBP", balance: 0.00, status: "Closed", include_in_available: false, feed: "Closed" }
         ],
         transactions: []
     };
@@ -1466,6 +1466,17 @@
             try {
                 appState = JSON.parse(stored);
             } catch (e) {}
+        }
+
+        // Ensure Monzo Current has £15,000 GBP configured
+        const monzo = appState.accounts.find(a => a.name.toLowerCase().includes("monzo current"));
+        if (monzo) {
+            if (!monzo.balance || monzo.balance === 0) {
+                monzo.balance = 15000.00;
+            }
+            monzo.include_in_available = true;
+            monzo.currency = "GBP";
+            monzo.status = "Winding Down";
         }
 
         if (url) syncFromCloud(url);
