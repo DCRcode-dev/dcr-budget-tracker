@@ -466,22 +466,22 @@ function buildDashboardTab_(sheet) {
   askBox.setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_YELLOW);
   askBox.setBorder(true, true, true, true, false, false, SCRIPT_CONFIG.COLORS.BORDER_ORANGE, SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
 
-  sheet.getRange("B5:E5").merge().setValue("FUNDING GAP (THE ASK)")
+  sheet.getRange("B5:E5").merge().setValue("PHASE 1 MOVE-IN FUNDING GAP (THE ASK)")
     .setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.BORDER_ORANGE);
 
-  sheet.getRange("B6:E7").merge().setFormula('=MAX(0, (SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 7618) - MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))))')
+  sheet.getRange("B6:E7").merge().setFormula('=MAX(0, 28929 - MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))))')
     .setFontSize(32).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("B8:E8").merge().setFormula('="Renovation still to pay ($" & TEXT(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+7618, "#,##0") & ") − available cash ($" & TEXT(MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))), "#,##0") & ") = ask your parents"')
+  sheet.getRange("B8:E8").merge().setFormula('="Phase 1 still to pay ($28,929) − available cash ($" & TEXT(MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))), "#,##0") & ") = ask your parents"')
     .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
 
-  sheet.getRange("F6:H6").merge().setFormula('="Self-funded: " & TEXT(MIN(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+7618, MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING)))), "$#,##0.00")')
+  sheet.getRange("F6:H6").merge().setFormula('="Self-funded: " & TEXT(MIN(28929, MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING)))), "$#,##0.00")')
     .setFontSize(11).setFontWeight("bold");
 
   sheet.getRange("F7:H7").merge().setFormula('=IF(B6=0, "✅ Fully self-funded", "🔴 Ask required")')
     .setFontSize(12).setFontWeight("bold");
 
-  sheet.getRange("B9:H9").merge().setFormula('="⚠️ " & COUNTIFS(Renovation!H:H, FALSE, Renovation!F:F, "Pending") & " renovation items still have no price. The real gap is higher than this."')
+  sheet.getRange("B9:H9").merge().setValue("📋 3-Phase Roadmap: Phase 1 Move-In ($50.7k) · Phase 2 ($34.5k) · Phase 3 ($38.2k) · Grand Total: $123,451")
     .setFontSize(9).setFontStyle("italic").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT);
 
   // ── BLOCK 2: MORTGAGE (Rows 11–15, Cols B:E) ──
@@ -623,44 +623,45 @@ function buildHomeTab_(sheet) {
     .setFontFamily("Arial").setFontSize(18).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.PRIMARY_NAVY);
 
   // 3 Tiles
-  sheet.getRange("B4").setValue("Paid to Date").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("B5").setFormula('=SUMIFS(Renovation!G:G, Renovation!I:I, FALSE)').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
+  sheet.getRange("B4").setValue("Phase 1 Move-In").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
+  sheet.getRange("B5").setValue(50718).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
-  sheet.getRange("C4").setValue("Still to Pay").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("C5").setFormula('=SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 7618').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
+  sheet.getRange("C4").setValue("P1 Still to Pay").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
+  sheet.getRange("C5").setValue(28929).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("D4").setValue("All-in Project Est.").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("D5").setFormula('=B5 + C5').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
+  sheet.getRange("D4").setValue("All 3 Phases Total").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
+  sheet.getRange("D5").setValue(123451).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
   sheet.getRange("B7:F7").merge().setFormula('="🎯 Move-in " & TEXT(MOVE_IN_DATE, "MM/DD/YYYY") & " · " & MAX(0, MOVE_IN_DATE - TODAY()) & " days"').setFontWeight("bold");
 
-  // Contractor Disbursements Schedule
-  sheet.getRange("B9:F9").merge().setValue("CONTRACTOR DISBURSEMENTS (DAVIS FACIAS)").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
-  sheet.getRange("B10:F10").setValues([["Phase", "Milestone", "Target Date", "Status", "Amount"]]).setFontWeight("bold");
-  sheet.getRange("B11:F13").setValues([
-    ["Phase 1 Deposit 50%", "Prior to commencement", "07/12/2026", "✅ Paid", 10700],
-    ["Phase 2 Progress 25%", "At 75% completion", "Sep 2026", "⏳ Pending", 5350],
-    ["Phase 3 Final 25%", "On final signoff", "Oct 2026", "⏳ Pending", 5350]
+  // 3-Phase Roadmap Table
+  sheet.getRange("B9:F9").merge().setValue("3-PHASE RENOVATION & PROCUREMENT ROADMAP").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
+  sheet.getRange("B10:F10").setValues([["Work Phase & Timing", "Building Works", "Furniture", "Expected Total", "Still to Pay"]]).setFontWeight("bold");
+  sheet.getRange("B11:F14").setValues([
+    ["Phase 1: Move-In Priority (Oct 28)", 27400, 23318, 50718, 28929],
+    ["Phase 2: Post-Move-In Trades (Nov–Apr)", 16500, 18018, 34518, 34518],
+    ["Phase 3: Outdoor & Luxury (May Onward)", 29800, 8415, 38215, 38215],
+    ["Grand All-In Total (All 3 Phases)", 73700, 49751, 123451, 101662]
   ]);
-  sheet.getRange("F11:F13").setNumberFormat("$#,##0.00");
-  sheet.getRange("B14:F14").merge().setValue("Total Contracted: $21,400.00 · Outstanding: $10,700.00").setFontStyle("italic").setFontSize(9);
+  sheet.getRange("C11:F14").setNumberFormat("$#,##0.00");
 
-  // Furniture Summary Table
-  sheet.getRange("B16:F16").merge().setValue("FURNITURE SUMMARY & ESTIMATES").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
-  sheet.getRange("B17:F17").setValues([["Scope", "Items Count", "Status", "Pricing Range", "Amount (Max Est.)"]]).setFontWeight("bold");
+  // Phase 1 Building Disbursements Schedule
+  sheet.getRange("B16:F16").merge().setValue("PHASE 1 BUILDING DISBURSEMENTS").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
+  sheet.getRange("B17:F17").setValues([["Milestone / Trade", "Target Date", "Status", "Contractor", "Amount"]]).setFontWeight("bold");
   sheet.getRange("B18:F21").setValues([
-    ["Ordered Fixed (5 items)", 5, "Ordered", "Fixed committed", 11089],
-    ["Pending Options (Max Selection)", 13, "Options", "Range: $6,681 – $7,618", 7618],
-    ["Total Estimated Furniture Spend", 18, "Combined", "Ordered + Max Options", 18707],
-    ["Unpriced Pending Items", 50, "Pending", "Carpet, Curtains, TV, Art", "TBD"]
+    ["Davis Facias Deposit (50%)", "07/12/2026", "✅ Paid", "Davis Facias", 10700],
+    ["Davis Facias Progress (25%)", "Sep 2026", "⏳ Pending", "Davis Facias", 5350],
+    ["Davis Facias Final (25%)", "Oct 2026", "⏳ Pending", "Davis Facias", 5350],
+    ["Master Boutique Closet Nook", "Oct 2026", "⏳ Pending", "Custom Millwork", 6000]
   ]);
-  sheet.getRange("F18:F20").setNumberFormat("$#,##0.00");
+  sheet.getRange("F18:F21").setNumberFormat("$#,##0.00");
 
-  // Amber Callout for Unpriced Gap
+  // Callout
   const callout = sheet.getRange("B23:F24");
   callout.setBackground(SCRIPT_CONFIG.COLORS.STATUS_WATCH_BG);
   callout.setBorder(true, true, true, true, false, false, SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT, SpreadsheetApp.BorderStyle.SOLID);
-  sheet.getRange("B23:F24").merge().setValue("💡 Conservative Max Pricing Active: Pending furniture calculates using the highest-priced option ($7,618 max options + $11,089 ordered = $18,707 total furniture). All-in project estimate is $40,107.")
+  sheet.getRange("B23:F24").merge().setValue("📋 3-Phase Roadmap: Phase 1 Move-In essentials total $50,718 ($10,700 paid · $28,929 still to pay). Full 3-phase project is $123,451.");
+
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
   sheet.getRange("B27:F27").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "", SPARKLINE(D5, {"charttype","bar"; "max",RENO_TOTAL_BUDGET; "color1","#F57C00"}))');

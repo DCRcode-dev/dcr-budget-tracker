@@ -530,19 +530,19 @@
             <!-- BLOCK 1: THE ASK (Primary Focus) -->
             <div class="ask-card">
                 <div class="ask-header">
-                    <div class="ask-title">Renovation Funding Gap (The Ask)</div>
+                    <div class="ask-title">Phase 1 Move-In Funding Gap (The Ask)</div>
                     <div class="status-pill ask" id="dash-gap-status">🔴 Ask Required</div>
                 </div>
-                <div class="ask-val" id="dash-funding-gap">$17,440.00</div>
+                <div class="ask-val" id="dash-funding-gap">$28,420.65</div>
                 <div class="ask-sub" id="dash-gap-equation">
-                    Renovation still to pay ($17,440) − available cash ($0) = ask your parents
+                    Phase 1 still to pay ($28,929) − available cash ($508) = ask your parents
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-bottom: 10px;">
-                    <span>Self-funded: <span id="dash-self-funded">$0.00</span></span>
-                    <span style="color: var(--blue);">Target: Davis Facias + Furniture</span>
+                    <span>Self-funded: <span id="dash-self-funded">$508.35</span></span>
+                    <span style="color: var(--blue);">🎯 Target: Oct 28 Move-In</span>
                 </div>
                 <div class="ask-callout">
-                    ⚠️ 50 renovation items still have no price. The real gap is higher than this.
+                    📋 <strong>3-Phase Roadmap</strong>: Phase 1 Move-In ($50.7k) · Phase 2 ($34.5k) · Phase 3 ($38.2k) · Grand Total: $123,451
                 </div>
             </div>
 
@@ -747,82 +747,135 @@
             <!-- 3 Tiles -->
             <div class="cash-grid" style="margin-bottom: 14px;">
                 <div class="cash-tile">
-                    <div class="cash-lbl">Paid to Date</div>
-                    <div class="cash-val" style="color: var(--green);" id="home-paid-val">$10,700</div>
+                    <div class="cash-lbl">Phase 1 Move-In</div>
+                    <div class="cash-val" style="color: var(--text);" id="home-p1-val">$50,718</div>
                 </div>
                 <div class="cash-tile">
-                    <div class="cash-lbl">Still to Pay</div>
-                    <div class="cash-val" style="color: var(--red);" id="home-still-val">$18,318</div>
+                    <div class="cash-lbl">P1 Still to Pay</div>
+                    <div class="cash-val" style="color: var(--red);" id="home-still-val">$28,929</div>
                 </div>
                 <div class="cash-tile">
-                    <div class="cash-lbl">All-in Project Est.</div>
-                    <div class="cash-val" id="home-allin-val">$40,107</div>
+                    <div class="cash-lbl">All 3 Phases Total</div>
+                    <div class="cash-val" id="home-allin-val">$123,451</div>
                 </div>
             </div>
 
             <div class="card" style="padding: 14px 18px; margin-bottom: 14px;">
-                <div style="font-size: 12px; font-weight: 700; color: var(--blue);">🎯 Target Move-In: October 28, 2026</div>
-                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">From Victoria Court Project Management Tracker</div>
+                <div style="font-size: 12px; font-weight: 700; color: var(--blue);">🎯 Target Move-In: October 28, 2026 (Phase 1 Completion)</div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Direct from Victoria Court Project Management Tracker.xlsx</div>
+            </div>
+
+            <!-- 3-Phase Roadmap Table -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">3-Phase Renovation Roadmap</h3>
+                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">Full Scope</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="clean-table" style="font-size: 11px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border);">
+                                <th>Phase & Timing</th>
+                                <th style="text-align: right;">Building</th>
+                                <th style="text-align: right;">Furniture</th>
+                                <th style="text-align: right;">Expected Total</th>
+                                <th style="text-align: right;">Still to Pay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Phase 1: Move-In Priority</strong><br><span style="font-size: 9px; color: var(--text-muted);">Move-in Oct 28, 2026</span></td>
+                                <td style="text-align: right;">$27,400</td>
+                                <td style="text-align: right;">$23,318</td>
+                                <td style="text-align: right; font-weight: 700; color: var(--blue);">$50,718</td>
+                                <td style="text-align: right; font-weight: 700; color: var(--red);">$28,929</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phase 2: Post-Move-In Trades</strong><br><span style="font-size: 9px; color: var(--text-muted);">Nov 2026 – Apr 2027</span></td>
+                                <td style="text-align: right;">$16,500</td>
+                                <td style="text-align: right;">$18,018</td>
+                                <td style="text-align: right; font-weight: 600;">$34,518</td>
+                                <td style="text-align: right; color: var(--text-muted);">$34,518</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phase 3: Outdoor & Luxury</strong><br><span style="font-size: 9px; color: var(--text-muted);">May 2027 Onward</span></td>
+                                <td style="text-align: right;">$29,800</td>
+                                <td style="text-align: right;">$8,415</td>
+                                <td style="text-align: right; font-weight: 600;">$38,215</td>
+                                <td style="text-align: right; color: var(--text-muted);">$38,215</td>
+                            </tr>
+                            <tr style="border-top: 2px solid var(--border); font-weight: 700; font-size: 12px;">
+                                <td>All 3 Phases Grand Total</td>
+                                <td style="text-align: right;">$73,700</td>
+                                <td style="text-align: right;">$49,751</td>
+                                <td style="text-align: right; color: var(--text); font-size: 13px;">$123,451</td>
+                                <td style="text-align: right; color: var(--red);">$101,662</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Contractor Disbursements Schedule -->
             <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Contractor Disbursements (Davis Facias)</h3>
+                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Phase 1 Building Disbursements</h3>
                 <table class="clean-table">
                     <thead>
                         <tr>
-                            <th>Phase & Milestone</th>
-                            <th>Target</th>
-                            <th style="text-align: right;">Amount</th>
+                            <th>Milestone / Trade</th>
+                            <th>Target Date</th>
+                            <th style="text-align: right;">Status & Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Phase 1 Deposit 50%<br><span style="font-size: 9px; color: var(--green);">✅ Paid prior to commencement</span></td>
-                            <td>07/12/2026</td>
-                            <td style="text-align: right; font-weight: 600;">$10,700.00</td>
+                            <td>Davis Facias Deposit (50%)</td>
+                            <td>Jul 12, 2026</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--green);">✅ $10,700.00 (Paid)</td>
                         </tr>
                         <tr>
-                            <td>Phase 2 Progress 25%<br><span style="font-size: 9px; color: #7F6000;">⏳ Sep 2026 at 75% work</span></td>
-                            <td>Sep 2026</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">$5,350.00</td>
+                            <td>Davis Facias Progress (25%)</td>
+                            <td>Sep 2026 (75% work)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $5,350.00</td>
                         </tr>
                         <tr>
-                            <td>Phase 3 Final 25%<br><span style="font-size: 9px; color: #7F6000;">⏳ Oct 2026 on signoff</span></td>
+                            <td>Davis Facias Final (25%)</td>
+                            <td>Oct 2026 (Signoff)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $5,350.00</td>
+                        </tr>
+                        <tr>
+                            <td>Master Boutique Closet Build</td>
                             <td>Oct 2026</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">$5,350.00</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $6,000.00</td>
                         </tr>
                     </tbody>
                 </table>
-                <div style="font-size: 9px; color: var(--text-muted); margin-top: 8px;">Total Contracted: $21,400.00 · Outstanding: $10,700.00</div>
+                <div style="font-size: 9px; color: var(--text-muted); margin-top: 8px;">
+                    Phase 1 Building Total: $27,400.00 ($10,700 Paid · $16,700 Remaining)
+                </div>
             </div>
 
-            <!-- Furniture Summary -->
+            <!-- Phase 1 Furniture Status -->
             <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Furniture Status & Estimates</h3>
+                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Phase 1 Furniture Status</h3>
                 <table class="clean-table">
                     <tbody>
                         <tr>
-                            <td>Ordered Fixed (5 committed items)</td>
-                            <td style="text-align: right; font-weight: 600;">$11,089.00</td>
+                            <td>5 Ordered Items (Committed)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--green);">✅ $11,089.00</td>
                         </tr>
                         <tr>
-                            <td>Pending Options (Max Estimated Selection)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">$7,618.00</td>
+                            <td>Move-In Essentials to Buy (King bed/mattress, 90" TV, Sonos, rugs, pots)</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $12,229.00</td>
                         </tr>
                         <tr style="border-top: 1px solid var(--border);">
-                            <td><strong>Total Estimated Furniture Spend</strong></td>
-                            <td style="text-align: right; font-weight: 700; color: var(--text); font-size: 13px;">$18,707.00</td>
-                        </tr>
-                        <tr>
-                            <td>Unpriced Pending Items</td>
-                            <td style="text-align: right; font-weight: 600; color: #7F6000;">50 items (TBD)</td>
+                            <td><strong>Phase 1 Furniture Expected Total</strong></td>
+                            <td style="text-align: right; font-weight: 700; color: var(--text); font-size: 13px;">$23,318.00</td>
                         </tr>
                     </tbody>
                 </table>
-
-                <div class="ask-callout" style="margin-top: 12px;">
-                    💡 <strong>Conservative Max Pricing Active</strong>: Every pending furniture category calculates using its highest-priced option ($7,618.00 max options + $11,089.00 ordered = <strong>$18,707.00</strong> total furniture). 50 decorative items still carry no price.
+                <div style="font-size: 9px; color: var(--text-muted); margin-top: 8px;">
+                    Phase 1 Move-In Still to Buy: $12,229.00 (5 items ordered, remaining move-in essentials pending purchase).
                 </div>
             </div>
         </div>
@@ -957,13 +1010,13 @@
         salary_start_date: "2026-09-08",
         first_paycheck: 5136.67,
         
-        reno_building_contract: 21400.00,
-        reno_building_outstanding: 10700.00,
-        reno_building_paid: 10700.00,
-        reno_furniture_ordered: 11089.00,
-        reno_furniture_options_max: 7618.00,
-        reno_furniture_total_est: 18707.00,
-        reno_unpriced_count: 50,
+        // 3-Phase Renovation Roadmap
+        reno_p1_total: 50718.00,
+        reno_p1_paid: 10700.00,
+        reno_p1_still_to_pay: 28929.00,
+        reno_p2_total: 34518.00,
+        reno_p3_total: 38215.00,
+        reno_grand_total: 123451.00,
         
         accounts: [
             { id: "acc_1", name: "Banco Popular", institution: "Banco Popular", type: "Checking", currency: "USD", balance: 0.00, status: "Active", include_in_available: true, feed: "SimpleFIN" },
@@ -1097,17 +1150,17 @@
         const availableCash = Math.max(0, totalCash - runwayHold);
         const cashDeficit = Math.max(0, runwayHold - totalCash);
 
-        // 4. Renovation Totals (Using Max Option Selection for pending items)
-        const furnitureOrdered = appState.reno_furniture_ordered || 11089.00;
-        const furnitureOptionsMax = appState.reno_furniture_options_max || 7618.00;
-        const totalFurnitureEst = furnitureOrdered + furnitureOptionsMax; // $18,707.00
-        const renoOutstanding = (appState.reno_building_outstanding || 10700.00) + furnitureOptionsMax; // $18,318.00
-        const renoAllIn = (appState.reno_building_contract || 21400.00) + totalFurnitureEst; // $40,107.00
-        const renoPaid = appState.reno_building_paid || 10700.00;
+        // 4. Renovation Totals (Phase 1 Move-In Focus)
+        const renoP1Total = appState.reno_p1_total || 50718.00;
+        const renoP1Paid = appState.reno_p1_paid || 10700.00;
+        const renoP1StillToPay = appState.reno_p1_still_to_pay || 28929.00;
+        const renoP2Total = appState.reno_p2_total || 34518.00;
+        const renoP3Total = appState.reno_p3_total || 38215.00;
+        const renoGrandTotal = appState.reno_grand_total || 123451.00;
 
-        // 5. The Ask (Funding Gap)
-        const fundingGap = Math.max(0, renoOutstanding - availableCash);
-        const selfFunded = Math.min(renoOutstanding, availableCash);
+        // 5. The Ask (Funding Gap for Phase 1 Move-In)
+        const fundingGap = Math.max(0, renoP1StillToPay - availableCash);
+        const selfFunded = Math.min(renoP1StillToPay, availableCash);
 
         // 6. Mortgage Coverage
         const mortgageCoveredMonths = monthlyCost <= 0 ? 0 : Math.floor(totalCash / monthlyCost);
@@ -1148,7 +1201,8 @@
 
         return {
             monthlyCost, totalCash, runwayHold, availableCash, cashDeficit,
-            renoOutstanding, fundingGap, selfFunded,
+            renoP1Total, renoP1Paid, renoP1StillToPay, renoP2Total, renoP3Total, renoGrandTotal,
+            fundingGap, selfFunded,
             mortgageCoveredMonths, daysToFirstPayment,
             livingSpendMTD, livingRemaining, livingPctUsed, dailyAllowance, paceDelta,
             daysToMoveIn, currentMonthKey, currentMonthTxs
@@ -1163,7 +1217,7 @@
         document.getElementById('dash-funding-gap').innerText = fmtUSD(m.fundingGap);
         document.getElementById('dash-self-funded').innerText = fmtUSD(m.selfFunded);
         document.getElementById('dash-gap-equation').innerText = 
-            `Renovation still to pay (${fmtUSD(m.renoOutstanding)}) − available cash (${fmtUSD(m.availableCash)}) = ask your parents`;
+            `Phase 1 still to pay (${fmtUSD(m.renoP1StillToPay)}) − available cash (${fmtUSD(m.availableCash)}) = ask your parents`;
         
         const gapStatus = document.getElementById('dash-gap-status');
         if (m.fundingGap === 0) {
@@ -1208,8 +1262,17 @@
         document.getElementById('dash-util-val').innerText = appState.utilities_est > 0 ? fmtUSD(appState.utilities_est) : "⚠️ not set";
         document.getElementById('dash-hoa-val').innerText = appState.hoa_amount > 0 ? fmtUSD(appState.hoa_amount) : "⚠️ not set";
         document.getElementById('dash-movein-days').innerText = `🎯 10/28/2026 · ${m.daysToMoveIn} days`;
+        document.getElementById('dash-home-spent').innerText = `P1 Spent: ${fmtUSD(m.renoP1Paid)}`;
 
-        // 6. Living Tab
+        // 6. Home Tab
+        const p1ValEl = document.getElementById('home-p1-val');
+        const stillEl = document.getElementById('home-still-val');
+        const allinEl = document.getElementById('home-allin-val');
+        if (p1ValEl) p1ValEl.innerText = fmtUSD(m.renoP1Total);
+        if (stillEl) stillEl.innerText = fmtUSD(m.renoP1StillToPay);
+        if (allinEl) allinEl.innerText = fmtUSD(m.renoGrandTotal);
+
+        // 7. Living Tab
         document.getElementById('living-tab-remaining').innerText = fmtUSD(m.livingRemaining);
         document.getElementById('living-tab-bar').style.width = `${barPct}%`;
         document.getElementById('living-tab-bar').style.backgroundColor = m.livingPctUsed > 1.0 ? "var(--red)" : (m.livingPctUsed > 0.8 ? "var(--orange)" : "var(--blue)");
@@ -1219,7 +1282,7 @@
         renderLivingCategories(m.currentMonthKey, m.livingSpendMTD, m.currentMonthTxs);
         renderLivingTrend();
 
-        // 7. Accounts Tab
+        // 8. Accounts Tab
         renderAccountsList();
     }
 
