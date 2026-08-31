@@ -469,13 +469,13 @@ function buildDashboardTab_(sheet) {
   sheet.getRange("B5:E5").merge().setValue("FUNDING GAP (THE ASK)")
     .setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.BORDER_ORANGE);
 
-  sheet.getRange("B6:E7").merge().setFormula('=MAX(0, (SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 3401 + 3339) - MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))))')
+  sheet.getRange("B6:E7").merge().setFormula('=MAX(0, (SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 7618) - MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))))')
     .setFontSize(32).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("B8:E8").merge().setFormula('="Renovation still to pay ($" & TEXT(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+6740, "#,##0") & ") − available cash ($" & TEXT(MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))), "#,##0") & ") = ask your parents"')
+  sheet.getRange("B8:E8").merge().setFormula('="Renovation still to pay ($" & TEXT(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+7618, "#,##0") & ") − available cash ($" & TEXT(MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING))), "#,##0") & ") = ask your parents"')
     .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
 
-  sheet.getRange("F6:H6").merge().setFormula('="Self-funded: " & TEXT(MIN(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+6740, MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING)))), "$#,##0.00")')
+  sheet.getRange("F6:H6").merge().setFormula('="Self-funded: " & TEXT(MIN(SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE)+7618, MAX(0, SUMIFS(Accounts!F:F, Accounts!I:I, TRUE, Accounts!H:H, "<>Closed") - (RUNWAY_MONTHS * (MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT + LIVING_CEILING)))), "$#,##0.00")')
     .setFontSize(11).setFontWeight("bold");
 
   sheet.getRange("F7:H7").merge().setFormula('=IF(B6=0, "✅ Fully self-funded", "🔴 Ask required")')
@@ -627,9 +627,9 @@ function buildHomeTab_(sheet) {
   sheet.getRange("B5").setFormula('=SUMIFS(Renovation!G:G, Renovation!I:I, FALSE)').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
   sheet.getRange("C4").setValue("Still to Pay").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("C5").setFormula('=SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 3401 + 3339').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
+  sheet.getRange("C5").setFormula('=SUMIFS(Renovation!G:G, Renovation!B:B,"Building Works", Renovation!I:I,TRUE) + 7618').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("D4").setValue("All-in Priced").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
+  sheet.getRange("D4").setValue("All-in Project Est.").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
   sheet.getRange("D5").setFormula('=B5 + C5').setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
   sheet.getRange("B7:F7").merge().setFormula('="🎯 Move-in " & TEXT(MOVE_IN_DATE, "MM/DD/YYYY") & " · " & MAX(0, MOVE_IN_DATE - TODAY()) & " days"').setFontWeight("bold");
@@ -646,12 +646,12 @@ function buildHomeTab_(sheet) {
   sheet.getRange("B14:F14").merge().setValue("Total Contracted: $21,400.00 · Outstanding: $10,700.00").setFontStyle("italic").setFontSize(9);
 
   // Furniture Summary Table
-  sheet.getRange("B16:F16").merge().setValue("FURNITURE SUMMARY").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
-  sheet.getRange("B17:F17").setValues([["Scope", "Items Count", "Status", "Pricing Range", "Amount (Mid)"]]).setFontWeight("bold");
+  sheet.getRange("B16:F16").merge().setValue("FURNITURE SUMMARY & ESTIMATES").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
+  sheet.getRange("B17:F17").setValues([["Scope", "Items Count", "Status", "Pricing Range", "Amount (Max Est.)"]]).setFontWeight("bold");
   sheet.getRange("B18:F21").setValues([
-    ["Ordered (Fixed)", 5, "Ordered", "Fixed committed", 11089],
-    ["Option Groups (Selected)", 7, "Options", "Range: $2,765 – $4,279", 3401],
-    ["Standalone Options", 6, "Options", "Fixed wanted", 3339],
+    ["Ordered Fixed (5 items)", 5, "Ordered", "Fixed committed", 11089],
+    ["Pending Options (Max Selection)", 13, "Options", "Range: $6,681 – $7,618", 7618],
+    ["Total Estimated Furniture Spend", 18, "Combined", "Ordered + Max Options", 18707],
     ["Unpriced Pending Items", 50, "Pending", "Carpet, Curtains, TV, Art", "TBD"]
   ]);
   sheet.getRange("F18:F20").setNumberFormat("$#,##0.00");
@@ -660,7 +660,7 @@ function buildHomeTab_(sheet) {
   const callout = sheet.getRange("B23:F24");
   callout.setBackground(SCRIPT_CONFIG.COLORS.STATUS_WATCH_BG);
   callout.setBorder(true, true, true, true, false, false, SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT, SpreadsheetApp.BorderStyle.SOLID);
-  sheet.getRange("B23:F24").merge().setValue("⚠️ The source file's headline of $32,489 counts only the 5 ordered furniture items and ignores every priced option. Realistic all-in is about $39,200, and 50 items still carry no price at all.")
+  sheet.getRange("B23:F24").merge().setValue("💡 Conservative Max Pricing Active: Pending furniture calculates using the highest-priced option ($7,618 max options + $11,089 ordered = $18,707 total furniture). All-in project estimate is $40,107.")
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
   sheet.getRange("B27:F27").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "", SPARKLINE(D5, {"charttype","bar"; "max",RENO_TOTAL_BUDGET; "color1","#F57C00"}))');

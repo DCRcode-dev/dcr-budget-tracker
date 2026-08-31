@@ -1,4 +1,4 @@
-const CACHE = 'victoria-court-v10';
+const CACHE = 'victoria-court-v11';
 const ASSETS = [
   './index.html',
   './manifest.json',
