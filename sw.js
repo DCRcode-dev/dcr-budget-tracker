@@ -1,4 +1,4 @@
-const CACHE = 'dcr-ledger-v4';
+const CACHE = 'victoria-court-v1';
 const ASSETS = [
   './index.html',
   './manifest.json',

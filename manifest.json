@@ -1,7 +1,7 @@
 {
-  "name": "DCR Ledger",
-  "short_name": "DCR Ledger",
-  "description": "Premium mobile budgeting and spend observation ledger",
+  "name": "Victoria Court · Money",
+  "short_name": "Victoria Court",
+  "description": "Personal finance and renovation funding tracker for Victoria Court",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
