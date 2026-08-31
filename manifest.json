@@ -1,7 +1,7 @@
 {
-  "name": "Victoria Court · Money",
-  "short_name": "Victoria Court",
-  "description": "Personal finance and renovation funding tracker for Victoria Court",
+  "name": "BTCR Ledger Notarial Courts",
+  "short_name": "BTCR Ledger",
+  "description": "Personal finance and renovation funding tracker for Notarial Courts",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
