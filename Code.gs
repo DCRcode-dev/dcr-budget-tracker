@@ -224,7 +224,7 @@ function buildAccountsTab_(sheet) {
     ["Banco Popular", "Banco Popular - Puerto Rico & Virgin Islands", "Checking", "USD", "", '=IF(D2="GBP", E2*GBP_USD_RATE, E2)', "", "Active", true, "SimpleFIN", ""],
     ["Capital One Venture X", "Capital One", "Credit Card", "USD", "", '=IF(D3="GBP", E3*GBP_USD_RATE, E3)', "", "Active", false, "SimpleFIN", ""],
     ["Bank of America", "Bank of America", "Checking", "USD", "", '=IF(D4="GBP", E4*GBP_USD_RATE, E4)', "", "Winding Down", true, "None", ""],
-    ["Monzo Current", "Monzo", "Checking", "GBP", "", '=IF(D5="GBP", E5*GBP_USD_RATE, E5)', "", "Winding Down", true, "CSV", ""],
+    ["Monzo Current", "Monzo", "Checking", "GBP", 15000, '=IF(D5="GBP", E5*GBP_USD_RATE, E5)', new Date(), "Winding Down", true, "Manual", ""],
     ["Monzo Flex", "Monzo", "Credit Card", "GBP", "", '=IF(D6="GBP", E6*GBP_USD_RATE, E6)', "", "Closed", false, "CSV", ""]
   ];
 
@@ -1167,6 +1167,24 @@ function removeDailyTrigger() {
   });
 }
 
+function setMonzoBalance() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const accSheet = ss.getSheetByName(SCRIPT_CONFIG.TABS.ACCOUNTS);
+  if (!accSheet) return;
+  const lastRow = accSheet.getLastRow();
+  if (lastRow <= 1) return;
+  const data = accSheet.getRange(2, 1, lastRow - 1, 10).getValues();
+  for (let i = 0; i < data.length; i++) {
+    if ((data[i][0] || '').toString().toLowerCase().includes('monzo current')) {
+      accSheet.getRange(i + 2, 5).setValue(15000); // Balance_Native (GBP)
+      accSheet.getRange(i + 2, 9).setValue(true); // Include_In_Available
+      accSheet.getRange(i + 2, 7).setValue(new Date()); // Balance_As_Of
+      SpreadsheetApp.getActiveSpreadsheet().toast("✅ Monzo Current balance set to £15,000.00 ($19,050.00 USD).", "Updated", 5);
+      return;
+    }
+  }
+}
+
 /**
  * Custom Menu creation.
  */
@@ -1174,6 +1192,7 @@ function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu("💰 Budget Tracker")
     .addItem("Sync banks now", "syncBankData")
+    .addItem("Set Monzo balance (£15,000)", "setMonzoBalance")
     .addItem("Import CSV (Monzo / BofA)", "importCsv")
     .addItem("Re-sync renovation figures", "importRenovationCSV")
     .addItem("Re-categorise uncategorised", "recategoriseUncategorised")
