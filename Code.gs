@@ -158,6 +158,9 @@ function buildConfigTab_(sheet, ss) {
     ["HOA_AMOUNT", "Victoria Court HOA monthly (USD)", 0, "$#,##0.00", true, "NOT SET. Home insurance is INSIDE the HOA."],
     ["RUNWAY_MONTHS", "Months of runway to hold back", 3, "#,##0", true, "Owner's choice over recommended 6."],
     ["RENO_TOTAL_BUDGET", "Renovation total project budget (USD)", 0, "$#,##0.00", true, "DORMANT. When > 0, burn-down activates."],
+    ["MONTHLY_SALARY", "Monthly salary (USD)", 6700, "$#,##0.00", true, "Expected in Banco Popular."],
+    ["SALARY_START_DATE", "Salary start date", "09/08/2026", "MM/DD/YYYY", true, "Started Sep 8, 2026."],
+    ["FIRST_PAYCHECK_EST", "First paycheck est. (Prorated Sep 8–30)", 5136.67, "$#,##0.00", true, "23/30 days proration paid early Oct in Banco Popular."],
     ["GBP_USD_RATE", "GBP→USD rate for Monzo wind-down", 1.27, "0.00", true, "Fixed rate, manually updated."],
     ["CURRENT_MONTH_KEY", "Current month key", '=TEXT(TODAY(),"YYYY-MM")', "@", false, "Formula, black text."],
     ["LAST_BANK_SYNC", "Last bank sync", "", "MM/DD/YYYY HH:mm", false, "Script-written timestamp."],
@@ -1231,7 +1234,9 @@ function doGet(e) {
         living_ceiling: ss.getRangeByName("LIVING_CEILING").getValue(),
         mortgage_payment: ss.getRangeByName("MORTGAGE_PAYMENT").getValue(),
         runway_months: ss.getRangeByName("RUNWAY_MONTHS").getValue(),
-        move_in_date: ss.getRangeByName("MOVE_IN_DATE").getValue()
+        move_in_date: ss.getRangeByName("MOVE_IN_DATE").getValue(),
+        monthly_salary: 6700,
+        first_paycheck: 5136.67
       },
       accounts: accounts.slice(1).map(r => ({
         name: r[0],
