@@ -676,16 +676,46 @@ function buildHomeTab_(sheet) {
  */
 function storeCredentials() {
   const ui = SpreadsheetApp.getUi();
-  const response = ui.prompt("SimpleFIN Bridge Configuration", "Please paste your SimpleFIN Access URL:", ui.ButtonSet.OK_CANCEL);
+  const response = ui.prompt("SimpleFIN Bridge Configuration", "Please paste your SimpleFIN Setup Token or Access URL:", ui.ButtonSet.OK_CANCEL);
   
   if (response.getSelectedButton() === ui.Button.OK) {
-    const url = response.getResponseText().trim();
-    if (!url || !url.startsWith("http")) {
-      ui.alert("Invalid URL. Please provide a valid SimpleFIN Access URL.");
+    let input = response.getResponseText().trim();
+    if (!input) return;
+
+    // 1. Check if base64 encoded setup token
+    if (!input.startsWith("http")) {
+      try {
+        const decoded = Utilities.newBlob(Utilities.base64Decode(input)).getDataAsString().trim();
+        if (decoded.startsWith("http")) {
+          input = decoded;
+        }
+      } catch (e) {}
+    }
+
+    // 2. If it's a claim URL, claim it via POST to obtain the permanent Access URL
+    if (input.includes("/claim/")) {
+      try {
+        const claimRes = UrlFetchApp.fetch(input, { method: "post", muteHttpExceptions: true });
+        const accessUrl = claimRes.getContentText().trim();
+        if (accessUrl && accessUrl.startsWith("http")) {
+          input = accessUrl;
+        } else {
+          ui.alert("Claim response: " + accessUrl);
+          return;
+        }
+      } catch (err) {
+        ui.alert("Could not claim SimpleFIN URL: " + err.message);
+        return;
+      }
+    }
+
+    if (!input.startsWith("http")) {
+      ui.alert("Invalid token or URL. Please provide a valid SimpleFIN Token or Access URL.");
       return;
     }
-    PropertiesService.getScriptProperties().setProperty("SIMPLEFIN_ACCESS_URL", url);
-    ui.alert("✅ SimpleFIN credentials stored securely in Script Properties.");
+
+    PropertiesService.getScriptProperties().setProperty("SIMPLEFIN_ACCESS_URL", input);
+    ui.alert("✅ SimpleFIN credentials stored securely in Script Properties!");
   }
 }
 
