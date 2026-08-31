@@ -716,9 +716,13 @@ function storeCredentials() {
       return;
     }
 
-    // 3. Test connection live
+    // 3. Test connection live with parsed Basic Auth headers
     try {
-      const testRes = UrlFetchApp.fetch(`${input}/accounts`, { muteHttpExceptions: true });
+      const parsed = parseSimpleFinUrl_(input);
+      const testRes = UrlFetchApp.fetch(`${parsed.url}/accounts`, {
+        headers: parsed.headers,
+        muteHttpExceptions: true
+      });
       const testCode = testRes.getResponseCode();
       if (testCode === 200) {
         PropertiesService.getScriptProperties().setProperty("SIMPLEFIN_ACCESS_URL", input);
@@ -753,11 +757,15 @@ function syncBankData() {
   }
 
   const ninetyDaysAgo = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
-  const fetchUrl = `${accessUrl}/accounts?start-date=${ninetyDaysAgo}`;
+  const parsed = parseSimpleFinUrl_(accessUrl);
+  const fetchUrl = `${parsed.url}/accounts?start-date=${ninetyDaysAgo}`;
 
   let responseData;
   try {
-    const res = UrlFetchApp.fetch(fetchUrl, { muteHttpExceptions: true });
+    const res = UrlFetchApp.fetch(fetchUrl, {
+      headers: parsed.headers,
+      muteHttpExceptions: true
+    });
     const code = res.getResponseCode();
     if (code !== 200) {
       const errorSnippet = res.getContentText().substring(0, 120);
@@ -1203,4 +1211,26 @@ function cleanMerchantName_(name) {
   if (!name) return "Unknown";
   let cleaned = name.toString().replace(/\s{2,}.*/, '').trim();
   return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.substring(1).toLowerCase()).join(' ');
+}
+
+function parseSimpleFinUrl_(fullUrl) {
+  if (!fullUrl) return { url: "", headers: {} };
+  const trimmed = fullUrl.toString().trim().replace(/\/+$/, '');
+  const match = trimmed.match(/^(https?:\/\/)([^:]+):([^@]+)@(.+)$/);
+  if (match) {
+    const protocol = match[1];
+    const user = match[2];
+    const pass = match[3];
+    const rest = match[4];
+    const cleanUrl = protocol + rest;
+    const authHeader = "Basic " + Utilities.base64Encode(user + ":" + pass);
+    return {
+      url: cleanUrl,
+      headers: { "Authorization": authHeader }
+    };
+  }
+  return {
+    url: trimmed,
+    headers: {}
+  };
 }
