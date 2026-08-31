@@ -1205,7 +1205,6 @@ function doGet(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const accounts = ss.getSheetByName(SCRIPT_CONFIG.TABS.ACCOUNTS).getDataRange().getValues();
     const transactions = ss.getSheetByName(SCRIPT_CONFIG.TABS.TRANSACTIONS).getDataRange().getValues();
-    const renovation = ss.getSheetByName(SCRIPT_CONFIG.TABS.RENOVATION).getDataRange().getValues();
 
     const payload = {
       timestamp: new Date().toISOString(),
@@ -1215,10 +1214,31 @@ function doGet(e) {
         runway_months: ss.getRangeByName("RUNWAY_MONTHS").getValue(),
         move_in_date: ss.getRangeByName("MOVE_IN_DATE").getValue()
       },
-      accounts: accounts.slice(1).map(r => ({ name: r[0], balance: r[5], status: r[7] })),
-      transactions: transactions.slice(1).map(r => ({
-        tx_id: r[0], date: r[1], merchant: r[2], amount: r[3], currency: r[5], account: r[6], tier: r[7], category: r[8]
+      accounts: accounts.slice(1).map(r => ({
+        name: r[0],
+        balance: typeof r[5] === 'number' ? r[5] : (typeof r[4] === 'number' ? r[4] : parseFloat((r[5]||r[4]||0).toString().replace(/[^0-9.-]/g, ''))),
+        status: r[7]
       })),
+      transactions: transactions.slice(1).map(r => {
+        let dStr = "";
+        if (r[1] instanceof Date) {
+          dStr = Utilities.formatDate(r[1], SCRIPT_CONFIG.TIMEZONE, "yyyy-MM-dd");
+        } else if (r[1]) {
+          dStr = r[1].toString().trim();
+        }
+        const amt = typeof r[3] === 'number' ? r[3] : parseFloat((r[3]||0).toString().replace(/[^0-9.-]/g, ''));
+        return {
+          tx_id: (r[0] || '').toString(),
+          date: dStr,
+          merchant: r[2] || "Unknown",
+          amount_usd: isNaN(amt) ? 0 : amt,
+          amount: isNaN(amt) ? 0 : amt,
+          currency: r[5] || "USD",
+          account: r[6] || "Banco Popular",
+          tier: r[7] || "Living",
+          category: r[8] || "Other"
+        };
+      }),
       renovation_outstanding: 17440,
       renovation_paid: 10700
     };

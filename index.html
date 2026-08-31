@@ -670,6 +670,17 @@
                 </table>
             </div>
 
+            <!-- Recent Living Expenses -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Recent Living Expenses</h3>
+                    <span id="living-tx-count" style="font-size: 10px; color: var(--text-muted);">0 transactions</span>
+                </div>
+                <div id="living-tx-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
             <!-- 6-Month Trend Chart -->
             <div class="card">
                 <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">6-Month Spend Trend</h3>
@@ -1043,9 +1054,23 @@
         const msPerDay = 1000 * 60 * 60 * 24;
         const daysToFirstPayment = Math.max(0, Math.ceil((firstPayDate - today) / msPerDay));
 
+        // Helper to match current month
+        function isCurrentMonth(dStr) {
+            if (!dStr) return false;
+            const str = dStr.toString().trim();
+            if (str.startsWith(currentMonthKey)) return true;
+            const d = new Date(str);
+            if (!isNaN(d.getTime())) {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                return `${y}-${m}` === currentMonthKey;
+            }
+            return false;
+        }
+
         // 7. Living Spend Current Month
-        const currentMonthTxs = appState.transactions.filter(t => t.tier === "Living" && t.date.startsWith(currentMonthKey));
-        const livingSpendMTD = currentMonthTxs.reduce((sum, t) => sum + t.amount_usd, 0);
+        const currentMonthTxs = appState.transactions.filter(t => (t.tier === "Living" || !t.tier) && isCurrentMonth(t.date));
+        const livingSpendMTD = currentMonthTxs.reduce((sum, t) => sum + (parseFloat(t.amount_usd) || 0), 0);
         const livingRemaining = appState.living_ceiling - livingSpendMTD;
         const livingPctUsed = appState.living_ceiling <= 0 ? 0 : livingSpendMTD / appState.living_ceiling;
 
@@ -1065,7 +1090,7 @@
             renoOutstanding, fundingGap, selfFunded,
             mortgageCoveredMonths, daysToFirstPayment,
             livingSpendMTD, livingRemaining, livingPctUsed, dailyAllowance, paceDelta,
-            daysToMoveIn, currentMonthKey
+            daysToMoveIn, currentMonthKey, currentMonthTxs
         };
     }
 
@@ -1130,30 +1155,32 @@
         document.getElementById('living-tab-spent').innerText = `${fmtUSD(m.livingSpendMTD)} spent (${Math.round(m.livingPctUsed * 100)}%)`;
         document.getElementById('living-tab-daily').innerText = `${fmtUSD(m.dailyAllowance)} / day left`;
 
-        renderLivingCategories(m.currentMonthKey, m.livingSpendMTD);
+        renderLivingCategories(m.currentMonthKey, m.livingSpendMTD, m.currentMonthTxs);
         renderLivingTrend();
 
         // 7. Accounts Tab
         renderAccountsList();
     }
 
-    function renderLivingCategories(monthKey, totalLivingSpend) {
+    function renderLivingCategories(monthKey, totalLivingSpend, currentMonthTxs) {
         const tbody = document.getElementById('living-cat-tbody');
         tbody.innerHTML = '';
 
         const catTotals = {};
         LIVING_CATEGORIES.forEach(c => catTotals[c] = 0);
 
-        appState.transactions.filter(t => t.tier === "Living" && t.date.startsWith(monthKey)).forEach(t => {
-            if (catTotals[t.category] !== undefined) {
-                catTotals[t.category] += t.amount_usd;
+        (currentMonthTxs || []).forEach(t => {
+            const cat = t.category || "Other";
+            const amt = parseFloat(t.amount_usd) || 0;
+            if (catTotals[cat] !== undefined) {
+                catTotals[cat] += amt;
             } else {
-                catTotals["Other"] += t.amount_usd;
+                catTotals["Other"] = (catTotals["Other"] || 0) + amt;
             }
         });
 
         LIVING_CATEGORIES.forEach(cat => {
-            const spent = catTotals[cat];
+            const spent = catTotals[cat] || 0;
             const share = totalLivingSpend > 0 ? (spent / totalLivingSpend) * 100 : 0;
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -1162,6 +1189,43 @@
                 <td style="text-align: right; color: var(--text-muted);">${share.toFixed(1)}%</td>
             `;
             tbody.appendChild(tr);
+        });
+
+        renderRecentTransactions(appState.transactions);
+    }
+
+    function renderRecentTransactions(allTxs) {
+        const container = document.getElementById('living-tx-container');
+        const countEl = document.getElementById('living-tx-count');
+        if (!container) return;
+
+        container.innerHTML = '';
+        const livingTxs = (allTxs || []).filter(t => t.tier === "Living" || !t.tier);
+        if (countEl) countEl.innerText = `${livingTxs.length} transactions`;
+
+        if (livingTxs.length === 0) {
+            container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 16px;">No expenses imported yet.</div>`;
+            return;
+        }
+
+        const sorted = [...livingTxs].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+        sorted.slice(0, 40).forEach(t => {
+            const item = document.createElement('div');
+            item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);";
+            item.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">${getCatIcon(t.category)}</span>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600;">${t.merchant}</div>
+                        <div style="font-size: 10px; color: var(--text-muted);">${t.date || ''} · ${t.category || 'Other'} · ${t.account || ''}</div>
+                    </div>
+                </div>
+                <div style="text-align: right; font-weight: 700; font-size: 13px; color: var(--text);">
+                    ${fmtUSD(t.amount_usd)}
+                </div>
+            `;
+            container.appendChild(item);
         });
     }
 
@@ -1344,25 +1408,49 @@
             if (res.ok) {
                 const data = await res.json();
                 if (data.config) {
-                    appState.living_ceiling = data.config.living_ceiling || appState.living_ceiling;
-                    appState.mortgage_payment = data.config.mortgage_payment || appState.mortgage_payment;
+                    if (data.config.living_ceiling) appState.living_ceiling = parseFloat(data.config.living_ceiling) || appState.living_ceiling;
+                    if (data.config.mortgage_payment) appState.mortgage_payment = parseFloat(data.config.mortgage_payment) || appState.mortgage_payment;
+                    if (data.config.runway_months) appState.runway_months = parseInt(data.config.runway_months) || appState.runway_months;
                 }
-                if (data.accounts && data.accounts.length > 0) {
+                if (data.accounts && Array.isArray(data.accounts)) {
                     data.accounts.forEach(cA => {
-                        const m = appState.accounts.find(a => a.name === cA.name);
-                        if (m && typeof cA.balance === "number") m.balance = cA.balance;
+                        const m = appState.accounts.find(a => a.name.toLowerCase() === (cA.name || '').toLowerCase() || (cA.name || '').toLowerCase().includes(a.name.toLowerCase()));
+                        const rawBal = typeof cA.balance === "number" ? cA.balance : parseFloat((cA.balance || "0").toString().replace(/[^0-9.-]/g, ''));
+                        if (m && !isNaN(rawBal)) {
+                            m.balance = rawBal;
+                        }
                     });
                 }
-                if (data.transactions) {
-                    appState.transactions = data.transactions;
+                if (data.transactions && Array.isArray(data.transactions)) {
+                    appState.transactions = data.transactions.map(t => {
+                        let dStr = (t.date || '').toString().trim();
+                        if (dStr.includes('T')) dStr = dStr.split('T')[0];
+                        const amt = typeof t.amount_usd === 'number' ? t.amount_usd :
+                                    (typeof t.amount === 'number' ? t.amount :
+                                    parseFloat((t.amount_usd || t.amount || 0).toString().replace(/[^0-9.-]/g, '')));
+                        return {
+                            tx_id: t.tx_id || ('tx_' + Math.random()),
+                            date: dStr,
+                            merchant: t.merchant || 'Unknown',
+                            amount_usd: isNaN(amt) ? 0 : amt,
+                            amount_native: isNaN(amt) ? 0 : amt,
+                            currency_native: t.currency || "USD",
+                            account: t.account || "Banco Popular",
+                            tier: t.tier || "Living",
+                            category: t.category || "Other",
+                            source: "Cloud"
+                        };
+                    });
                 }
                 saveState();
                 renderAll();
-                alert("✅ Synced successfully with Google Sheets cloud.");
+                alert(`✅ Synced with Google Sheets!\n\nLoaded ${appState.transactions.length} transactions and updated account balances.`);
+            } else {
+                alert(`Cloud sync HTTP error ${res.status}: Check that your Apps Script Web App access is set to 'Anyone'.`);
             }
         } catch (err) {
             console.warn("Cloud sync failed", err);
-            alert("Sync failed: check your Apps Script URL permissions.");
+            alert("Sync failed: " + err.message);
         }
     }
 
