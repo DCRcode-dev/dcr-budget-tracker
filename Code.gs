@@ -757,8 +757,8 @@ function syncBankData() {
   }
 
   const parsed = parseSimpleFinUrl_(accessUrl);
-  // Safe 60-day window (avoids SimpleFIN's strict 90-day cap error)
-  const safeStart = Math.floor(Date.now() / 1000) - (60 * 24 * 60 * 60);
+  // Request 30-day window to stay well within SimpleFIN limits
+  const safeStart = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
   let fetchUrl = `${parsed.url}/accounts?start-date=${safeStart}`;
 
   let responseData;
@@ -769,8 +769,9 @@ function syncBankData() {
     });
     let code = res.getResponseCode();
 
+    // Fallback: If query parameter fails or server complains, fetch plain /accounts
     if (code !== 200) {
-      Logger.log(`Retrying plain /accounts without date param. First attempt returned HTTP ${code}`);
+      Logger.log(`Query param returned HTTP ${code}. Retrying plain /accounts.`);
       res = UrlFetchApp.fetch(`${parsed.url}/accounts`, {
         headers: parsed.headers,
         muteHttpExceptions: true
@@ -798,6 +799,11 @@ function syncBankData() {
 
   // Read Accounts
   const accLastRow = accountsSheet.getLastRow();
+  if (accLastRow <= 1) {
+    SpreadsheetApp.getActiveSpreadsheet().toast("⚠️ Accounts tab is empty. Run setupTracker() first.", "Sync Error", 5);
+    return;
+  }
+
   const accData = accountsSheet.getRange(2, 1, accLastRow - 1, 11).getValues();
   const simpleFinAccounts = responseData.accounts || [];
 
@@ -810,15 +816,26 @@ function syncBankData() {
       let simpleFinId = row[10];
 
       if (feed === "SimpleFIN" && status !== "Closed") {
+        const rName = (row[0] || "").toString().toLowerCase();
+        const rInst = (row[1] || "").toString().toLowerCase();
+        const sName = (sAcc.name || "").toString().toLowerCase();
+        const sOrg = (sAcc.org && sAcc.org.name ? sAcc.org.name : "").toString().toLowerCase();
+
         const matchesId = simpleFinId && simpleFinId === sAcc.id;
-        const matchesName = !simpleFinId && (sAcc.name.includes(row[0]) || sAcc.org.name.includes(row[1]));
+        const matchesName = !simpleFinId && (
+          sName.includes(rName) ||
+          sOrg.includes(rInst) ||
+          rInst.includes(sOrg) ||
+          (rName.includes("banco popular") && (sName.includes("popular") || sOrg.includes("popular"))) ||
+          (rName.includes("capital one") && (sName.includes("capital") || sOrg.includes("capital") || sName.includes("venture")))
+        );
 
         if (matchesId || matchesName) {
           if (!simpleFinId) {
-            accData[i][10] = sAcc.id; // Store SimpleFIN Account ID
+            accData[i][10] = sAcc.id;
           }
-          accData[i][4] = parseFloat(sAcc.balance); // Balance_Native
-          accData[i][6] = now; // Balance_As_Of
+          accData[i][4] = parseFloat(sAcc.balance || 0);
+          accData[i][6] = now;
           break;
         }
       }
@@ -826,38 +843,36 @@ function syncBankData() {
   });
   accountsSheet.getRange(2, 1, accData.length, 11).setValues(accData);
 
-  // Read existing Tx_IDs into a Set (bulk read column A)
+  // Deduplication Set
   const txLastRow = txSheet.getLastRow();
   const existingTxIds = new Set();
   if (txLastRow > 1) {
     const ids = txSheet.getRange(2, 1, txLastRow - 1, 1).getValues();
-    ids.forEach(r => { if (r[0]) existingTxIds.add(r[0]); });
+    ids.forEach(r => { if (r[0]) existingTxIds.add(r[0].toString().trim()); });
   }
 
   // Process Transactions
   const newTxRows = [];
   simpleFinAccounts.forEach(sAcc => {
-    // Find matching Account in table
     const matchedAccountRow = accData.find(r => r[10] === sAcc.id && r[9] === "SimpleFIN" && r[7] !== "Closed");
     if (!matchedAccountRow) return;
 
     const accountName = matchedAccountRow[0];
-    const currency = matchedAccountRow[3];
+    const currency = matchedAccountRow[3] || "USD";
     const txList = sAcc.transactions || [];
 
     txList.forEach(t => {
-      const txId = t.id;
-      if (existingTxIds.has(txId)) return; // Dedup
+      const txId = (t.id || "").toString().trim();
+      if (!txId || existingTxIds.has(txId)) return;
 
-      const txDate = new Date(t.posted * 1000);
-      const merchant = cleanMerchantName_(t.description || t.payee || "Unknown");
-      const nativeAmount = parseFloat(t.amount);
-      
-      // Sign convention: SimpleFIN returns negative for money out (spend).
-      // We store spend as positive, refund as negative.
-      const amountUSD = -nativeAmount;
+      const txDate = t.posted ? new Date(t.posted * 1000) : new Date();
+      const rawDesc = t.description || t.payee || t.memo || "Unknown";
+      const merchant = cleanMerchantName_(rawDesc);
+      const nativeAmount = parseFloat(t.amount || 0);
+      const amountUSD = -nativeAmount; // Negate: spend is positive
 
       const catResult = categorise(merchant);
+      const targetRow = txLastRow + newTxRows.length + 1;
 
       newTxRows.push([
         txId,
@@ -869,9 +884,9 @@ function syncBankData() {
         accountName,
         catResult.Tier,
         catResult.Category,
-        `=TEXT(B${txLastRow + newTxRows.length + 1},"YYYY-MM")`,
-        `=YEAR(B${txLastRow + newTxRows.length + 1})`,
-        `=MONTH(B${txLastRow + newTxRows.length + 1})`,
+        `=TEXT(B${targetRow},"YYYY-MM")`,
+        `=YEAR(B${targetRow})`,
+        `=MONTH(B${targetRow})`,
         "SimpleFIN",
         now,
         false
