@@ -657,9 +657,6 @@ function buildHomeTab_(sheet) {
   callout.setBackground(SCRIPT_CONFIG.COLORS.STATUS_WATCH_BG);
   callout.setBorder(true, true, true, true, false, false, SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT, SpreadsheetApp.BorderStyle.SOLID);
   sheet.getRange("B23:F24").merge().setValue("⚠️ The source file's headline of $32,489 counts only the 5 ordered furniture items and ignores every priced option. Realistic all-in is about $39,200, and 50 items still carry no price at all.")
-    .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT).setWrap(true);
-
-  // Burn-down Bar (Dormant when budget = 0)
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
   sheet.getRange("B27:F27").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "", SPARKLINE(D5, {"charttype","bar"; "max",RENO_TOTAL_BUDGET; "color1","#F57C00"}))');
@@ -696,11 +693,16 @@ function storeCredentials() {
     if (input.includes("/claim/")) {
       try {
         const claimRes = UrlFetchApp.fetch(input, { method: "post", muteHttpExceptions: true });
+        const code = claimRes.getResponseCode();
         const accessUrl = claimRes.getContentText().trim();
-        if (accessUrl && accessUrl.startsWith("http")) {
+        
+        if (code === 200 && accessUrl.startsWith("http")) {
           input = accessUrl;
+        } else if (code === 403) {
+          ui.alert("⚠️ This SimpleFIN setup token was already used or expired. Please generate a fresh token on bridge.simplefin.org and paste it.");
+          return;
         } else {
-          ui.alert("Claim response: " + accessUrl);
+          ui.alert(`⚠️ SimpleFIN claim returned HTTP ${code}: ${accessUrl}`);
           return;
         }
       } catch (err) {
@@ -714,8 +716,19 @@ function storeCredentials() {
       return;
     }
 
-    PropertiesService.getScriptProperties().setProperty("SIMPLEFIN_ACCESS_URL", input);
-    ui.alert("✅ SimpleFIN credentials stored securely in Script Properties!");
+    // 3. Test connection live
+    try {
+      const testRes = UrlFetchApp.fetch(`${input}/accounts`, { muteHttpExceptions: true });
+      const testCode = testRes.getResponseCode();
+      if (testCode === 200) {
+        PropertiesService.getScriptProperties().setProperty("SIMPLEFIN_ACCESS_URL", input);
+        ui.alert("✅ SimpleFIN connected successfully!\n\nClick 'Sync banks now' in the top menu to import your accounts and transactions.");
+      } else {
+        ui.alert(`⚠️ SimpleFIN returned HTTP ${testCode}: ${testRes.getContentText().substring(0, 150)}`);
+      }
+    } catch (err) {
+      ui.alert("Connection test failed: " + err.message);
+    }
   }
 }
 
@@ -745,9 +758,11 @@ function syncBankData() {
   let responseData;
   try {
     const res = UrlFetchApp.fetch(fetchUrl, { muteHttpExceptions: true });
-    if (res.getResponseCode() !== 200) {
-      Logger.log("SimpleFIN API error: HTTP " + res.getResponseCode());
-      SpreadsheetApp.getActiveSpreadsheet().toast("⚠️ Bank sync failed — showing last good data.", "Sync Error", 5);
+    const code = res.getResponseCode();
+    if (code !== 200) {
+      const errorSnippet = res.getContentText().substring(0, 120);
+      Logger.log(`SimpleFIN API error: HTTP ${code} - ${errorSnippet}`);
+      SpreadsheetApp.getActiveSpreadsheet().toast(`⚠️ Bank sync returned HTTP ${code}: ${errorSnippet}`, "Sync Error", 8);
       return;
     }
     responseData = JSON.parse(res.getContentText());
