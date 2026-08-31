@@ -590,64 +590,78 @@
                 </div>
             </div>
 
-            <!-- BLOCK 5: INCOME & CASH FLOW -->
+            <!-- BLOCK 5: 3-PHASE MONTHLY FORECAST -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Income & Cash Flow</h3>
-                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">✅ Net +$519/mo</span>
+                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Monthly Cash Flow Timeline</h3>
+                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">3-Phase Transition</span>
                 </div>
-                <table class="clean-table">
-                    <tbody>
-                        <tr>
-                            <td>💼 Monthly Salary (Banco Popular)</td>
-                            <td style="text-align: right; font-weight: 700; color: var(--green);">$6,700.00</td>
-                        </tr>
-                        <tr>
-                            <td>⏳ 1st Paycheck (Prorated Sep 8–30 · 23 days)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--text);">$5,136.67</td>
-                        </tr>
-                        <tr>
-                            <td>📊 Total Commitments (Mortgage + HOA + Utilities + Living)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">−$6,180.55</td>
-                        </tr>
-                        <tr style="border-top: 2px solid var(--border);">
-                            <td><strong>Net Monthly Cash Flow</strong></td>
-                            <td style="text-align: right; font-weight: 700; color: var(--green); font-size: 14px;">+$519.45 / mo</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
-                    First paycheck arrives early October (~$5,136.67). Ongoing $6,700/mo fully covers your $3,305.55 November mortgage + $375 HOA + $500 utilities ($400 power + $100 water) + $2,000 Living budget with +$519.45 surplus every month.
-                </div>
-            </div>
 
-            <!-- BLOCK 6: FIXED COMMITMENTS -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 10px;">Monthly Fixed Commitments</h3>
-                <table class="clean-table">
-                    <tbody>
-                        <tr>
-                            <td>🏠 Mortgage (from Nov 2026)</td>
-                            <td style="text-align: right; font-weight: 600;">$3,305.55</td>
-                        </tr>
-                        <tr>
-                            <td>🏢 HOA (incl. home insurance)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--text);" id="dash-hoa-val">$375.00</td>
-                        </tr>
-                        <tr>
-                            <td>⚡ Electricity (LUMA est.)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--text);">$400.00</td>
-                        </tr>
-                        <tr>
-                            <td>💧 Water (AAA / Acueductos est.)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--text);">$100.00</td>
-                        </tr>
-                        <tr style="border-top: 1px solid var(--border);">
-                            <td><strong>Total Fixed Expected</strong></td>
-                            <td style="text-align: right; font-weight: 700;">$4,180.55</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="clean-table" style="font-size: 12px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border);">
+                                <th>Item</th>
+                                <th style="text-align: right;">Sep 2026<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">Construction</span></th>
+                                <th style="text-align: right;">Oct 2026<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">1st Pay · Move-in</span></th>
+                                <th style="text-align: right;">Nov 2026+<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">Full Operations</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>💼 Salary Inflow</td>
+                                <td style="text-align: right; color: var(--text-muted);">$0.00</td>
+                                <td style="text-align: right; font-weight: 600; color: var(--green);">$5,136.67</td>
+                                <td style="text-align: right; font-weight: 700; color: var(--green);">$6,700.00</td>
+                            </tr>
+                            <tr>
+                                <td>🏠 Mortgage</td>
+                                <td style="text-align: right; color: var(--text-muted);">$0.00</td>
+                                <td style="text-align: right; color: var(--text-muted);">$0.00</td>
+                                <td style="text-align: right; font-weight: 600; color: var(--red);">−$3,305.55</td>
+                            </tr>
+                            <tr>
+                                <td>🏢 HOA (starts Sep)</td>
+                                <td style="text-align: right; font-weight: 600;">−$375.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$375.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$375.00</td>
+                            </tr>
+                            <tr>
+                                <td>⚡ Electricity</td>
+                                <td style="text-align: right; color: var(--text-muted);">−$100.00</td>
+                                <td style="text-align: right; color: var(--text-muted);">−$100.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$400.00</td>
+                            </tr>
+                            <tr>
+                                <td>💧 Water</td>
+                                <td style="text-align: right; color: var(--text-muted);">−$30.00</td>
+                                <td style="text-align: right; color: var(--text-muted);">−$30.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$100.00</td>
+                            </tr>
+                            <tr>
+                                <td>🛒 Living Ceiling</td>
+                                <td style="text-align: right; font-weight: 600;">−$2,000.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$2,000.00</td>
+                                <td style="text-align: right; font-weight: 600;">−$2,000.00</td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border); font-weight: 600;">
+                                <td>Total Outflows</td>
+                                <td style="text-align: right; color: var(--red);">−$2,505.00</td>
+                                <td style="text-align: right; color: var(--red);">−$2,505.00</td>
+                                <td style="text-align: right; color: var(--red);">−$6,180.55</td>
+                            </tr>
+                            <tr style="border-top: 2px solid var(--border); font-weight: 700; font-size: 13px;">
+                                <td>Net Cash Flow</td>
+                                <td style="text-align: right; color: var(--red);">−$2,505.00</td>
+                                <td style="text-align: right; color: var(--green);">+$2,631.67</td>
+                                <td style="text-align: right; color: var(--green);">+$519.45/mo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+                    ⚡ Sep & Oct use construction utility rates ($100 power + $30 water). In October, your prorated 1st paycheck (+$5,136.67) generates a <strong>+$2,631.67 cash booster</strong> before mortgage payments start in November!
+                </div>
             </div>
 
             <!-- BLOCK 6: HOME SUMMARY -->
