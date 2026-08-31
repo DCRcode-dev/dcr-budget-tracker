@@ -944,19 +944,37 @@
         document.getElementById('csv-file-input').addEventListener('change', handleCsvUpload);
     }
 
+    let registration;
     function setupServiceWorker() {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').then(reg => {
+                registration = reg;
+
+                // 1. Force update check immediately
+                reg.update();
+
+                // 2. Check if a worker is already waiting
+                if (reg.waiting) {
+                    newWorker = reg.waiting;
+                    showUpdateToast();
+                }
+
+                // 3. Listen for new worker updates
                 reg.addEventListener('updatefound', () => {
                     newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            document.getElementById('update-toast').style.display = 'flex';
-                        }
-                    });
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateToast();
+                            }
+                        });
+                    }
                 });
+            }).catch(err => {
+                console.warn("ServiceWorker registration failed", err);
             });
 
+            // Listen for controller changes to reload automatically
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (!refreshing) {
@@ -967,8 +985,26 @@
         }
     }
 
+    function showUpdateToast() {
+        const toast = document.getElementById('update-toast');
+        if (toast) {
+            toast.style.display = 'flex';
+        }
+    }
+
     function activateAppUpdate() {
-        if (newWorker) newWorker.postMessage({ type: 'SKIP_WAITING' });
+        if (newWorker) {
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+        } else if (registration && registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        } else {
+            if ('caches' in window) {
+                caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))))
+                      .then(() => window.location.reload(true));
+            } else {
+                window.location.reload(true);
+            }
+        }
     }
 
     // ─── CORE FINANCIAL ENGINE ────────────────────────────────────────────────

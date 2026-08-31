@@ -1,4 +1,4 @@
-const CACHE = 'victoria-court-v1';
+const CACHE = 'victoria-court-v2';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -9,7 +9,6 @@ const ASSETS = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(ASSETS))
-      .then(() => self.skipWaiting())
   );
 });
 
