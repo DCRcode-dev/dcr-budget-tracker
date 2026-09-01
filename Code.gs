@@ -469,13 +469,13 @@ function buildDashboardTab_(sheet) {
   sheet.getRange("B5:E5").merge().setValue("PHASE 1 MOVE-IN FUNDING GAP (THE ASK)")
     .setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.BORDER_ORANGE);
 
-  sheet.getRange("B6:E7").merge().setValue(32750.98)
+  sheet.getRange("B6:E7").merge().setValue(33259.33)
     .setFontSize(32).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($35,891.00) − Daniel contributes ($3,140.02) = Ask for Father")
+  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($35,891.00) − Daniel salary surplus ($2,631.67) = Ask for Father")
     .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
 
-  sheet.getRange("F6:H6").merge().setValue("Daniel contributes: $3,140.02")
+  sheet.getRange("F6:H6").merge().setValue("Daniel contributes: $2,631.67")
     .setFontSize(11).setFontWeight("bold");
 
   sheet.getRange("F7:H7").merge().setValue("🔴 Ask Required")
@@ -547,8 +547,8 @@ function buildDashboardTab_(sheet) {
   sheet.getRange("B26:D26").merge().setValue("Total Fixed Expected").setFontWeight("bold");
   sheet.getRange("E26").setFormula('=MORTGAGE_PAYMENT + UTILITIES_EST + HOA_AMOUNT').setFontWeight("bold").setNumberFormat("$#,##0.00");
 
-  // ── BLOCK 6: HOME RENOVATION (Rows 29–32) ──
-  sheet.getRange("B29:H29").merge().setValue("HOME RENOVATION SUMMARY").setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.PRIMARY_NAVY);
+  // ── BLOCK 6: HOME UPDATES (Rows 29–32) ──
+  sheet.getRange("B29:H29").merge().setValue("HOME UPDATES SUMMARY").setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.PRIMARY_NAVY);
   sheet.getRange("B30:E30").merge().setFormula('="Total Spent: $" & TEXT(SUMIFS(Transactions!D:D, Transactions!H:H,"Home"), "#,##0.00") & " · This Month: $" & TEXT(SUMIFS(Transactions!D:D, Transactions!H:H,"Home", Transactions!J:J, CURRENT_MONTH_KEY), "#,##0.00")');
   sheet.getRange("F30:H30").merge().setFormula('="🎯 Move-in " & TEXT(MOVE_IN_DATE, "MM/DD/YYYY") & " · " & MAX(0, MOVE_IN_DATE - TODAY()) & " days"').setFontWeight("bold");
 
@@ -658,11 +658,7 @@ function buildHomeTab_(sheet) {
   ]);
   sheet.getRange("F19:F23").setNumberFormat("$#,##0.00");
 
-  // Callout
-  const callout = sheet.getRange("B25:F26");
-  callout.setBackground(SCRIPT_CONFIG.COLORS.STATUS_WATCH_BG);
-  callout.setBorder(true, true, true, true, false, false, SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT, SpreadsheetApp.BorderStyle.SOLID);
-  sheet.getRange("B25:F26").merge().setValue("📋 4-Phase Home Updates: Phase 1 Move-In total is $57,680 ($10,700 paid · $35,891 still to pay). All 4 phases total $90,278 (Daniel: $7,296 · Father: $61,193).");
+  sheet.getRange("B25:F26").merge().setValue("📋 4-Phase Home Updates: Phase 1 Move-In total is $57,680 ($10,700 paid · $35,891 still to pay). All 4 phases total $90,278 (Daniel: $6,787 · Father: $61,702). Monzo £8k held as emergency reserve.");
 
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
