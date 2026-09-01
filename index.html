@@ -533,12 +533,12 @@
                     <div class="ask-title">Phase 1 Move-In Funding Gap (The Ask)</div>
                     <div class="status-pill ask" id="dash-gap-status">🔴 Ask Required</div>
                 </div>
-                <div class="ask-val" id="dash-funding-gap">$32,750.98</div>
+                <div class="ask-val" id="dash-funding-gap">$33,259.33</div>
                 <div class="ask-sub" id="dash-gap-equation">
-                    Phase 1 still to pay ($35,891.00) − Daniel contributes ($3,140.02) = Ask for Father
+                    Phase 1 still to pay ($35,891.00) − Daniel salary surplus ($2,631.67) = Ask for Father
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-bottom: 10px;">
-                    <span>Daniel contributes: <span id="dash-self-funded">$3,140.02</span></span>
+                    <span>Daniel contributes: <span id="dash-self-funded">$2,631.67</span> (Monzo £8k reserved)</span>
                     <span style="color: var(--blue);">🎯 Target: Oct 28 Move-In</span>
                 </div>
                 <div class="ask-callout">
@@ -789,8 +789,8 @@
                                 <td style="text-align: right;">$33,600</td>
                                 <td style="text-align: right;">$24,080</td>
                                 <td style="text-align: right; font-weight: 700; color: var(--blue);">$57,680</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--green);">$3,140</td>
-                                <td style="text-align: right; font-weight: 700; color: var(--red);">$32,751</td>
+                                <td style="text-align: right; font-weight: 600; color: var(--green);">$2,632</td>
+                                <td style="text-align: right; font-weight: 700; color: var(--red);">$33,259</td>
                             </tr>
                             <tr>
                                 <td><strong>Phase 2: TVs, Audio, Guest 1</strong><br><span style="font-size: 9px; color: var(--text-muted);">Dec 2026 – Mar 2027</span></td>
@@ -821,8 +821,8 @@
                                 <td style="text-align: right;">$47,100</td>
                                 <td style="text-align: right;">$43,178</td>
                                 <td style="text-align: right; color: var(--text); font-size: 13px;">$90,278</td>
-                                <td style="text-align: right; color: var(--green);">$7,296</td>
-                                <td style="text-align: right; color: var(--red);">$61,193</td>
+                                <td style="text-align: right; color: var(--green);">$6,787</td>
+                                <td style="text-align: right; color: var(--red);">$61,702</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1032,21 +1032,21 @@
         reno_p1_total: 57680.00,
         reno_p1_paid: 10700.00,
         reno_p1_still_to_pay: 35891.00,
-        reno_p1_daniel_pays: 3140.02,
-        reno_p1_father_pays: 32750.98,
+        reno_p1_daniel_pays: 2631.67,
+        reno_p1_father_pays: 33259.33,
         reno_p2_total: 9501.00,
         reno_p3_total: 6312.00,
         reno_p4_total: 16785.00,
         reno_grand_total: 90278.00,
         reno_grand_still_to_pay: 68489.00,
-        reno_grand_daniel_pays: 7295.62,
-        reno_grand_father_pays: 61193.38,
+        reno_grand_daniel_pays: 6787.27,
+        reno_grand_father_pays: 61701.73,
         
         accounts: [
             { id: "acc_1", name: "Banco Popular", institution: "Banco Popular", type: "Checking", currency: "USD", balance: 0.00, status: "Active", include_in_available: true, feed: "SimpleFIN" },
             { id: "acc_2", name: "Capital One Venture X", institution: "Capital One", type: "Credit Card", currency: "USD", balance: 0.00, status: "Active", include_in_available: false, feed: "SimpleFIN" },
             { id: "acc_3", name: "Bank of America", institution: "Bank of America", type: "Checking", currency: "USD", balance: 0.00, status: "Winding Down", include_in_available: true, feed: "None" },
-            { id: "acc_4", name: "Monzo Current", institution: "Monzo", type: "Checking", currency: "GBP", balance: 15000.00, status: "Winding Down", include_in_available: true, feed: "Manual" },
+            { id: "acc_4", name: "Monzo Current", institution: "Monzo", type: "Checking", currency: "GBP", balance: 8000.00, status: "Winding Down", include_in_available: true, feed: "Manual" },
             { id: "acc_5", name: "Monzo Flex", institution: "Monzo", type: "Credit Card", currency: "GBP", balance: 0.00, status: "Closed", include_in_available: false, feed: "Closed" }
         ],
         transactions: []
@@ -1179,8 +1179,7 @@
         const renoP1Paid = appState.reno_p1_paid || 10700.00;
         const renoP1StillToPay = appState.reno_p1_still_to_pay || 35891.00;
         const renoGrandTotal = appState.reno_grand_total || 90278.00;
-        const renoGrandStillToPay = appState.reno_grand_still_to_pay || 68489.00;
-        const danielPhase1Contribution = appState.reno_p1_daniel_pays || 3140.02;
+        const danielPhase1Contribution = appState.reno_p1_daniel_pays || 2631.67;
 
         // 5. The Ask (Funding Gap for Phase 1 Move-In)
         const fundingGap = Math.max(0, renoP1StillToPay - danielPhase1Contribution);
