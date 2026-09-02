@@ -146,7 +146,7 @@ function buildConfigTab_(sheet, ss) {
   sheet.getRange("B2:D2").setValues([["Setting", "Value", "Notes"]]).setFontWeight("bold");
 
   const configRows = [
-    ["LIVING_CEILING", "Living monthly ceiling (USD)", 3200, "$#,##0.00", true, "Hard cap. Owner-stated."],
+    ["LIVING_CEILING", "Living monthly ceiling (USD)", 3500, "$#,##0.00", true, "Hard cap. Owner-stated."],
     ["MORTGAGE_PAYMENT", "Mortgage monthly payment (USD)", 3305.55, "$#,##0.00", true, "Years 1–11, includes FHA MIP."],
     ["MORTGAGE_PAYMENT_POST_MIP", "Mortgage payment after MIP drops (USD)", 3053.47, "$#,##0.00", true, "Years 12–30."],
     ["MORTGAGE_MIP_PAYMENT_COUNT", "Payments until MIP cancels", 132, "#,##0", true, "11 years."],
@@ -155,7 +155,7 @@ function buildConfigTab_(sheet, ss) {
     ["MORTGAGE_RATE", "Mortgage interest rate", 0.0475, "0.000%", true, "FHA 30-yr fixed."],
     ["MORTGAGE_APR", "Mortgage APR", 0.05137, "0.000%", true, "Annual Percentage Rate."],
     ["UTILITIES_EST_CONSTRUCTION", "Utilities monthly estimate — Construction (Sep–Oct)", 130, "$#,##0.00", true, "Electricity ($100) + Water ($30) construction usage."],
-    ["UTILITIES_EST", "Utilities monthly estimate — Living (Nov onward)", 500, "$#,##0.00", true, "Electricity ($400) + Water ($100) living usage."],
+    ["UTILITIES_EST", "Utilities monthly estimate — Living (Nov onward)", 750, "$#,##0.00", true, "Electricity ($630) + Water ($120) living usage (upper range for 3,008 sq ft 4-level home)."],
     ["HOA_AMOUNT", "Victoria Court HOA monthly (USD)", 375, "$#,##0.00", true, "Recurring $375/mo starting September. Home insurance inside."],
     ["RUNWAY_MONTHS", "Months of runway to hold back", 3, "#,##0", true, "Owner's choice over recommended 6."],
     ["RENO_TOTAL_BUDGET", "Renovation total project budget (USD)", 0, "$#,##0.00", true, "DORMANT. When > 0, burn-down activates."],
