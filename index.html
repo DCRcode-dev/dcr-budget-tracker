@@ -732,17 +732,8 @@
     const BASE_UTILITIES = 750.00;       // Upper baseline utility estimate
     const SEP_OCT_CONSTRUCTION_UTIL = 130.00; // Expected construction utilities in Sep/Oct
 
-    // Default Seed Transactions (Representative Banco Popular / Capital One feed)
-    const DEFAULT_TRANSACTIONS = [
-        { tx_id: "tx_1", date: "2026-09-02", merchant: "Pueblo Supermarket", amount: 64.50, category: "Groceries", account: "Banco Popular" },
-        { tx_id: "tx_2", date: "2026-09-02", merchant: "Hacienda San Pedro Coffee", amount: 8.25, category: "Dining", account: "Capital One" },
-        { tx_id: "tx_3", date: "2026-09-01", merchant: "Uber Rides", amount: 16.80, category: "Transport", account: "Capital One" },
-        { tx_id: "tx_4", date: "2026-09-01", merchant: "Santaella Dinner", amount: 98.40, category: "Dining", account: "Capital One" },
-        { tx_id: "tx_5", date: "2026-08-28", merchant: "LUMA Energy (Electricity)", amount: 104.20, category: "Utilities", account: "Banco Popular" },
-        { tx_id: "tx_6", date: "2026-08-26", merchant: "AAA (Water Utility)", amount: 28.50, category: "Utilities", account: "Banco Popular" },
-        { tx_id: "tx_7", date: "2026-08-25", merchant: "Costco Wholesale", amount: 142.30, category: "Groceries", account: "Capital One" },
-        { tx_id: "tx_8", date: "2026-08-24", merchant: "Walgreens Pharmacy", amount: 32.10, category: "Shopping", account: "Banco Popular" }
-    ];
+    // Live SimpleFIN / Bank feed starts clean at $0.00
+    const DEFAULT_TRANSACTIONS = [];
 
     let state = {
         sheets_api_url: '',
@@ -756,12 +747,14 @@
             if (saved) {
                 const parsed = JSON.parse(saved);
                 state.sheets_api_url = parsed.sheets_api_url || '';
-                state.transactions = Array.isArray(parsed.transactions) && parsed.transactions.length > 0 ? parsed.transactions : DEFAULT_TRANSACTIONS;
+                // Filter out any legacy mock data (tx_1, tx_2, etc.)
+                const rawTxs = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+                state.transactions = rawTxs.filter(t => !['tx_1', 'tx_2', 'tx_3', 'tx_4', 'tx_5', 'tx_6', 'tx_7', 'tx_8'].includes(t.tx_id));
             } else {
-                state.transactions = DEFAULT_TRANSACTIONS;
+                state.transactions = [];
             }
         } catch (e) {
-            state.transactions = DEFAULT_TRANSACTIONS;
+            state.transactions = [];
         }
         document.getElementById('sheets-url-input').value = state.sheets_api_url;
     }

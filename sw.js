@@ -1,4 +1,4 @@
-const CACHE = 'dcr-ledger-v21';
+const CACHE = 'dcr-ledger-v22';
 const ASSETS = [
   './index.html',
   './manifest.json',
