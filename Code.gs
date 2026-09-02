@@ -473,19 +473,19 @@ function buildDashboardTab_(sheet) {
   sheet.getRange("B5:E5").merge().setValue("PHASE 1 MOVE-IN FUNDING GAP (THE ASK)")
     .setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.BORDER_ORANGE);
 
-  sheet.getRange("B6:E7").merge().setValue(33259.33)
+  sheet.getRange("B6:E7").merge().setValue(39091.00)
     .setFontSize(32).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($35,891.00) − Daniel salary surplus ($2,631.67) = Ask for Father")
+  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($42,091.00) − Daniel October contribution ($3,000.00) = Request for Parents ($39,091.00)")
     .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
 
-  sheet.getRange("F6:H6").merge().setValue("Daniel contributes: $2,631.67")
+  sheet.getRange("F6:H6").merge().setValue("Daniel pays: $14,189.00 ($11.2k furn + $3k Oct)")
     .setFontSize(11).setFontWeight("bold");
 
-  sheet.getRange("F7:H7").merge().setValue("🔴 Ask Required")
+  sheet.getRange("F7:H7").merge().setValue("🔴 Funding Request")
     .setFontSize(12).setFontWeight("bold");
 
-  sheet.getRange("B9:H9").merge().setValue("📋 4-Phase Home Updates: Phase 1 Move-In ($57.7k) · Phase 2 ($9.5k) · Phase 3 ($6.3k) · Phase 4 ($16.8k) · Grand Total: $90,278")
+  sheet.getRange("B9:H9").merge().setValue("📋 Capital Plan: Parents fund P1 Move-In ($39.1k) + P2 ($4.3k) = $43.3k. Daniel self-funds P3 ($6.8k) & P4 ($16.3k) in 2028 ($23.1k). Monzo £8k reserve 100% untouched.")
     .setFontSize(9).setFontStyle("italic").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT);
 
   // ── BLOCK 2: MORTGAGE (Rows 11–15, Cols B:E) ──
@@ -628,13 +628,13 @@ function buildHomeTab_(sheet) {
 
   // 3 Tiles
   sheet.getRange("B4").setValue("Phase 1 Move-In").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("B5").setValue(57680).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
+  sheet.getRange("B5").setValue(63980).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
   sheet.getRange("C4").setValue("P1 Still to Pay").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("C5").setValue(35891).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
+  sheet.getRange("C5").setValue(42091).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
   sheet.getRange("D4").setValue("All 4 Phases Total").setFontWeight("bold").setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
-  sheet.getRange("D5").setValue(90278).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
+  sheet.getRange("D5").setValue(94687).setFontSize(16).setFontWeight("bold").setNumberFormat("$#,##0.00");
 
   sheet.getRange("B7:F7").merge().setFormula('="🎯 Move-in " & TEXT(MOVE_IN_DATE, "MM/DD/YYYY") & " · " & MAX(0, MOVE_IN_DATE - TODAY()) & " days"').setFontWeight("bold");
 
@@ -642,11 +642,11 @@ function buildHomeTab_(sheet) {
   sheet.getRange("B9:F9").merge().setValue("4-PHASE HOME UPDATES & PROCUREMENT ROADMAP").setFontWeight("bold").setFontSize(10).setBackground(SCRIPT_CONFIG.COLORS.BG_LIGHT_GRAY);
   sheet.getRange("B10:F10").setValues([["Work Phase & Timing", "Building Works", "Furniture", "Expected Total", "Still to Pay"]]).setFontWeight("bold");
   sheet.getRange("B11:F15").setValues([
-    ["Phase 1: Move-In Priority (Aug–Oct)", 33600, 24080, 57680, 35891],
-    ["Phase 2: TVs, Audio, Guest 1 (Dec–Mar)", 0, 9501, 9501, 9501],
-    ["Phase 3: Suites, Doors & Art (Apr–May)", 0, 6312, 6312, 6312],
-    ["Phase 4: Pergola, BBQ & Glass (May–Jul)", 13500, 3285, 16785, 16785],
-    ["Grand All-In Total (All 4 Phases)", 47100, 43178, 90278, 68489]
+    ["Phase 1: Moving Essentials (Aug–Oct)", 39900, 24080, 63980, 42091],
+    ["Phase 2: TVs, Audio, Guest 1 (Dec–Mar)", 0, 7602, 7602, 7602],
+    ["Phase 3: Suites, Computer & Art (2028 Self-Funded)", 0, 6770, 6770, 6770],
+    ["Phase 4: Pergola, BBQ, Glass & Art (2028 Self-Funded)", 13500, 2835, 16335, 16335],
+    ["Grand All-In Total (All 4 Phases)", 53400, 41287, 94687, 72798]
   ]);
   sheet.getRange("C11:F15").setNumberFormat("$#,##0.00");
 
@@ -658,11 +658,11 @@ function buildHomeTab_(sheet) {
     ["Davis Facias Progress (25%)", "Sep 2026", "⏳ Pending", "Davis Facias", 5350],
     ["Davis Facias Final (25%)", "Oct 2026", "⏳ Pending", "Davis Facias", 5350],
     ["Davis Contingencies & Incidentals", "Oct 2026", "⏳ Pending", "Owner Allocation", 2000],
-    ["8x Specialty Trades (Closet, Bar, TV, Glass, Drapery)", "Oct 2026", "⏳ Pending", "Specialists", 10200]
+    ["8x Specialty Trades (Closet, Bar, TV, Wallpaper, Glass, Curtains)", "Oct 2026", "⏳ Pending", "Specialists", 16500]
   ]);
   sheet.getRange("F19:F23").setNumberFormat("$#,##0.00");
 
-  sheet.getRange("B25:F26").merge().setValue("📋 4-Phase Home Updates: Phase 1 Move-In total is $57,680 ($10,700 paid · $35,891 still to pay). All 4 phases total $90,278 (Daniel: $6,787 · Father: $61,702). Monzo £8k held as emergency reserve.");
+  sheet.getRange("B25:F26").merge().setValue("📋 Capital Plan: Parents fund P1 ($39,091) + P2 ($4,251) = $43,342. Daniel self-funds P3 ($6,770) & P4 ($16,335) in 2028 ($23,105). Monzo £8k reserve 100% untouched.");
 
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
