@@ -1,4 +1,4 @@
-const CACHE = 'dcr-ledger-biometrics-v24';
+const CACHE = 'dcr-ledger-refined-v25';
 const ASSETS = [
   './index.html',
   './manifest.json',
