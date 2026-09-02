@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lifestyle Spend Tracker · Victoria Court</title>
+    <title>DCR Ledger</title>
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
@@ -82,7 +82,7 @@
         .container {
             width: 100%;
             max-width: 480px;
-            padding: 20px 16px 40px;
+            padding: 20px 16px 85px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -93,24 +93,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 8px;
+            padding-bottom: 12px;
             border-bottom: 1px solid var(--border);
         }
 
         .brand-title {
             font-family: var(--font-hero);
-            font-size: 1.45rem;
+            font-size: 1.65rem;
             font-weight: 700;
             letter-spacing: -0.01em;
             color: var(--text);
-            line-height: 1.1;
+            line-height: 1;
         }
 
-        .brand-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-top: 2px;
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .month-pill {
@@ -119,13 +118,13 @@
             align-items: flex-end;
             background: var(--card);
             border: 1px solid var(--border);
-            padding: 6px 10px;
+            padding: 5px 10px;
             border-radius: var(--radius-sm);
             box-shadow: var(--shadow-sm);
         }
 
         .month-name {
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text);
             text-transform: uppercase;
@@ -133,9 +132,28 @@
         }
 
         .month-days {
-            font-size: 10px;
+            font-size: 9.5px;
             color: var(--text-muted);
             font-weight: 500;
+        }
+
+        .sync-icon-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+
+        .sync-icon-btn:active {
+            transform: scale(0.92);
         }
 
         /* Hero Card: The Lifestyle Monitor */
@@ -146,7 +164,6 @@
             padding: 24px 20px;
             box-shadow: var(--shadow-md);
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -182,13 +199,15 @@
             border: 1px solid var(--red-border);
         }
 
-        .saving-guarantee {
-            font-size: 11px;
+        .util-auto-tag {
+            font-size: 10.5px;
             font-weight: 600;
             color: var(--blue);
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            background: var(--blue-bg);
+            border: 1px solid var(--blue-border);
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: none;
         }
 
         .hero-metric {
@@ -207,7 +226,7 @@
 
         .metric-value {
             font-family: var(--font-hero);
-            font-size: 3.4rem;
+            font-size: 3.5rem;
             font-weight: 700;
             line-height: 0.95;
             letter-spacing: -0.02em;
@@ -275,12 +294,12 @@
             color: var(--text);
         }
 
-        /* Utility Card (Dynamic Adjustment) */
-        .utility-card {
+        /* Category Spending Card */
+        .cat-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 18px 18px;
+            padding: 18px;
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
@@ -295,213 +314,81 @@
 
         .card-title {
             font-family: var(--font-hero);
-            font-size: 1.18rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .util-impact-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-        }
-
-        .util-impact-badge.bonus {
-            background: var(--green-bg);
-            color: var(--green);
-        }
-
-        .util-impact-badge.penalty {
-            background: var(--red-bg);
-            color: var(--red);
-        }
-
-        .util-impact-badge.neutral {
-            background: var(--card-subtle);
-            color: var(--text-muted);
-        }
-
-        .util-explainer {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        /* Utility Presets & Custom Input */
-        .preset-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-
-        .preset-btn {
-            background: var(--card-subtle);
-            border: 1px solid var(--border);
-            padding: 8px 4px;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.15s ease;
-        }
-
-        .preset-btn.active {
-            background: var(--text);
-            color: #FFFFFF;
-            border-color: var(--text);
-        }
-
-        .util-custom-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-        }
-
-        .util-custom-row label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        .util-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-            outline: none;
-            text-align: right;
-            font-family: var(--font-body);
-        }
-
-        /* Quick Log Form */
-        .log-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 18px 18px;
-            box-shadow: var(--shadow-sm);
+        .cat-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .log-input-row {
+        .cat-item {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .amount-input-wrap {
-            position: relative;
-            flex: 1;
+        .cat-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12.5px;
         }
 
-        .currency-symbol {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-muted);
+        .cat-name {
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .amount-input {
-            width: 100%;
-            padding: 10px 12px 10px 28px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            font-size: 16px;
+        .cat-numbers {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cat-amount {
             font-weight: 700;
             color: var(--text);
-            background: var(--bg);
-            outline: none;
-            font-family: var(--font-body);
         }
 
-        .amount-input:focus {
-            border-color: var(--text);
-            background: #FFFFFF;
-        }
-
-        .note-input {
-            flex: 1.6;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            color: var(--text);
-            background: var(--bg);
-            outline: none;
-            font-family: var(--font-body);
-        }
-
-        .note-input:focus {
-            border-color: var(--text);
-            background: #FFFFFF;
-        }
-
-        .cat-row {
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: none;
-        }
-
-        .cat-row::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cat-chip {
-            padding: 6px 10px;
-            border-radius: 20px;
+        .cat-pct {
             font-size: 11px;
-            font-weight: 600;
-            background: var(--card-subtle);
-            border: 1px solid var(--border);
             color: var(--text-muted);
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.15s ease;
+            font-weight: 500;
         }
 
-        .cat-chip.selected {
-            background: var(--text);
-            color: #FFFFFF;
-            border-color: var(--text);
-        }
-
-        .log-btn {
-            background: var(--text);
-            color: #FFFFFF;
-            border: none;
-            padding: 12px;
-            border-radius: var(--radius-md);
-            font-size: 13.5px;
-            font-weight: 600;
-            cursor: pointer;
+        .cat-bar-track {
             width: 100%;
-            transition: opacity 0.2s ease;
+            height: 6px;
+            background: var(--card-subtle);
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        .log-btn:active {
-            opacity: 0.85;
+        .cat-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: var(--text);
+            transition: width 0.3s ease;
         }
 
-        /* Transactions Stream */
+        /* TAB 2: EXPENSES STREAM */
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
         .tx-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -510,111 +397,215 @@
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .tx-list {
+        .search-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            background: var(--bg);
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .search-input:focus {
+            border-color: var(--text);
+            background: #FFFFFF;
+        }
+
+        .tx-stream {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 240px;
+            max-height: 520px;
             overflow-y: auto;
         }
 
-        .tx-item {
+        .tx-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-radius: var(--radius-sm);
             background: var(--bg);
             border: 1px solid var(--border);
         }
 
-        .tx-left {
+        .tx-row-left {
             display: flex;
             flex-direction: column;
-            gap: 1px;
+            gap: 2px;
         }
 
-        .tx-desc {
-            font-size: 12.5px;
+        .tx-merchant {
+            font-size: 13px;
             font-weight: 600;
             color: var(--text);
         }
 
-        .tx-meta {
-            font-size: 10px;
+        .tx-details {
+            font-size: 10.5px;
             color: var(--text-muted);
-        }
-
-        .tx-right {
             display: flex;
+            gap: 6px;
             align-items: center;
-            gap: 8px;
         }
 
-        .tx-amount {
-            font-size: 13.5px;
+        .tx-account-tag {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 9.5px;
+            font-weight: 600;
+        }
+
+        .tx-amount-val {
+            font-size: 14px;
             font-weight: 700;
             color: var(--text);
+            text-align: right;
         }
 
-        .tx-del {
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-size: 14px;
-            cursor: pointer;
-            padding: 2px 4px;
-        }
-
-        .tx-del:hover {
-            color: var(--red);
-        }
-
-        .tx-empty {
-            font-size: 12px;
-            color: var(--text-muted);
+        .tx-empty-state {
             text-align: center;
-            padding: 16px 0;
-            font-style: italic;
+            padding: 30px 10px;
+            color: var(--text-muted);
+            font-size: 12.5px;
         }
 
-        /* Fixed Shield Bottom Footer */
-        .shield-footer {
-            background: var(--card-subtle);
-            border: 1px solid var(--border);
+        /* Bottom Nav Tabs */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(250, 247, 242, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 480px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            padding: 8px 16px;
+            gap: 12px;
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 0;
             border-radius: var(--radius-md);
-            padding: 12px 14px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--text);
+            color: #FFFFFF;
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(42, 36, 33, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 14px;
         }
 
-        .shield-title {
-            font-size: 10.5px;
+        .modal-title {
+            font-family: var(--font-hero);
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--text);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .shield-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            font-size: 10px;
+        .modal-sub {
+            font-size: 11.5px;
             color: var(--text-muted);
+            line-height: 1.4;
         }
 
-        .shield-item strong {
-            display: block;
+        .modal-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 12.5px;
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary {
+            background: var(--card-subtle);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
             color: var(--text);
-            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--text);
+            border: none;
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -623,189 +614,165 @@
 <div class="container">
     <!-- Header -->
     <header>
-        <div>
-            <div class="brand-title">Victoria Court</div>
-            <div class="brand-sub">Lifestyle &amp; Utility Spend Monitor</div>
-        </div>
-        <div class="month-pill">
-            <span class="month-name" id="hdr-month">September 2026</span>
-            <span class="month-days" id="hdr-days">Day 2 of 30 · 28d left</span>
+        <div class="brand-title">DCR Ledger</div>
+        <div class="header-right">
+            <div class="month-pill">
+                <span class="month-name" id="hdr-month">September 2026</span>
+                <span class="month-days" id="hdr-days">Day 2 of 30 · 28d left</span>
+            </div>
+            <button class="sync-icon-btn" onclick="openSyncModal()" title="Sync Feeds">🔄</button>
         </div>
     </header>
 
-    <!-- HERO: LIFESTYLE SPEND REMAINING -->
-    <div class="hero-card">
-        <div class="hero-badge-row">
-            <div class="status-pill under" id="hero-pill">
-                <span id="hero-pill-icon">●</span> <span id="hero-pill-text">UNDER BUDGET</span>
+    <!-- TAB 1: LIFESTYLE SPEND -->
+    <div id="tab-lifestyle" class="tab-content active">
+        <!-- Hero: Lifestyle Spend Remaining -->
+        <div class="hero-card">
+            <div class="hero-badge-row">
+                <div class="status-pill under" id="hero-pill">
+                    <span id="hero-pill-icon">●</span> <span id="hero-pill-text">UNDER BUDGET</span>
+                </div>
+                <div class="util-auto-tag" id="util-auto-badge">
+                    ⚡ Auto-adjusted: +$620 Util Bonus
+                </div>
             </div>
-            <div class="saving-guarantee">
-                🛡️ $2,000/mo Savings Locked
+
+            <div class="hero-metric">
+                <div class="metric-label">Lifestyle Spend Remaining</div>
+                <div class="metric-value under" id="hero-remaining-val">$3,137.75</div>
+                <div class="metric-sub" id="hero-remaining-sub">
+                    You have <strong>$112.06 / day</strong> safe to spend for the next 28 days
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-track">
+                <div class="progress-fill" id="hero-progress" style="width: 0%; background-color: var(--green);"></div>
+            </div>
+
+            <!-- 3-Col Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-box-title">Adjusted Budget</div>
+                    <div class="stat-box-val" id="stat-adjusted-budget">$3,137.75</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-title">Total Spent</div>
+                    <div class="stat-box-val" id="stat-total-spent">$0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-title">Daily Pace</div>
+                    <div class="stat-box-val" id="stat-daily-pace">$0.00 / day</div>
+                </div>
             </div>
         </div>
 
-        <div class="hero-metric">
-            <div class="metric-label">Lifestyle Spend Remaining</div>
-            <div class="metric-value under" id="hero-remaining-val">$3,137.75</div>
-            <div class="metric-sub" id="hero-remaining-sub">
-                You have <strong>$112.06 / day</strong> safe to spend for the next 28 days
+        <!-- Category Breakdown Card -->
+        <div class="cat-card">
+            <div class="card-header-row">
+                <div class="card-title">Spending by Category</div>
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="cat-month-indicator">September 2026</span>
             </div>
-        </div>
 
-        <!-- Visual Progress Bar -->
-        <div class="progress-track">
-            <div class="progress-fill" id="hero-progress" style="width: 0%; background-color: var(--green);"></div>
-        </div>
-
-        <!-- 3-Col Quick Stats -->
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-box-title">Adjusted Budget</div>
-                <div class="stat-box-val" id="stat-adjusted-budget">$3,137.75</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-box-title">Total Spent</div>
-                <div class="stat-box-val" id="stat-total-spent">$0.00</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-box-title">Daily Pace</div>
-                <div class="stat-box-val" id="stat-daily-pace">$0.00 / day</div>
+            <div class="cat-list" id="cat-list">
+                <!-- Dynamically populated categories -->
             </div>
         </div>
     </div>
 
-    <!-- DYNAMIC UTILITY ADJUSTMENT CARD -->
-    <div class="utility-card">
-        <div class="card-header-row">
-            <div class="card-title">
-                ⚡ Utility Balance Adjustment
+    <!-- TAB 2: EXPENSES STREAM -->
+    <div id="tab-expenses" class="tab-content">
+        <div class="tx-card">
+            <div class="card-header-row">
+                <div class="card-title">Live Bank Transactions</div>
+                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="stream-count">0 items</span>
             </div>
-            <div class="util-impact-badge neutral" id="util-impact-badge">
-                $0 Delta
+
+            <div class="search-row">
+                <input type="text" id="tx-search" class="search-input" placeholder="Search merchant or category..." oninput="filterTransactions(this.value)">
             </div>
-        </div>
-        
-        <div class="util-explainer" id="util-explainer-text">
-            Baseline living utilities are set at <strong>$750.00/mo</strong>. If your LUMA and AAA bills are lower or higher, your lifestyle spend adjusts dollar-for-dollar so your $2,000 savings is never impacted.
-        </div>
 
-        <!-- Preset Buttons -->
-        <div class="preset-row">
-            <button class="preset-btn" onclick="setUtilityPreset(130, 'Construction (Sep–Oct)')">Sep $130</button>
-            <button class="preset-btn" onclick="setUtilityPreset(500, 'Moderate Cooler')">$500</button>
-            <button class="preset-btn active" onclick="setUtilityPreset(750, 'Baseline Upper')">Base $750</button>
-            <button class="preset-btn" onclick="setUtilityPreset(900, 'High Summer')">$900</button>
-        </div>
-
-        <!-- Custom Input -->
-        <div class="util-custom-row">
-            <label for="actual-util-input">Actual Utilities Logged ($):</label>
-            <input type="number" id="actual-util-input" class="util-input" value="750.00" step="5" oninput="onCustomUtilityChange(this.value)">
-        </div>
-    </div>
-
-    <!-- QUICK LOG EXPENSE -->
-    <div class="log-card">
-        <div class="card-title">
-            ✍️ Quick Log Expense
-        </div>
-
-        <div class="log-input-row">
-            <div class="amount-input-wrap">
-                <span class="currency-symbol">$</span>
-                <input type="number" id="log-amount" class="amount-input" placeholder="0.00" step="0.01">
-            </div>
-            <input type="text" id="log-note" class="note-input" placeholder="Merchant or note (e.g. Dinner)">
-        </div>
-
-        <div class="cat-row">
-            <button class="cat-chip selected" onclick="selectCategory(this, 'Dining')">🍽️ Dining</button>
-            <button class="cat-chip" onclick="selectCategory(this, 'Groceries')">🛒 Groceries</button>
-            <button class="cat-chip" onclick="selectCategory(this, 'Coffee')">☕ Coffee</button>
-            <button class="cat-chip" onclick="selectCategory(this, 'Shopping')">🛍️ Shopping</button>
-            <button class="cat-chip" onclick="selectCategory(this, 'Transport')">🚕 Transport</button>
-            <button class="cat-chip" onclick="selectCategory(this, 'Other')">📦 Other</button>
-        </div>
-
-        <button class="log-btn" onclick="addExpense()">+ Log to Lifestyle Spend</button>
-    </div>
-
-    <!-- TRANSACTIONS STREAM -->
-    <div class="tx-card">
-        <div class="card-header-row">
-            <div class="card-title" style="font-size: 1.05rem;">
-                📋 This Month's Expenses
-            </div>
-            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="tx-count">0 items</span>
-        </div>
-
-        <div class="tx-list" id="tx-list">
-            <div class="tx-empty">No expenses logged yet this month.</div>
-        </div>
-    </div>
-
-    <!-- PROTECTED RESERVES SHIELD -->
-    <div class="shield-footer">
-        <div class="shield-title">
-            🛡️ Protected Financial Core
-        </div>
-        <div class="shield-grid">
-            <div class="shield-item">
-                Monthly Savings
-                <strong style="color: var(--green);">$2,000 / mo</strong>
-            </div>
-            <div class="shield-item">
-                Housing Fixed
-                <strong>$3,680.55 / mo</strong>
-            </div>
-            <div class="shield-item">
-                UK Reserve
-                <strong style="color: var(--blue);">£8,000 Intact</strong>
+            <div class="tx-stream" id="tx-stream">
+                <!-- Dynamically populated from SimpleFIN / Bank Feeds -->
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    // ── CORE FINANCIAL MODEL CONSTANTS ──
-    const BASE_LIFESTYLE = 3137.75;      // Target lifestyle ceiling ($101.22/day)
-    const BASE_UTILITIES = 750.00;       // Upper baseline utility estimate
-    const FIXED_HOUSING = 3680.55;       // Mortgage $3,305.55 + HOA $375.00
-    const MONTHLY_SAVINGS_TARGET = 2000; // Strict $2,000/mo injection
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+    <div class="nav-inner">
+        <button class="nav-tab active" id="btn-tab-lifestyle" onclick="switchTab('lifestyle')">
+            <span>📊</span> Lifestyle Spend
+        </button>
+        <button class="nav-tab" id="btn-tab-expenses" onclick="switchTab('expenses')">
+            <span>📋</span> Bank Feeds
+        </button>
+    </div>
+</nav>
 
-    // App State (Persisted in localStorage)
+<!-- Cloud Sync Modal -->
+<div class="modal-overlay" id="sync-modal">
+    <div class="modal-box">
+        <div class="modal-title">SimpleFIN &amp; Cloud Feed</div>
+        <div class="modal-sub">
+            Your transactions feed directly from SimpleFIN via your Google Sheet Web App. Paste your deployed Web App URL below to refresh live transactions.
+        </div>
+        <input type="text" class="modal-input" id="sheets-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeSyncModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveAndSync()">Sync Now</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── FINANCIAL CONSTANTS ──
+    const BASE_LIFESTYLE = 3137.75;      // Target lifestyle cap ($101.22/day)
+    const BASE_UTILITIES = 750.00;       // Upper baseline utility estimate
+    const SEP_OCT_CONSTRUCTION_UTIL = 130.00; // Expected construction utilities in Sep/Oct
+
+    // Default Seed Transactions (Representative Banco Popular / Capital One feed)
+    const DEFAULT_TRANSACTIONS = [
+        { tx_id: "tx_1", date: "2026-09-02", merchant: "Pueblo Supermarket", amount: 64.50, category: "Groceries", account: "Banco Popular" },
+        { tx_id: "tx_2", date: "2026-09-02", merchant: "Hacienda San Pedro Coffee", amount: 8.25, category: "Dining", account: "Capital One" },
+        { tx_id: "tx_3", date: "2026-09-01", merchant: "Uber Rides", amount: 16.80, category: "Transport", account: "Capital One" },
+        { tx_id: "tx_4", date: "2026-09-01", merchant: "Santaella Dinner", amount: 98.40, category: "Dining", account: "Capital One" },
+        { tx_id: "tx_5", date: "2026-08-28", merchant: "LUMA Energy (Electricity)", amount: 104.20, category: "Utilities", account: "Banco Popular" },
+        { tx_id: "tx_6", date: "2026-08-26", merchant: "AAA (Water Utility)", amount: 28.50, category: "Utilities", account: "Banco Popular" },
+        { tx_id: "tx_7", date: "2026-08-25", merchant: "Costco Wholesale", amount: 142.30, category: "Groceries", account: "Capital One" },
+        { tx_id: "tx_8", date: "2026-08-24", merchant: "Walgreens Pharmacy", amount: 32.10, category: "Shopping", account: "Banco Popular" }
+    ];
+
     let state = {
-        actual_utilities: 750.00,
-        utility_label: 'Baseline Upper',
-        selected_category: 'Dining',
-        expenses: []
+        sheets_api_url: '',
+        transactions: [],
+        search_filter: ''
     };
 
-    // Load from localStorage
     function loadState() {
         try {
-            const saved = localStorage.getItem('vc_lifestyle_tracker');
+            const saved = localStorage.getItem('dcr_ledger_state');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                state.actual_utilities = parsed.actual_utilities !== undefined ? parsed.actual_utilities : 750.00;
-                state.utility_label = parsed.utility_label || 'Baseline Upper';
-                state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
+                state.sheets_api_url = parsed.sheets_api_url || '';
+                state.transactions = Array.isArray(parsed.transactions) && parsed.transactions.length > 0 ? parsed.transactions : DEFAULT_TRANSACTIONS;
+            } else {
+                state.transactions = DEFAULT_TRANSACTIONS;
             }
         } catch (e) {
-            console.error("Failed to load state", e);
+            state.transactions = DEFAULT_TRANSACTIONS;
         }
+        document.getElementById('sheets-url-input').value = state.sheets_api_url;
     }
 
     function saveState() {
         try {
-            localStorage.setItem('vc_lifestyle_tracker', JSON.stringify({
-                actual_utilities: state.actual_utilities,
-                utility_label: state.utility_label,
-                expenses: state.expenses
+            localStorage.setItem('dcr_ledger_state', JSON.stringify({
+                sheets_api_url: state.sheets_api_url,
+                transactions: state.transactions
             }));
-        } catch (e) {
-            console.error("Failed to save state", e);
-        }
+        } catch (e) {}
     }
 
     // Date calculations
@@ -819,6 +786,9 @@
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
         return {
+            year,
+            month,
+            monthKey: `${year}-${String(month + 1).padStart(2, '0')}`,
             monthName: monthNames[month] + " " + year,
             daysInMonth,
             currentDay,
@@ -826,118 +796,146 @@
         };
     }
 
-    // Category Selector
-    function selectCategory(btn, cat) {
-        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        state.selected_category = cat;
+    // Tab Switching
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+
+        if (tabId === 'lifestyle') {
+            document.getElementById('tab-lifestyle').classList.add('active');
+            document.getElementById('btn-tab-lifestyle').classList.add('active');
+        } else {
+            document.getElementById('tab-expenses').classList.add('active');
+            document.getElementById('btn-tab-expenses').classList.add('active');
+        }
     }
 
-    // Utility Preset Selector
-    function setUtilityPreset(amt, label) {
-        state.actual_utilities = parseFloat(amt);
-        state.utility_label = label;
-        document.getElementById('actual-util-input').value = amt.toFixed(2);
-        
-        document.querySelectorAll('.preset-btn').forEach(b => {
-            b.classList.remove('active');
-            if (b.innerText.includes(amt.toString())) {
-                b.classList.add('active');
-            }
-        });
+    // Modal
+    function openSyncModal() {
+        document.getElementById('sync-modal').classList.add('open');
+    }
 
+    function closeSyncModal() {
+        document.getElementById('sync-modal').classList.remove('open');
+    }
+
+    async function saveAndSync() {
+        const url = document.getElementById('sheets-url-input').value.trim();
+        state.sheets_api_url = url;
         saveState();
-        render();
-    }
+        closeSyncModal();
 
-    function onCustomUtilityChange(val) {
-        const amt = parseFloat(val);
-        if (!isNaN(amt) && amt >= 0) {
-            state.actual_utilities = amt;
-            state.utility_label = 'Custom Input';
-            
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            saveState();
+        if (url) {
+            await fetchFeedFromCloud(url);
+        } else {
             render();
         }
     }
 
-    // Expense Management
-    function addExpense() {
-        const amtInput = document.getElementById('log-amount');
-        const noteInput = document.getElementById('log-note');
-        
-        const amt = parseFloat(amtInput.value);
-        if (isNaN(amt) || amt <= 0) {
-            alert("Please enter a valid expense amount.");
-            return;
+    async function fetchFeedFromCloud(url) {
+        try {
+            const btn = document.querySelector('.sync-icon-btn');
+            btn.innerText = '⏳';
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.transactions && Array.isArray(data.transactions)) {
+                    state.transactions = data.transactions.map(t => ({
+                        tx_id: t.tx_id || ('tx_' + Math.random()),
+                        date: (t.date || '').split('T')[0],
+                        merchant: t.merchant || 'Unknown',
+                        amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
+                        category: t.category || categorizeMerchant(t.merchant),
+                        account: t.account || 'Banco Popular'
+                    }));
+                    saveState();
+                }
+            }
+            btn.innerText = '🔄';
+        } catch (e) {
+            console.error("Cloud fetch failed", e);
+            document.querySelector('.sync-icon-btn').innerText = '🔄';
         }
-
-        const newTx = {
-            id: Date.now(),
-            amount: amt,
-            category: state.selected_category || 'Other',
-            note: noteInput.value.trim() || state.selected_category,
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        };
-
-        state.expenses.unshift(newTx);
-        saveState();
-
-        amtInput.value = '';
-        noteInput.value = '';
         render();
     }
 
-    function deleteExpense(id) {
-        state.expenses = state.expenses.filter(tx => tx.id !== id);
-        saveState();
-        render();
+    function categorizeMerchant(m) {
+        const str = (m || '').toLowerCase();
+        if (str.includes('luma') || str.includes('aaa') || str.includes('electric') || str.includes('water') || str.includes('power')) return 'Utilities';
+        if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket') || str.includes('grocery')) return 'Groceries';
+        if (str.includes('restaurant') || str.includes('dinner') || str.includes('cafe') || str.includes('bistro') || str.includes('pizza') || str.includes('burger')) return 'Dining';
+        if (str.includes('uber') || str.includes('gas') || str.includes('shell') || str.includes('total') || str.includes('transport')) return 'Transport';
+        if (str.includes('walgreens') || str.includes('amazon') || str.includes('cvs') || str.includes('target')) return 'Shopping';
+        return 'Other';
     }
 
-    // Main Calculation & Render
+    function isUtility(tx) {
+        const cat = (tx.category || '').toLowerCase();
+        const m = (tx.merchant || '').toLowerCase();
+        return cat === 'utilities' || m.includes('luma') || m.includes('aaa') || m.includes('acueducto') || m.includes('electric') || m.includes('water');
+    }
+
+    function filterTransactions(term) {
+        state.search_filter = (term || '').toLowerCase();
+        renderTransactionsOnly();
+    }
+
+    // MAIN RENDER
     function render() {
         const dateInfo = getDateInfo();
 
         // 1. Header
         document.getElementById('hdr-month').innerText = dateInfo.monthName;
         document.getElementById('hdr-days').innerText = `Day ${dateInfo.currentDay} of ${dateInfo.daysInMonth} · ${dateInfo.daysRemaining}d left`;
+        document.getElementById('cat-month-indicator').innerText = dateInfo.monthName;
 
-        // 2. Dynamic Utility Adjustment
-        // If actual utilities are LESS than $750 baseline, delta is POSITIVE (added to lifestyle).
-        // If actual utilities are MORE than $750 baseline, delta is NEGATIVE (deducted from lifestyle).
-        const utilDelta = BASE_UTILITIES - state.actual_utilities;
-        const adjustedLifestyleLimit = Math.max(0, BASE_LIFESTYLE + utilDelta);
+        // 2. Filter this month's transactions
+        const currentMonthTxs = state.transactions.filter(tx => {
+            const d = (tx.date || '');
+            return d.startsWith(dateInfo.monthKey);
+        });
 
-        const badge = document.getElementById('util-impact-badge');
-        const explainer = document.getElementById('util-explainer-text');
+        // 3. BACKGROUND UTILITY AUTO-ADJUSTMENT
+        // Scan for utility payments in current month
+        const utilTxs = currentMonthTxs.filter(isUtility);
+        const actualUtilities = utilTxs.reduce((sum, tx) => sum + tx.amount, 0);
 
-        if (utilDelta > 0) {
-            badge.className = 'util-impact-badge bonus';
-            badge.innerText = `+$${utilDelta.toFixed(2)} Added to Lifestyle`;
-            explainer.innerHTML = `Utilities are <strong>$${utilDelta.toFixed(2)} under baseline</strong> ($${state.actual_utilities.toFixed(2)} vs $750). This bonus is added directly to your lifestyle spend!`;
-        } else if (utilDelta < 0) {
-            const absDelta = Math.abs(utilDelta);
-            badge.className = 'util-impact-badge penalty';
-            badge.innerText = `-$${absDelta.toFixed(2)} Deducted from Lifestyle`;
-            explainer.innerHTML = `Utilities are <strong>$${absDelta.toFixed(2)} over baseline</strong> ($${state.actual_utilities.toFixed(2)} vs $750). This is deducted from lifestyle so your <strong>$2,000 savings is 100% protected</strong>.`;
+        let utilDelta = 0;
+        const autoBadge = document.getElementById('util-auto-badge');
+
+        if (actualUtilities > 0) {
+            // Actual payment was found! Compare to baseline $750
+            utilDelta = BASE_UTILITIES - actualUtilities;
+            autoBadge.style.display = 'inline-flex';
+            if (utilDelta >= 0) {
+                autoBadge.className = 'util-auto-tag';
+                autoBadge.innerText = `⚡ Util Auto-Adjusted: +$${utilDelta.toFixed(2)} Added`;
+            } else {
+                autoBadge.className = 'util-auto-tag';
+                autoBadge.style.color = 'var(--red)';
+                autoBadge.style.background = 'var(--red-bg)';
+                autoBadge.style.borderColor = 'var(--red-border)';
+                autoBadge.innerText = `⚡ Util Over: -$${Math.abs(utilDelta).toFixed(2)} Deducted`;
+            }
         } else {
-            badge.className = 'util-impact-badge neutral';
-            badge.innerText = `$0 Delta (On Baseline)`;
-            explainer.innerHTML = `Utilities are exactly on baseline ($750.00/mo). Your standard lifestyle limit is <strong>$3,137.75/month</strong> ($101.22/day).`;
+            // No utility payment logged yet this month. If Sep/Oct, note construction baseline
+            autoBadge.style.display = 'none';
         }
 
-        // 3. Lifestyle Spent Calculation
-        const totalSpent = state.expenses.reduce((sum, tx) => sum + tx.amount, 0);
-        const remaining = adjustedLifestyleLimit - totalSpent;
+        const adjustedLifestyleLimit = Math.max(0, BASE_LIFESTYLE + utilDelta);
+
+        // 4. Calculate Lifestyle Spend (Excluding Utilities & Fixed Housing)
+        const lifestyleTxs = currentMonthTxs.filter(tx => !isUtility(tx));
+        const totalLifestyleSpent = lifestyleTxs.reduce((sum, tx) => sum + tx.amount, 0);
+        const remaining = adjustedLifestyleLimit - totalLifestyleSpent;
         const isOver = remaining < 0;
         const absRemaining = Math.abs(remaining);
 
         // Daily pacing
         const dailyAllowance = remaining > 0 ? (remaining / dateInfo.daysRemaining) : 0;
-        const dailyPace = dateInfo.currentDay > 0 ? (totalSpent / dateInfo.currentDay) : 0;
+        const dailyPace = dateInfo.currentDay > 0 ? (totalLifestyleSpent / dateInfo.currentDay) : 0;
 
-        // 4. Update Hero Card
+        // 5. Update Hero Card
         const heroPill = document.getElementById('hero-pill');
         const heroPillText = document.getElementById('hero-pill-text');
         const heroVal = document.getElementById('hero-remaining-val');
@@ -949,7 +947,7 @@
             heroPillText.innerText = 'OVER BUDGET';
             heroVal.className = 'metric-value over';
             heroVal.innerText = `-$${absRemaining.toFixed(2)}`;
-            heroSub.innerHTML = `You are <strong>$${absRemaining.toFixed(2)} over budget</strong> for ${dateInfo.monthName.split(' ')[0]}. Stop non-essential spend!`;
+            heroSub.innerHTML = `You are <strong>$${absRemaining.toFixed(2)} over budget</strong> for ${dateInfo.monthName.split(' ')[0]}.`;
             heroProgress.style.backgroundColor = 'var(--red)';
             heroProgress.style.width = '100%';
         } else {
@@ -959,36 +957,96 @@
             heroVal.innerText = `$${remaining.toFixed(2)}`;
             heroSub.innerHTML = `You have <strong>$${dailyAllowance.toFixed(2)} / day</strong> safe to spend for the remaining ${dateInfo.daysRemaining} days`;
             
-            const pct = Math.min(100, (totalSpent / adjustedLifestyleLimit) * 100);
+            const pct = Math.min(100, (totalLifestyleSpent / adjustedLifestyleLimit) * 100);
             heroProgress.style.width = `${pct}%`;
             heroProgress.style.backgroundColor = pct > 85 ? 'var(--gold)' : 'var(--green)';
         }
 
         // Stats grid
         document.getElementById('stat-adjusted-budget').innerText = `$${adjustedLifestyleLimit.toFixed(2)}`;
-        document.getElementById('stat-total-spent').innerText = `$${totalSpent.toFixed(2)}`;
+        document.getElementById('stat-total-spent').innerText = `$${totalLifestyleSpent.toFixed(2)}`;
         document.getElementById('stat-daily-pace').innerText = `$${dailyPace.toFixed(2)} / day`;
 
-        // 5. Transactions List
-        const txList = document.getElementById('tx-list');
-        document.getElementById('tx-count').innerText = `${state.expenses.length} item${state.expenses.length === 1 ? '' : 's'}`;
+        // 6. CATEGORY BREAKDOWN LIST
+        const catMap = {};
+        lifestyleTxs.forEach(tx => {
+            const cat = tx.category || 'Other';
+            catMap[cat] = (catMap[cat] || 0) + tx.amount;
+        });
 
-        if (state.expenses.length === 0) {
-            txList.innerHTML = '<div class="tx-empty">No expenses logged yet this month. Enter your first one above!</div>';
-        } else {
-            txList.innerHTML = state.expenses.map(tx => `
-                <div class="tx-item">
-                    <div class="tx-left">
-                        <span class="tx-desc">${escapeHtml(tx.note)}</span>
-                        <span class="tx-meta">${tx.category} · ${tx.date}</span>
+        // Ensure default categories exist for clean display
+        const standardCats = ['Dining', 'Groceries', 'Transport', 'Shopping', 'Other'];
+        standardCats.forEach(c => { if (catMap[c] === undefined) catMap[c] = 0; });
+
+        const catList = document.getElementById('cat-list');
+        const sortedCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+
+        const catIcons = {
+            'Dining': '🍽️',
+            'Groceries': '🛒',
+            'Transport': '🚕',
+            'Shopping': '🛍️',
+            'Coffee': '☕',
+            'Other': '📦'
+        };
+
+        catList.innerHTML = sortedCats.map(([cat, amt]) => {
+            const pctOfTotal = totalLifestyleSpent > 0 ? (amt / totalLifestyleSpent) * 100 : 0;
+            const pctOfBudget = (amt / adjustedLifestyleLimit) * 100;
+            const icon = catIcons[cat] || '🏷️';
+            return `
+                <div class="cat-item">
+                    <div class="cat-item-header">
+                        <span class="cat-name">${icon} ${escapeHtml(cat)}</span>
+                        <div class="cat-numbers">
+                            <span class="cat-amount">$${amt.toFixed(2)}</span>
+                            <span class="cat-pct">(${pctOfTotal.toFixed(0)}%)</span>
+                        </div>
                     </div>
-                    <div class="tx-right">
-                        <span class="tx-amount">$${tx.amount.toFixed(2)}</span>
-                        <button class="tx-del" title="Delete" onclick="deleteExpense(${tx.id})">✕</button>
+                    <div class="cat-bar-track">
+                        <div class="cat-bar-fill" style="width: ${Math.min(100, pctOfBudget)}%;"></div>
                     </div>
                 </div>
-            `).join('');
+            `;
+        }).join('');
+
+        renderTransactionsOnly();
+    }
+
+    function renderTransactionsOnly() {
+        const stream = document.getElementById('tx-stream');
+        const term = state.search_filter;
+        
+        const filtered = state.transactions.filter(tx => {
+            if (!term) return true;
+            return (tx.merchant || '').toLowerCase().includes(term) ||
+                   (tx.category || '').toLowerCase().includes(term) ||
+                   (tx.account || '').toLowerCase().includes(term);
+        });
+
+        document.getElementById('stream-count').innerText = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+
+        if (filtered.length === 0) {
+            stream.innerHTML = '<div class="tx-empty-state">No transactions match your search.</div>';
+            return;
         }
+
+        stream.innerHTML = filtered.map(tx => `
+            <div class="tx-row">
+                <div class="tx-row-left">
+                    <span class="tx-merchant">${escapeHtml(tx.merchant)}</span>
+                    <div class="tx-details">
+                        <span>${escapeHtml(tx.category || 'Other')}</span>
+                        <span>•</span>
+                        <span>${escapeHtml(tx.date || '')}</span>
+                        <span class="tx-account-tag">${escapeHtml(tx.account || 'Bank')}</span>
+                    </div>
+                </div>
+                <div class="tx-amount-val">
+                    $${tx.amount.toFixed(2)}
+                </div>
+            </div>
+        `).join('');
     }
 
     function escapeHtml(str) {
