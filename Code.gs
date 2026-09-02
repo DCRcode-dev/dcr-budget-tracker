@@ -146,7 +146,7 @@ function buildConfigTab_(sheet, ss) {
   sheet.getRange("B2:D2").setValues([["Setting", "Value", "Notes"]]).setFontWeight("bold");
 
   const configRows = [
-    ["LIVING_CEILING", "Living monthly ceiling (USD)", 2000, "$#,##0.00", true, "Hard cap. Owner-stated."],
+    ["LIVING_CEILING", "Living monthly ceiling (USD)", 3200, "$#,##0.00", true, "Hard cap. Owner-stated."],
     ["MORTGAGE_PAYMENT", "Mortgage monthly payment (USD)", 3305.55, "$#,##0.00", true, "Years 1–11, includes FHA MIP."],
     ["MORTGAGE_PAYMENT_POST_MIP", "Mortgage payment after MIP drops (USD)", 3053.47, "$#,##0.00", true, "Years 12–30."],
     ["MORTGAGE_MIP_PAYMENT_COUNT", "Payments until MIP cancels", 132, "#,##0", true, "11 years."],
