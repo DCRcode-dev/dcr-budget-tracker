@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BTCR Ledger Notarial Courts</title>
+    <title>Lifestyle Spend Tracker · Victoria Court</title>
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
@@ -14,35 +14,43 @@
     <!-- Premium Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- PDF.js library for client-side PDF parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Soho House / Lux-Tech Light Sepia Palette */
-            --bg: #FAF7F2;          /* vellum paper background */
-            --card: #FFFFFF;        /* clean high-contrast white card */
-            --border: #EDE8E0;      /* warm division line */
-            --text: #2A2421;        /* warm espresso charcoal */
-            --text-muted: #6B6259;  /* sand/taupe */
-            --gold: #C9A84C;        /* antique gold */
-            --gold-light: rgba(201, 168, 76, 0.08);
-            --blue: #1155CC;        /* electric navy / input blue */
-            --blue-light: #E8F0FE;
-            --orange: #F57C00;      /* amber/orange */
-            --orange-light: #FFF8E1;
-            --red: #990000;         /* deep red for funding ask */
-            --red-light: #F4CCCC;
-            --green: #274E13;       /* forest green for ok */
-            --green-light: #D9EAD3;
+            /* Warm luxury palette */
+            --bg: #FAF7F2;          /* vellum paper */
+            --card: #FFFFFF;        /* card surface */
+            --card-subtle: #F5F1EA;
+            --border: #EDE6DC;      /* delicate divider */
+            --text: #2A2421;        /* espresso */
+            --text-muted: #756D65;  /* taupe gray */
+            --text-dim: #9C9389;    /* muted stone */
+            
+            --green: #1B5E20;       /* deep forest green for under budget */
+            --green-bg: #E8F5E9;
+            --green-border: #C8E6C9;
+            
+            --red: #B71C1C;         /* crimson for over budget */
+            --red-bg: #FFEBEE;
+            --red-border: #FFCDD2;
+            
+            --blue: #0D47A1;        /* navy */
+            --blue-bg: #E3F2FD;
+            --blue-border: #BBDEFB;
+            
+            --gold: #B78103;        /* warm gold */
+            --gold-bg: #FFF8E1;
+            --gold-border: #FFE082;
             
             --font-hero: 'Cormorant Garamond', Georgia, serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-haptic: cubic-bezier(0.25, 1, 0.5, 1);
+            --shadow-sm: 0 2px 8px rgba(42, 36, 33, 0.04);
+            --shadow-md: 0 6px 20px rgba(42, 36, 33, 0.06);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
         }
 
         * {
@@ -56,1623 +64,943 @@
             font-family: var(--font-body);
             background-color: var(--bg);
             color: var(--text);
-            line-height: 1.4;
-            overflow: hidden;
-            height: 100svh;
-            max-height: 100svh;
+            line-height: 1.45;
+            min-height: 100svh;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
         }
 
-        /* Tactile micro-noise grain overlay */
+        /* Subtle background noise texture */
         body::after {
             content: '';
             position: fixed; inset: 0; z-index: 999; pointer-events: none;
-            opacity: 0.025; mix-blend-mode: multiply;
+            opacity: 0.02; mix-blend-mode: multiply;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 128px 128px;
         }
 
-        .app-shell {
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px 16px 40px;
             display: flex;
             flex-direction: column;
-            height: 100svh;
-            max-height: 100svh;
-            position: relative;
-            overflow: hidden;
+            gap: 16px;
         }
 
         /* Header */
         header {
-            position: sticky;
-            top: 0;
-            background-color: rgba(250, 247, 242, 0.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 100;
-        }
-
-        .logo-text {
-            font-family: var(--font-hero);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.01em;
-        }
-
-        .header-sub {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* Tab Navigation Bar */
-        .nav-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 75px;
-            background-color: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            padding-bottom: env(safe-area-inset-bottom, 10px);
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            gap: 4px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-item.active {
-            color: var(--blue);
-        }
-
-        .nav-item svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            transition: transform 0.2s var(--ease-haptic);
-        }
-
-        .nav-item:active svg {
-            transform: scale(0.9);
-        }
-
-        .screens-container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background: transparent;
-        }
-
-        .screen {
-            position: absolute;
-            inset: 0;
-            padding: 16px;
-            padding-bottom: 90px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            display: none;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .screen.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Structural Cards */
-        .card {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 16px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* THE ASK HERO CARD (Primary Visual Element) */
-        .ask-card {
-            background-color: var(--orange-light);
-            border: 2px solid var(--orange);
-            border-radius: 20px;
-            padding: 24px 20px;
-            margin-bottom: 16px;
-        }
-
-        .ask-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .ask-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--orange);
-        }
-
-        .status-pill {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .status-pill.ask {
-            background-color: var(--red-light);
-            color: var(--red);
-        }
-        .status-pill.funded {
-            background-color: var(--green-light);
-            color: var(--green);
-        }
-
-        .ask-val {
-            font-family: var(--font-hero);
-            font-size: 3.2rem;
-            font-weight: 700;
-            color: var(--red);
-            line-height: 1.05;
-            margin-bottom: 8px;
-        }
-
-        .ask-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 12px;
-        }
-
-        .ask-callout {
-            font-size: 10px;
-            color: #7F6000;
-            background-color: #FFF2CC;
-            padding: 8px 12px;
-            border-radius: 10px;
-            border-left: 3px solid #7F6000;
-            line-height: 1.35;
-        }
-
-        /* MORTGAGE & LIVING SPLIT CARDS */
-        .split-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .mortgage-card {
-            background-color: var(--blue-light);
-            border: 2px solid var(--blue);
-            border-radius: 18px;
-            padding: 16px;
-        }
-
-        .mortgage-title {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--blue);
-            margin-bottom: 4px;
-        }
-
-        .mortgage-val {
-            font-family: var(--font-hero);
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .mortgage-sub {
-            font-size: 10px;
-            color: var(--text-muted);
-            line-height: 1.35;
-        }
-
-        .living-card {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 16px;
-        }
-
-        .living-title {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .living-val {
-            font-family: var(--font-hero);
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background-color: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 6px 0;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: var(--blue);
-            border-radius: 3px;
-            transition: width 0.4s ease;
-        }
-
-        /* CASH TILES GRID */
-        .cash-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .cash-tile {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 12px;
-            text-align: center;
-        }
-        .cash-tile.highlight {
-            background-color: #FAF8F5;
-            border-color: var(--text);
-        }
-        .cash-lbl {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        .cash-val {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        /* TABLES */
-        .clean-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-        .clean-table th {
-            text-align: left;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
         }
-        .clean-table td {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
 
-        /* Form Inputs */
-        .form-group {
-            margin-bottom: 14px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-        .form-input {
-            width: 100%;
-            background-color: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 11px 13px;
-            font-family: var(--font-body);
-            font-size: 13px;
+        .brand-title {
+            font-family: var(--font-hero);
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
             color: var(--text);
-            outline: none;
-            transition: var(--transition);
-        }
-        .form-input:focus {
-            border-color: var(--blue);
-            background-color: #ffffff;
+            line-height: 1.1;
         }
 
-        .btn {
-            display: block;
-            width: 100%;
-            background-color: var(--text);
-            color: #ffffff;
-            border: none;
-            border-radius: 14px;
-            padding: 13px;
-            font-family: var(--font-body);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            transition: var(--transition);
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
         }
-        .btn:active {
-            transform: scale(0.97);
+
+        .month-pill {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
         }
-        .btn-blue {
-            background-color: var(--blue);
+
+        .month-name {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
-        .btn-orange {
-            background-color: var(--orange);
+
+        .month-days {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
-        .btn-danger {
-            background-color: transparent;
+
+        /* Hero Card: The Lifestyle Monitor */
+        .hero-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hero-badge-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .status-pill.under {
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid var(--green-border);
+        }
+
+        .status-pill.over {
+            background: var(--red-bg);
             color: var(--red);
-            border: 1px solid var(--red);
+            border: 1px solid var(--red-border);
         }
 
-        /* Floating Action Button (FAB) */
-        .fab {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background-color: var(--blue);
-            color: #ffffff;
+        .saving-guarantee {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--blue);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 16px rgba(17, 85, 204, 0.35);
-            cursor: pointer;
-            z-index: 99;
-            transition: var(--transition);
-        }
-        .fab:active {
-            transform: scale(0.9) rotate(45deg);
+            gap: 4px;
         }
 
-        /* Quick Add Drawer */
-        .quick-add-drawer {
-            position: fixed;
-            left: 0; right: 0; bottom: 0;
-            background-color: var(--card);
+        .hero-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-family: var(--font-hero);
+            font-size: 3.4rem;
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+
+        .metric-value.under {
+            color: var(--green);
+        }
+
+        .metric-value.over {
+            color: var(--red);
+        }
+
+        .metric-sub {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: var(--card-subtle);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+        }
+
+        /* 3-Col Quick Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding-top: 8px;
             border-top: 1px solid var(--border);
-            border-radius: 24px 24px 0 0;
-            padding: 22px;
-            z-index: 200;
-            transform: translateY(100%);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 -8px 30px rgba(42, 36, 33, 0.08);
-        }
-        .quick-add-drawer.active {
-            transform: translateY(0);
-        }
-        .drawer-backdrop {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(42, 36, 33, 0.4);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 150;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .drawer-backdrop.active {
-            opacity: 1;
-            pointer-events: all;
         }
 
-        .screen::-webkit-scrollbar {
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-box-title {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .stat-box-val {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Utility Card (Dynamic Adjustment) */
+        .utility-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 18px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-family: var(--font-hero);
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .util-impact-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .util-impact-badge.bonus {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .util-impact-badge.penalty {
+            background: var(--red-bg);
+            color: var(--red);
+        }
+
+        .util-impact-badge.neutral {
+            background: var(--card-subtle);
+            color: var(--text-muted);
+        }
+
+        .util-explainer {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Utility Presets & Custom Input */
+        .preset-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .preset-btn {
+            background: var(--card-subtle);
+            border: 1px solid var(--border);
+            padding: 8px 4px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .preset-btn.active {
+            background: var(--text);
+            color: #FFFFFF;
+            border-color: var(--text);
+        }
+
+        .util-custom-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .util-custom-row label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .util-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            outline: none;
+            text-align: right;
+            font-family: var(--font-body);
+        }
+
+        /* Quick Log Form */
+        .log-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 18px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .log-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .amount-input-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 10px 12px 10px 28px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .amount-input:focus {
+            border-color: var(--text);
+            background: #FFFFFF;
+        }
+
+        .note-input {
+            flex: 1.6;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            font-family: var(--font-body);
+        }
+
+        .note-input:focus {
+            border-color: var(--text);
+            background: #FFFFFF;
+        }
+
+        .cat-row {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .cat-row::-webkit-scrollbar {
             display: none;
+        }
+
+        .cat-chip {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--card-subtle);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .cat-chip.selected {
+            background: var(--text);
+            color: #FFFFFF;
+            border-color: var(--text);
+        }
+
+        .log-btn {
+            background: var(--text);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s ease;
+        }
+
+        .log-btn:active {
+            opacity: 0.85;
+        }
+
+        /* Transactions Stream */
+        .tx-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tx-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .tx-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .tx-desc {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .tx-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .tx-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tx-amount {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .tx-del {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+
+        .tx-del:hover {
+            color: var(--red);
+        }
+
+        .tx-empty {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 16px 0;
+            font-style: italic;
+        }
+
+        /* Fixed Shield Bottom Footer */
+        .shield-footer {
+            background: var(--card-subtle);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .shield-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .shield-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .shield-item strong {
+            display: block;
+            color: var(--text);
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
 
-<div class="app-shell" id="app">
+<div class="container">
     <!-- Header -->
     <header>
-        <div class="logo-text">BTCR Ledger Notarial Courts</div>
+        <div>
+            <div class="brand-title">Victoria Court</div>
+            <div class="brand-sub">Lifestyle &amp; Utility Spend Monitor</div>
+        </div>
+        <div class="month-pill">
+            <span class="month-name" id="hdr-month">September 2026</span>
+            <span class="month-days" id="hdr-days">Day 2 of 30 · 28d left</span>
+        </div>
     </header>
 
-    <div class="screens-container">
+    <!-- HERO: LIFESTYLE SPEND REMAINING -->
+    <div class="hero-card">
+        <div class="hero-badge-row">
+            <div class="status-pill under" id="hero-pill">
+                <span id="hero-pill-icon">●</span> <span id="hero-pill-text">UNDER BUDGET</span>
+            </div>
+            <div class="saving-guarantee">
+                🛡️ $2,000/mo Savings Locked
+            </div>
+        </div>
+
+        <div class="hero-metric">
+            <div class="metric-label">Lifestyle Spend Remaining</div>
+            <div class="metric-value under" id="hero-remaining-val">$3,137.75</div>
+            <div class="metric-sub" id="hero-remaining-sub">
+                You have <strong>$112.06 / day</strong> safe to spend for the next 28 days
+            </div>
+        </div>
+
+        <!-- Visual Progress Bar -->
+        <div class="progress-track">
+            <div class="progress-fill" id="hero-progress" style="width: 0%; background-color: var(--green);"></div>
+        </div>
+
+        <!-- 3-Col Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-box-title">Adjusted Budget</div>
+                <div class="stat-box-val" id="stat-adjusted-budget">$3,137.75</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-title">Total Spent</div>
+                <div class="stat-box-val" id="stat-total-spent">$0.00</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-title">Daily Pace</div>
+                <div class="stat-box-val" id="stat-daily-pace">$0.00 / day</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DYNAMIC UTILITY ADJUSTMENT CARD -->
+    <div class="utility-card">
+        <div class="card-header-row">
+            <div class="card-title">
+                ⚡ Utility Balance Adjustment
+            </div>
+            <div class="util-impact-badge neutral" id="util-impact-badge">
+                $0 Delta
+            </div>
+        </div>
         
-        <!-- 1. DASHBOARD SCREEN -->
-        <div class="screen active" id="screen-dashboard">
-            
-            <!-- BLOCK 1: THE ASK (Primary Focus) -->
-            <div class="ask-card">
-                <div class="ask-header">
-                    <div class="ask-title">Phase 1 Move-In Funding Gap (The Ask)</div>
-                    <div class="status-pill ask" id="dash-gap-status">🔴 Funding Request</div>
-                </div>
-                <div class="ask-val" id="dash-funding-gap">$39,091.00</div>
-                <div class="ask-sub" id="dash-gap-equation">
-                    Phase 1 still to pay ($42,091.00) − Daniel October contribution ($3,000.00) = Request for Parents ($39,091.00)
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-bottom: 10px;">
-                    <span>Daniel pays: <span id="dash-self-funded">$14,189.00</span> ($11.2k furn paid + $3k Oct)</span>
-                    <span style="color: var(--blue);">🎯 Target: Oct 28 Move-In</span>
-                </div>
-                <div class="ask-callout">
-                    📋 <strong>Capital Plan</strong>: Parents fund $39,091 Phase 1 Move-In + $4,251 Phase 2 ($43,342 Total). Daniel saves $2,563 cash contingency buffer in Oct &amp; keeps £8,000 Monzo UK reserve 100% untouched. Phases 3 &amp; 4 ($23,105) 100% self-funded after 2028.
-                </div>
-            </div>
-
-            <!-- BLOCK 2 & 3: MORTGAGE & LIVING SPLIT -->
-            <div class="split-grid">
-                <!-- Mortgage Card -->
-                <div class="mortgage-card">
-                    <div class="mortgage-title">🏠 Mortgage</div>
-                    <div class="mortgage-val" id="dash-mortgage-val">$3,305.55</div>
-                    <div class="mortgage-sub" id="dash-mortgage-sub">
-                        First payment 11/01/2026* · <span id="dash-mortgage-days">62 days</span>
-                    </div>
-                    <div style="font-size: 9px; font-weight: 700; margin-top: 6px; color: var(--green);" id="dash-mortgage-covered">
-                        Covered through Dec 2026 (4 mo)
-                    </div>
-                </div>
-
-                    <!-- Living Card -->
-                    <div class="living-card">
-                        <div class="living-title">Lifestyle This Month</div>
-                        <div class="living-val" id="dash-living-remaining">$3,500.00</div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="dash-living-bar" style="width: 0%;"></div>
-                        </div>
-                        <div style="font-size: 9px; color: var(--text-muted); display: flex; justify-content: space-between;">
-                            <span id="dash-living-daily">$112.90/day</span>
-                            <span id="dash-living-pace" style="color: var(--green); font-weight: 600;">✅ On pace</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BLOCK 4: CASH TILES -->
-                <div class="cash-grid">
-                    <div class="cash-tile">
-                        <div class="cash-lbl">Total Cash</div>
-                        <div class="cash-val" id="dash-total-cash">$0.00</div>
-                    </div>
-                    <div class="cash-tile">
-                        <div class="cash-lbl">Held Back (3mo)</div>
-                        <div class="cash-val" id="dash-runway-hold">$23,791.65</div>
-                    </div>
-                    <div class="cash-tile highlight">
-                        <div class="cash-lbl">Available Cash</div>
-                        <div class="cash-val" id="dash-available-cash">$0.00</div>
-                    </div>
-                </div>
-
-                <!-- BLOCK 5: 3-PHASE MONTHLY FORECAST -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Monthly Cash Flow Timeline</h3>
-                        <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">Bi-Weekly Cash Flow</span>
-                    </div>
-
-                    <div style="overflow-x: auto;">
-                        <table class="clean-table" style="font-size: 12px;">
-                            <thead>
-                                <tr style="border-bottom: 2px solid var(--border);">
-                                    <th>Item</th>
-                                    <th style="text-align: right;">Sep 2026<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">1st Pay Sep 25</span></th>
-                                    <th style="text-align: right;">Oct 2026<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">2 Paychecks</span></th>
-                                    <th style="text-align: right;">Nov 2026+<br><span style="font-size: 9px; font-weight: normal; color: var(--text-muted);">Mortgage Starts</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>💼 Net Inflow (Salary + Donation)</td>
-                                    <td style="text-align: right; font-weight: 600; color: var(--green);">$3,827.31</td>
-                                    <td style="text-align: right; font-weight: 600; color: var(--green);">$9,568.30</td>
-                                    <td style="text-align: right; font-weight: 700; color: var(--green);">$9,568.30</td>
-                                </tr>
-                                <tr>
-                                    <td>🏠 Mortgage</td>
-                                    <td style="text-align: right; color: var(--text-muted);">$0.00</td>
-                                    <td style="text-align: right; color: var(--text-muted);">$0.00</td>
-                                    <td style="text-align: right; font-weight: 600; color: var(--red);">−$3,305.55</td>
-                                </tr>
-                                <tr>
-                                    <td>🏢 HOA (starts Sep)</td>
-                                    <td style="text-align: right; font-weight: 600;">−$375.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$375.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$375.00</td>
-                                </tr>
-                                <tr>
-                                    <td>⚡ Electricity (LUMA Upper Est)</td>
-                                    <td style="text-align: right; color: var(--text-muted);">−$100.00</td>
-                                    <td style="text-align: right; color: var(--text-muted);">−$100.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$630.00</td>
-                                </tr>
-                                <tr>
-                                    <td>💧 Water (AAA Upper Est)</td>
-                                    <td style="text-align: right; color: var(--text-muted);">−$30.00</td>
-                                    <td style="text-align: right; color: var(--text-muted);">−$30.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$120.00</td>
-                                </tr>
-                                <tr>
-                                    <td>🛒 Lifestyle Budget</td>
-                                    <td style="text-align: right; font-weight: 600;">−$3,500.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$3,500.00</td>
-                                    <td style="text-align: right; font-weight: 600;">−$3,500.00</td>
-                                </tr>
-                                <tr style="border-top: 1px solid var(--border); font-weight: 600;">
-                                    <td>Total Outflows</td>
-                                    <td style="text-align: right; color: var(--red);">−$4,005.00</td>
-                                    <td style="text-align: right; color: var(--red);">−$4,005.00</td>
-                                    <td style="text-align: right; color: var(--red);">−$7,930.55</td>
-                                </tr>
-                                <tr style="border-top: 2px solid var(--border); font-weight: 700; font-size: 13px;">
-                                    <td>Net Monthly Surplus</td>
-                                    <td style="text-align: right; color: var(--text-muted);">−$177.69</td>
-                                    <td style="text-align: right; color: var(--green);">+$5,563.30</td>
-                                    <td style="text-align: right; color: var(--green);">+$1,637.75/mo</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
-                        ⚡ Net Inflow includes $100k taxable salary + $50k tax-free donation ($4,784.15 per paycheck). Utilities modeled at realistic upper living range ($630 LUMA power + $120 AAA water). Ongoing surplus after mortgage &amp; $3,500 lifestyle spend is <strong>+$1,637.75 / month</strong>!
-                    </div>
-                </div>
-
-            <!-- BLOCK 6: HOME SUMMARY -->
-            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Home Renovation</div>
-                    <div style="font-size: 13px; font-weight: 600; margin-top: 2px;" id="dash-home-spent">Total Spent: $10,700.00</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Target Move-In</div>
-                    <div style="font-size: 13px; font-weight: 700; color: var(--blue);" id="dash-movein-days">🎯 10/28/2026 · 58 days</div>
-                </div>
-            </div>
-
-            <!-- BLOCK 7: FAMILY BALANCE -->
-            <div class="card" style="background-color: var(--bg); border-style: dashed; padding: 14px;">
-                <div style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Family Balance (Unsettled)</div>
-                <div style="font-size: 12px; font-weight: 600;">Owed to Milton (unsettled): —</div>
-                <div style="font-size: 9px; color: var(--text-muted); margin-top: 4px; line-height: 1.35;">
-                    $1,100,000 paid in cash by father, June 2026. $550,000 repaid via mortgage. Remaining $550,000 not yet settled.
-                </div>
-            </div>
-            
+        <div class="util-explainer" id="util-explainer-text">
+            Baseline living utilities are set at <strong>$750.00/mo</strong>. If your LUMA and AAA bills are lower or higher, your lifestyle spend adjusts dollar-for-dollar so your $2,000 savings is never impacted.
         </div>
 
-        <!-- 2. LIVING TAB -->
-        <div class="screen" id="screen-living">
-            <div class="card" style="text-align: center; padding: 24px 16px;">
-                <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px;">Living Spend Dial (Single Cap)</div>
-                <div style="font-family: var(--font-hero); font-size: 2.8rem; font-weight: 700; color: var(--text);" id="living-tab-remaining">$2,000.00</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Remaining of $2,000.00 Monthly Ceiling</div>
-                
-                <div class="progress-bar-bg" style="height: 10px; border-radius: 5px;">
-                    <div class="progress-bar-fill" id="living-tab-bar" style="width: 0%; border-radius: 5px;"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 6px;">
-                    <span id="living-tab-spent">$0.00 spent (0%)</span>
-                    <span id="living-tab-daily">$64.51 / day left</span>
-                </div>
-            </div>
-
-            <!-- Explanatory Category Breakdown (NO INDIVIDUAL CAPS) -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 10px;">Category Breakdown (Explanatory Only)</h3>
-                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 12px;">Categories explain where money went. Only the $2,000 total is a hard limit.</div>
-                
-                <table class="clean-table" id="living-cat-table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th style="text-align: right;">Spent</th>
-                            <th style="text-align: right;">Share</th>
-                        </tr>
-                    </thead>
-                    <tbody id="living-cat-tbody">
-                        <!-- Populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Recent Living Expenses -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">Recent Living Expenses</h3>
-                    <span id="living-tx-count" style="font-size: 10px; color: var(--text-muted);">0 transactions</span>
-                </div>
-                <div id="living-tx-container">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- 6-Month Trend Chart -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">6-Month Spend Trend</h3>
-                <div style="width: 100%; height: 90px; position: relative;">
-                    <svg id="living-trend-svg" style="width: 100%; height: 100%; overflow: visible;"></svg>
-                </div>
-            </div>
+        <!-- Preset Buttons -->
+        <div class="preset-row">
+            <button class="preset-btn" onclick="setUtilityPreset(130, 'Construction (Sep–Oct)')">Sep $130</button>
+            <button class="preset-btn" onclick="setUtilityPreset(500, 'Moderate Cooler')">$500</button>
+            <button class="preset-btn active" onclick="setUtilityPreset(750, 'Baseline Upper')">Base $750</button>
+            <button class="preset-btn" onclick="setUtilityPreset(900, 'High Summer')">$900</button>
         </div>
 
-        <!-- 3. HOME TAB -->
-        <div class="screen" id="screen-home">
-            <!-- 3 Tiles -->
-            <div class="cash-grid" style="margin-bottom: 14px;">
-                <div class="cash-tile">
-                    <div class="cash-lbl">Phase 1 Move-In</div>
-                    <div class="cash-val" style="color: var(--text);" id="home-p1-val">$57,680</div>
-                </div>
-                <div class="cash-tile">
-                    <div class="cash-lbl">P1 Still to Pay</div>
-                    <div class="cash-val" style="color: var(--red);" id="home-still-val">$35,891</div>
-                </div>
-                <div class="cash-tile">
-                    <div class="cash-lbl">All 4 Phases Total</div>
-                    <div class="cash-val" id="home-allin-val">$90,278</div>
-                </div>
-            </div>
-
-            <div class="card" style="padding: 14px 18px; margin-bottom: 14px;">
-                <div style="font-size: 12px; font-weight: 700; color: var(--blue);">🎯 Target Move-In: October 28, 2026 (Phase 1 Completion)</div>
-                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Direct from Victoria Court Project Management Tracker.xlsx</div>
-            </div>
-
-            <!-- 4-Phase Roadmap Table -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600;">4-Phase Home Updates Roadmap</h3>
-                    <span class="status-pill funded" style="font-size: 10px; font-weight: 700;">Full Scope</span>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table class="clean-table" style="font-size: 11px;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid var(--border);">
-                                <th>Phase & Timing</th>
-                                <th style="text-align: right;">Building</th>
-                                <th style="text-align: right;">Furniture</th>
-                                <th style="text-align: right;">Total Expected</th>
-                                <th style="text-align: right;">Daniel Pays</th>
-                                <th style="text-align: right;">Parents Fund</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Phase 1: Moving Essentials</strong><br><span style="font-size: 9px; color: var(--text-muted);">Aug – Oct 2026 (Move-In Oct 28)</span></td>
-                                <td style="text-align: right;">$39,900</td>
-                                <td style="text-align: right;">$24,080</td>
-                                <td style="text-align: right; font-weight: 700; color: var(--blue);">$63,980</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--green);">$14,189</td>
-                                <td style="text-align: right; font-weight: 700; color: var(--red);">$39,091</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Phase 2: TVs, Audio, Guest 1</strong><br><span style="font-size: 9px; color: var(--text-muted);">Dec 2026 – Mar 2027</span></td>
-                                <td style="text-align: right;">$0</td>
-                                <td style="text-align: right;">$7,602</td>
-                                <td style="text-align: right; font-weight: 600;">$7,602</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--green);">$3,351</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--red);">$4,251</td>
-                            </tr>
-                            <tr style="background: var(--bg-alt); font-weight: 600;">
-                                <td>🎯 Subtotal Funding Request (Phases 1 &amp; 2)</td>
-                                <td style="text-align: right;">$39,900</td>
-                                <td style="text-align: right;">$31,682</td>
-                                <td style="text-align: right; color: var(--blue);">$71,582</td>
-                                <td style="text-align: right; color: var(--green);">$17,540</td>
-                                <td style="text-align: right; color: var(--red); font-weight: 700;">$43,342</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Phase 3: Suites, Computer &amp; Art</strong><br><span style="font-size: 9px; color: var(--text-muted);">2028 (100% Self-Funded)</span></td>
-                                <td style="text-align: right;">$0</td>
-                                <td style="text-align: right;">$6,770</td>
-                                <td style="text-align: right; font-weight: 600;">$6,770</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--green);">$6,770</td>
-                                <td style="text-align: right; color: var(--text-muted);">$0</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Phase 4: Pergola, BBQ, Glass &amp; Art</strong><br><span style="font-size: 9px; color: var(--text-muted);">2028 (100% Self-Funded)</span></td>
-                                <td style="text-align: right;">$13,500</td>
-                                <td style="text-align: right;">$2,835</td>
-                                <td style="text-align: right; font-weight: 600;">$16,335</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--green);">$16,335</td>
-                                <td style="text-align: right; color: var(--text-muted);">$0</td>
-                            </tr>
-                            <tr style="border-top: 2px solid var(--border); font-weight: 700; font-size: 12px;">
-                                <td>All 4 Phases Grand Total</td>
-                                <td style="text-align: right;">$53,400</td>
-                                <td style="text-align: right;">$41,287</td>
-                                <td style="text-align: right; color: var(--text); font-size: 13px;">$94,687</td>
-                                <td style="text-align: right; color: var(--green);">$40,645</td>
-                                <td style="text-align: right; color: var(--red);">$43,342</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Contractor Disbursements Schedule -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Phase 1 Building Works Schedule</h3>
-                <table class="clean-table">
-                    <thead>
-                        <tr>
-                            <th>Milestone / Trade</th>
-                            <th>Target Date</th>
-                            <th style="text-align: right;">Status & Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Davis Facias Deposit (50%)</td>
-                            <td>Jul 12, 2026</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--green);">✅ $10,700.00 (Paid)</td>
-                        </tr>
-                        <tr>
-                            <td>Davis Facias Progress (25%)</td>
-                            <td>Sep 2026 (75% work)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $5,350.00</td>
-                        </tr>
-                        <tr>
-                            <td>Davis Facias Final (25%)</td>
-                            <td>Oct 2026 (Signoff)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $5,350.00</td>
-                        </tr>
-                        <tr>
-                            <td>Davis Contingencies & Incidentals</td>
-                            <td>Oct 2026</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $2,000.00</td>
-                        </tr>
-                        <tr>
-                            <td>8x Specialty Trades (Closet, Bar, TV, Glass, Drapery)</td>
-                            <td>Oct 2026</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $10,200.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="font-size: 9px; color: var(--text-muted); margin-top: 8px;">
-                    Phase 1 Building Total: $33,600.00 ($10,700 Paid · $22,900 Remaining Still to Pay)
-                </div>
-            </div>
-
-            <!-- Phase 1 Furniture Status -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">Phase 1 Furniture Status</h3>
-                <table class="clean-table">
-                    <tbody>
-                        <tr>
-                            <td>5 Ordered Items (Committed)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--green);">✅ $11,089.00</td>
-                        </tr>
-                        <tr>
-                            <td>Move-In Essentials to Buy (Mattress, Rugs, Cookware, etc.)</td>
-                            <td style="text-align: right; font-weight: 600; color: var(--red);">⏳ $12,991.00</td>
-                        </tr>
-                        <tr style="border-top: 1px solid var(--border);">
-                            <td><strong>Phase 1 Furniture Expected Total</strong></td>
-                            <td style="text-align: right; font-weight: 700; color: var(--text); font-size: 13px;">$24,080.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="font-size: 9px; color: var(--text-muted); margin-top: 8px;">
-                    Phase 1 Move-In Still to Buy: $12,991.00 (5 items ordered, remaining move-in essentials pending purchase).
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. ACCOUNTS & SETTINGS TAB -->
-        <div class="screen" id="screen-accounts">
-            <!-- Accounts List -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Connected Accounts</h3>
-                <div id="accounts-list-container">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- Google Sheets Sync Configuration -->
-            <div class="card">
-                <h3 style="font-family: var(--font-hero); font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Google Sheets API Sync</h3>
-                <div class="form-group">
-                    <label>Google Apps Script Web App URL</label>
-                    <input type="text" class="form-input" id="setting-sheets-url" placeholder="https://script.google.com/macros/s/.../exec">
-                    <span style="font-size: 9px; color: var(--text-muted); display: block; margin-top: 4px;">Paste the deployed Web App URL from your Victoria Court Budget Tracker Google Sheet.</span>
-                </div>
-                <button class="btn btn-blue" id="btn-save-sync" onclick="saveSettings()">Save & Sync Cloud</button>
-            </div>
-
-            <!-- Statement CSV Uploader -->
-            <div class="card" style="text-align: center; border-style: dashed; padding: 20px;" id="upload-box" onclick="document.getElementById('csv-file-input').click()">
-                <div style="font-size: 24px; margin-bottom: 6px;">📥</div>
-                <div style="font-size: 13px; font-weight: 600;">Import CSV Statement</div>
-                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Supports Monzo, Bank of America, Banco Popular, Capital One</div>
-                <input type="file" id="csv-file-input" style="display: none;" accept=".csv,.tsv">
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-danger" onclick="resetAppData()" style="width: auto; padding: 8px 18px; font-size: 11px; margin: 0 auto;">Clear Local Cache</button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Floating Action Button for Quick Add -->
-    <div class="fab" id="floating-quick-add" onclick="openQuickAddDrawer()">+</div>
-
-    <!-- Quick Add Drawer Overlay -->
-    <div class="drawer-backdrop" id="quick-add-backdrop" onclick="closeQuickAddDrawer()"></div>
-    <div class="quick-add-drawer" id="quick-add-drawer">
-        <h3 style="font-family: var(--font-hero); font-size: 1.3rem; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
-            <span>Log Expense</span>
-            <span style="cursor: pointer; font-size: 18px; color: var(--text-muted);" onclick="closeQuickAddDrawer()">✕</span>
-        </h3>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 10px;">
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Amount (USD $)</label>
-                <input type="number" step="0.01" class="form-input" id="qa-amount" placeholder="0.00">
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Account</label>
-                <select class="form-input" id="qa-account" style="padding: 9px 6px;">
-                    <option value="Banco Popular">Popular</option>
-                    <option value="Capital One Venture X">CapOne</option>
-                    <option value="Bank of America">BofA</option>
-                    <option value="Monzo Current">Monzo</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Merchant / Description</label>
-            <input type="text" class="form-input" id="qa-merchant" placeholder="e.g. SuperMax, Econo, Uber, Airbnb">
-        </div>
-
-        <div class="form-group">
-            <label>Category</label>
-            <select class="form-input" id="qa-category">
-                <option value="Groceries">🛒 Groceries</option>
-                <option value="Dining">🍔 Dining</option>
-                <option value="Transport">🚗 Transport</option>
-                <option value="Travel">✈️ Travel</option>
-                <option value="Health">🏋️ Health</option>
-                <option value="Shopping">🛍️ Shopping</option>
-                <option value="Other">📦 Other</option>
-                <option value="Renovation">🛠️ Renovation (Home)</option>
-                <option value="Mortgage">🏠 Mortgage (Fixed)</option>
-                <option value="Utilities">⚡ Utilities (Fixed)</option>
-                <option value="HOA">🏢 HOA (Fixed)</option>
-            </select>
-        </div>
-
-        <button class="btn btn-blue" onclick="submitQuickExpense(event)" style="margin-top: 10px;">Save Transaction</button>
-    </div>
-
-    <!-- Navigation Tab Bar -->
-    <div class="nav-bar">
-        <div class="nav-item active" data-target="dashboard">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            Dashboard
-        </div>
-        <div class="nav-item" data-target="living">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-            Living
-        </div>
-        <div class="nav-item" data-target="home">
-            <svg viewBox="0 0 24 24"><path d="M19 9.3V4h-3v2.6L12 3 2 12h3v8h6v-6h2v6h6v-8h3l-3-2.7z"/></svg>
-            Home
-        </div>
-        <div class="nav-item" data-target="accounts">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            Accounts
+        <!-- Custom Input -->
+        <div class="util-custom-row">
+            <label for="actual-util-input">Actual Utilities Logged ($):</label>
+            <input type="number" id="actual-util-input" class="util-input" value="750.00" step="5" oninput="onCustomUtilityChange(this.value)">
         </div>
     </div>
 
-    <!-- Live Update Toast -->
-    <div id="update-toast" style="position: fixed; bottom: 85px; left: 16px; right: 16px; background-color: var(--text); color: #ffffff; padding: 12px 18px; border-radius: 14px; display: none; align-items: center; justify-content: space-between; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
-        <span style="font-size: 11px; font-weight: 500;">New version available!</span>
-        <button onclick="activateAppUpdate()" style="background-color: var(--blue); border: none; border-radius: 8px; color: #ffffff; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; outline: none;">Restart & Update</button>
+    <!-- QUICK LOG EXPENSE -->
+    <div class="log-card">
+        <div class="card-title">
+            ✍️ Quick Log Expense
+        </div>
+
+        <div class="log-input-row">
+            <div class="amount-input-wrap">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="log-amount" class="amount-input" placeholder="0.00" step="0.01">
+            </div>
+            <input type="text" id="log-note" class="note-input" placeholder="Merchant or note (e.g. Dinner)">
+        </div>
+
+        <div class="cat-row">
+            <button class="cat-chip selected" onclick="selectCategory(this, 'Dining')">🍽️ Dining</button>
+            <button class="cat-chip" onclick="selectCategory(this, 'Groceries')">🛒 Groceries</button>
+            <button class="cat-chip" onclick="selectCategory(this, 'Coffee')">☕ Coffee</button>
+            <button class="cat-chip" onclick="selectCategory(this, 'Shopping')">🛍️ Shopping</button>
+            <button class="cat-chip" onclick="selectCategory(this, 'Transport')">🚕 Transport</button>
+            <button class="cat-chip" onclick="selectCategory(this, 'Other')">📦 Other</button>
+        </div>
+
+        <button class="log-btn" onclick="addExpense()">+ Log to Lifestyle Spend</button>
+    </div>
+
+    <!-- TRANSACTIONS STREAM -->
+    <div class="tx-card">
+        <div class="card-header-row">
+            <div class="card-title" style="font-size: 1.05rem;">
+                📋 This Month's Expenses
+            </div>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="tx-count">0 items</span>
+        </div>
+
+        <div class="tx-list" id="tx-list">
+            <div class="tx-empty">No expenses logged yet this month.</div>
+        </div>
+    </div>
+
+    <!-- PROTECTED RESERVES SHIELD -->
+    <div class="shield-footer">
+        <div class="shield-title">
+            🛡️ Protected Financial Core
+        </div>
+        <div class="shield-grid">
+            <div class="shield-item">
+                Monthly Savings
+                <strong style="color: var(--green);">$2,000 / mo</strong>
+            </div>
+            <div class="shield-item">
+                Housing Fixed
+                <strong>$3,680.55 / mo</strong>
+            </div>
+            <div class="shield-item">
+                UK Reserve
+                <strong style="color: var(--blue);">£8,000 Intact</strong>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // ─── STATE STORE ──────────────────────────────────────────────────────────
-    let appState = {
-        living_ceiling: 3500.00,
-        mortgage_payment: 3305.55,
-        mortgage_first_payment_date: "2026-11-01",
-        utilities_est: 750.00,
-        hoa_amount: 375.00,
-        runway_months: 3,
-        gbp_usd_rate: 1.27,
-        move_in_date: "2026-10-28",
-        annual_total_income: 150000.00,
-        annual_taxable_salary: 100000.00,
-        annual_nontax_donation: 50000.00,
-        biweekly_salary_gross: 3846.15,
-        biweekly_nontax: 1923.08,
-        biweekly_salary_net: 4784.15, // $2,861.07 taxable net + $1,923.08 tax-free
-        monthly_salary: 9568.30, // 2 bi-weekly checks ($4,784.15 * 2); annualized avg is $10,365.66
-        salary_start_date: "2026-09-09",
-        first_paycheck_date: "2026-09-25",
-        first_paycheck: 3827.31,
-        
-        // 4-Phase Home Updates Roadmap (From Victoria Court Tracker.xlsx)
-        reno_p1_total: 63980.00,
-        reno_p1_paid: 21889.00,
-        reno_p1_still_to_pay: 42091.00,
-        reno_p1_daniel_pays: 3000.00,
-        reno_p1_father_pays: 39091.00,
-        reno_p2_total: 7602.00,
-        reno_p2_daniel_pays: 3351.00,
-        reno_p2_father_pays: 4251.00,
-        reno_p3_total: 6770.00,
-        reno_p4_total: 16335.00,
-        reno_grand_total: 94687.00,
-        reno_grand_still_to_pay: 68489.00,
-        reno_grand_daniel_pays: 6787.27,
-        reno_grand_father_pays: 61701.73,
-        
-        accounts: [
-            { id: "acc_1", name: "Banco Popular", institution: "Banco Popular", type: "Checking", currency: "USD", balance: 0.00, status: "Active", include_in_available: true, feed: "SimpleFIN" },
-            { id: "acc_2", name: "Capital One Venture X", institution: "Capital One", type: "Credit Card", currency: "USD", balance: 0.00, status: "Active", include_in_available: false, feed: "SimpleFIN" },
-            { id: "acc_3", name: "Bank of America", institution: "Bank of America", type: "Checking", currency: "USD", balance: 0.00, status: "Winding Down", include_in_available: true, feed: "None" },
-            { id: "acc_4", name: "Monzo Current", institution: "Monzo", type: "Checking", currency: "GBP", balance: 8000.00, status: "Winding Down", include_in_available: true, feed: "Manual" },
-            { id: "acc_5", name: "Monzo Flex", institution: "Monzo", type: "Credit Card", currency: "GBP", balance: 0.00, status: "Closed", include_in_available: false, feed: "Closed" }
-        ],
-        transactions: []
+    // ── CORE FINANCIAL MODEL CONSTANTS ──
+    const BASE_LIFESTYLE = 3137.75;      // Target lifestyle ceiling ($101.22/day)
+    const BASE_UTILITIES = 750.00;       // Upper baseline utility estimate
+    const FIXED_HOUSING = 3680.55;       // Mortgage $3,305.55 + HOA $375.00
+    const MONTHLY_SAVINGS_TARGET = 2000; // Strict $2,000/mo injection
+
+    // App State (Persisted in localStorage)
+    let state = {
+        actual_utilities: 750.00,
+        utility_label: 'Baseline Upper',
+        selected_category: 'Dining',
+        expenses: []
     };
 
-    const LIVING_CATEGORIES = ["Groceries", "Dining", "Transport", "Travel", "Health", "Shopping", "Other"];
-
-    // ─── INITIALIZATION ───────────────────────────────────────────────────────
-    let newWorker;
-    document.addEventListener("DOMContentLoaded", () => {
-        loadState();
-        setupNavigation();
-        setupServiceWorker();
-        renderAll();
-    });
-
-    function setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-bar .nav-item');
-        const screens = {
-            dashboard: document.getElementById('screen-dashboard'),
-            living: document.getElementById('screen-living'),
-            home: document.getElementById('screen-home'),
-            accounts: document.getElementById('screen-accounts')
-        };
-        const fab = document.getElementById('floating-quick-add');
-
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const target = item.getAttribute('data-target');
-                navItems.forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
-
-                Object.keys(screens).forEach(k => screens[k].classList.remove('active'));
-                screens[target].classList.add('active');
-
-                fab.style.display = (target === 'dashboard' || target === 'living') ? 'flex' : 'none';
-            });
-        });
-
-        document.getElementById('csv-file-input').addEventListener('change', handleCsvUpload);
-    }
-
-    let registration;
-    function setupServiceWorker() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(reg => {
-                registration = reg;
-
-                // 1. Force update check immediately
-                reg.update();
-
-                // 2. Check if a worker is already waiting
-                if (reg.waiting) {
-                    newWorker = reg.waiting;
-                    showUpdateToast();
-                }
-
-                // 3. Listen for new worker updates
-                reg.addEventListener('updatefound', () => {
-                    newWorker = reg.installing;
-                    if (newWorker) {
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                showUpdateToast();
-                            }
-                        });
-                    }
-                });
-            }).catch(err => {
-                console.warn("ServiceWorker registration failed", err);
-            });
-
-            // Listen for controller changes to reload automatically
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
-                    window.location.reload();
-                    refreshing = true;
-                }
-            });
-        }
-    }
-
-    function showUpdateToast() {
-        const toast = document.getElementById('update-toast');
-        if (toast) {
-            toast.style.display = 'flex';
-        }
-    }
-
-    function activateAppUpdate() {
-        if (newWorker) {
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
-        } else if (registration && registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        } else {
-            if ('caches' in window) {
-                caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))))
-                      .then(() => window.location.reload(true));
-            } else {
-                window.location.reload(true);
-            }
-        }
-    }
-
-    // ─── CORE FINANCIAL ENGINE ────────────────────────────────────────────────
-    function calculateMetrics() {
-        const today = new Date();
-        const currentMonthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-
-        // 1. Monthly Cost Base
-        const monthlyCost = appState.mortgage_payment + appState.utilities_est + appState.hoa_amount + appState.living_ceiling;
-
-        // 2. Total Cash in USD
-        let totalCash = 0;
-        appState.accounts.forEach(acc => {
-            if (acc.include_in_available && acc.status !== "Closed") {
-                const balUSD = acc.currency === "GBP" ? acc.balance * appState.gbp_usd_rate : acc.balance;
-                totalCash += balUSD;
-            }
-        });
-
-        // 3. Runway Hold & Available Cash
-        const runwayHold = appState.runway_months * monthlyCost;
-        const availableCash = Math.max(0, totalCash - runwayHold);
-        const cashDeficit = Math.max(0, runwayHold - totalCash);
-
-        // 4. Home Updates Totals (4-Phase Schedule)
-        const renoP1Total = appState.reno_p1_total || 63980.00;
-        const renoP1Paid = appState.reno_p1_paid || 21889.00;
-        const renoP1StillToPay = appState.reno_p1_still_to_pay || 42091.00;
-        const renoGrandTotal = appState.reno_grand_total || 94687.00;
-        const danielPhase1Contribution = appState.reno_p1_daniel_pays || 3000.00;
-
-        // 5. The Ask (Funding Gap for Phase 1 Move-In)
-        const fundingGap = Math.max(0, renoP1StillToPay - danielPhase1Contribution);
-        const selfFunded = danielPhase1Contribution;
-
-        // 6. Mortgage Coverage
-        const mortgageCoveredMonths = monthlyCost <= 0 ? 0 : Math.floor(totalCash / monthlyCost);
-        const firstPayDate = new Date(appState.mortgage_first_payment_date);
-        const msPerDay = 1000 * 60 * 60 * 24;
-        const daysToFirstPayment = Math.max(0, Math.ceil((firstPayDate - today) / msPerDay));
-
-        // Helper to match current month
-        function isCurrentMonth(dStr) {
-            if (!dStr) return false;
-            const str = dStr.toString().trim();
-            if (str.startsWith(currentMonthKey)) return true;
-            const d = new Date(str);
-            if (!isNaN(d.getTime())) {
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                return `${y}-${m}` === currentMonthKey;
-            }
-            return false;
-        }
-
-        // 7. Living Spend Current Month
-        const currentMonthTxs = appState.transactions.filter(t => (t.tier === "Living" || !t.tier) && isCurrentMonth(t.date));
-        const livingSpendMTD = currentMonthTxs.reduce((sum, t) => sum + (parseFloat(t.amount_usd) || 0), 0);
-        const livingRemaining = appState.living_ceiling - livingSpendMTD;
-        const livingPctUsed = appState.living_ceiling <= 0 ? 0 : livingSpendMTD / appState.living_ceiling;
-
-        const dayOfMonth = today.getDate();
-        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-        const remainingDays = Math.max(1, daysInMonth - dayOfMonth);
-        const dailyAllowance = livingRemaining <= 0 ? 0 : livingRemaining / remainingDays;
-        const expectedPace = appState.living_ceiling * (dayOfMonth / daysInMonth);
-        const paceDelta = livingSpendMTD - expectedPace;
-
-        // 8. Move-in countdown
-        const moveInDate = new Date(appState.move_in_date);
-        const daysToMoveIn = Math.max(0, Math.ceil((moveInDate - today) / msPerDay));
-
-        return {
-            monthlyCost, totalCash, runwayHold, availableCash, cashDeficit,
-            renoP1Total, renoP1Paid, renoP1StillToPay, renoGrandTotal, renoGrandStillToPay,
-            fundingGap, selfFunded,
-            mortgageCoveredMonths, daysToFirstPayment,
-            livingSpendMTD, livingRemaining, livingPctUsed, dailyAllowance, paceDelta,
-            daysToMoveIn, currentMonthKey, currentMonthTxs
-        };
-    }
-
-    // ─── RENDERING ────────────────────────────────────────────────────────────
-    function renderAll() {
-        const m = calculateMetrics();
-
-        // 1. Dashboard Block 1: The Ask
-        document.getElementById('dash-funding-gap').innerText = fmtUSD(m.fundingGap);
-        document.getElementById('dash-self-funded').innerText = fmtUSD(m.selfFunded);
-        document.getElementById('dash-gap-equation').innerText = 
-            `Phase 1 still to pay (${fmtUSD(m.renoP1StillToPay)}) − Daniel contributes (${fmtUSD(m.selfFunded)}) = Ask for Father`;
-        
-        const gapStatus = document.getElementById('dash-gap-status');
-        if (m.fundingGap === 0) {
-            gapStatus.innerText = "✅ Fully Self-Funded";
-            gapStatus.className = "status-pill funded";
-            document.getElementById('dash-funding-gap').style.color = "var(--green)";
-        } else {
-            gapStatus.innerText = "🔴 Ask Required";
-            gapStatus.className = "status-pill ask";
-            document.getElementById('dash-funding-gap').style.color = "var(--red)";
-        }
-
-        // 2. Dashboard Block 2: Mortgage
-        document.getElementById('dash-mortgage-val').innerText = fmtUSD(appState.mortgage_payment);
-        document.getElementById('dash-mortgage-days').innerText = `${m.daysToFirstPayment} days`;
-        const covEl = document.getElementById('dash-mortgage-covered');
-        covEl.innerText = `Covered through ${getFutureMonth(m.mortgageCoveredMonths)} (${m.mortgageCoveredMonths} months)`;
-        covEl.style.color = m.mortgageCoveredMonths >= appState.runway_months ? "var(--green)" : "var(--red)";
-
-        // 3. Dashboard Block 3: Living This Month
-        document.getElementById('dash-living-remaining').innerText = fmtUSD(m.livingRemaining);
-        const barPct = Math.min(100, Math.max(0, m.livingPctUsed * 100));
-        document.getElementById('dash-living-bar').style.width = `${barPct}%`;
-        document.getElementById('dash-living-bar').style.backgroundColor = m.livingPctUsed > 1.0 ? "var(--red)" : (m.livingPctUsed > 0.8 ? "var(--orange)" : "var(--blue)");
-        document.getElementById('dash-living-daily').innerText = `${fmtUSD(m.dailyAllowance)}/day`;
-        
-        const paceEl = document.getElementById('dash-living-pace');
-        if (m.paceDelta > 0) {
-            paceEl.innerText = `⚠️ Hot (+${fmtUSD(m.paceDelta)})`;
-            paceEl.style.color = "var(--orange)";
-        } else {
-            paceEl.innerText = "✅ On pace";
-            paceEl.style.color = "var(--green)";
-        }
-
-        // 4. Dashboard Block 4: Cash
-        document.getElementById('dash-total-cash').innerText = fmtUSD(m.totalCash);
-        document.getElementById('dash-runway-hold').innerText = fmtUSD(m.runwayHold);
-        document.getElementById('dash-available-cash').innerText = fmtUSD(m.availableCash);
-
-        // 5. Dashboard Block 5 & 6
-        document.getElementById('dash-util-val').innerText = appState.utilities_est > 0 ? fmtUSD(appState.utilities_est) : "⚠️ not set";
-        document.getElementById('dash-hoa-val').innerText = appState.hoa_amount > 0 ? fmtUSD(appState.hoa_amount) : "⚠️ not set";
-        document.getElementById('dash-movein-days').innerText = `🎯 10/28/2026 · ${m.daysToMoveIn} days`;
-        document.getElementById('dash-home-spent').innerText = `P1 Spent: ${fmtUSD(m.renoP1Paid)}`;
-
-        // 6. Home Tab
-        const p1ValEl = document.getElementById('home-p1-val');
-        const stillEl = document.getElementById('home-still-val');
-        const allinEl = document.getElementById('home-allin-val');
-        if (p1ValEl) p1ValEl.innerText = fmtUSD(m.renoP1Total);
-        if (stillEl) stillEl.innerText = fmtUSD(m.renoP1StillToPay);
-        if (allinEl) allinEl.innerText = fmtUSD(m.renoGrandTotal);
-
-        // 7. Living Tab
-        document.getElementById('living-tab-remaining').innerText = fmtUSD(m.livingRemaining);
-        document.getElementById('living-tab-bar').style.width = `${barPct}%`;
-        document.getElementById('living-tab-bar').style.backgroundColor = m.livingPctUsed > 1.0 ? "var(--red)" : (m.livingPctUsed > 0.8 ? "var(--orange)" : "var(--blue)");
-        document.getElementById('living-tab-spent').innerText = `${fmtUSD(m.livingSpendMTD)} spent (${Math.round(m.livingPctUsed * 100)}%)`;
-        document.getElementById('living-tab-daily').innerText = `${fmtUSD(m.dailyAllowance)} / day left`;
-
-        renderLivingCategories(m.currentMonthKey, m.livingSpendMTD, m.currentMonthTxs);
-        renderLivingTrend();
-
-        // 8. Accounts Tab
-        renderAccountsList();
-    }
-
-    function renderLivingCategories(monthKey, totalLivingSpend, currentMonthTxs) {
-        const tbody = document.getElementById('living-cat-tbody');
-        tbody.innerHTML = '';
-
-        const catTotals = {};
-        LIVING_CATEGORIES.forEach(c => catTotals[c] = 0);
-
-        (currentMonthTxs || []).forEach(t => {
-            const cat = t.category || "Other";
-            const amt = parseFloat(t.amount_usd) || 0;
-            if (catTotals[cat] !== undefined) {
-                catTotals[cat] += amt;
-            } else {
-                catTotals["Other"] = (catTotals["Other"] || 0) + amt;
-            }
-        });
-
-        LIVING_CATEGORIES.forEach(cat => {
-            const spent = catTotals[cat] || 0;
-            const share = totalLivingSpend > 0 ? (spent / totalLivingSpend) * 100 : 0;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight: 600;">${getCatIcon(cat)} ${cat}</td>
-                <td style="text-align: right; font-weight: 600;">${fmtUSD(spent)}</td>
-                <td style="text-align: right; color: var(--text-muted);">${share.toFixed(1)}%</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        renderRecentTransactions(appState.transactions);
-    }
-
-    function renderRecentTransactions(allTxs) {
-        const container = document.getElementById('living-tx-container');
-        const countEl = document.getElementById('living-tx-count');
-        if (!container) return;
-
-        container.innerHTML = '';
-        const livingTxs = (allTxs || []).filter(t => t.tier === "Living" || !t.tier);
-        if (countEl) countEl.innerText = `${livingTxs.length} transactions`;
-
-        if (livingTxs.length === 0) {
-            container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 16px;">No expenses imported yet.</div>`;
-            return;
-        }
-
-        const sorted = [...livingTxs].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-
-        sorted.slice(0, 40).forEach(t => {
-            const item = document.createElement('div');
-            item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);";
-            item.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 16px;">${getCatIcon(t.category)}</span>
-                    <div>
-                        <div style="font-size: 13px; font-weight: 600;">${t.merchant}</div>
-                        <div style="font-size: 10px; color: var(--text-muted);">${t.date || ''} · ${t.category || 'Other'} · ${t.account || ''}</div>
-                    </div>
-                </div>
-                <div style="text-align: right; font-weight: 700; font-size: 13px; color: var(--text);">
-                    ${fmtUSD(t.amount_usd)}
-                </div>
-            `;
-            container.appendChild(item);
-        });
-    }
-
-    function renderLivingTrend() {
-        const svg = document.getElementById('living-trend-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-
-        const width = svg.clientWidth || 300;
-        const height = svg.clientHeight || 90;
-        const today = new Date();
-
-        const points = [];
-        for (let i = 5; i >= 0; i--) {
-            const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-            const mKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-            const sum = appState.transactions.filter(t => t.tier === "Living" && t.date.startsWith(mKey))
-                                             .reduce((acc, t) => acc + t.amount_usd, 0);
-            points.push(sum);
-        }
-
-        const max = Math.max(appState.living_ceiling, ...points, 1);
-        const getX = (idx) => (idx / (points.length - 1)) * (width - 20) + 10;
-        const getY = (val) => height - 10 - (val / max) * (height - 20);
-
-        let pathStr = `M ${getX(0)} ${getY(points[0])}`;
-        for (let i = 1; i < points.length; i++) {
-            pathStr += ` L ${getX(i)} ${getY(points[i])}`;
-        }
-
-        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathEl.setAttribute('d', pathStr);
-        pathEl.setAttribute('stroke', 'var(--blue)');
-        pathEl.setAttribute('stroke-width', '2.5');
-        pathEl.setAttribute('fill', 'none');
-        svg.appendChild(pathEl);
-
-        points.forEach((p, idx) => {
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', getX(idx));
-            circle.setAttribute('cy', getY(p));
-            circle.setAttribute('r', '3.5');
-            circle.setAttribute('fill', 'var(--blue)');
-            svg.appendChild(circle);
-        });
-    }
-
-    function renderAccountsList() {
-        const container = document.getElementById('accounts-list-container');
-        container.innerHTML = '';
-
-        appState.accounts.forEach(acc => {
-            const balUSD = acc.currency === "GBP" ? acc.balance * appState.gbp_usd_rate : acc.balance;
-            const item = document.createElement('div');
-            item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);";
-            item.innerHTML = `
-                <div>
-                    <div style="font-size: 13px; font-weight: 600;">${acc.name}</div>
-                    <div style="font-size: 10px; color: var(--text-muted);">${acc.institution} · ${acc.type} · ${acc.status}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 13px; font-weight: 700;">${fmtUSD(balUSD)}</div>
-                    ${acc.currency === "GBP" ? `<div style="font-size: 9px; color: var(--text-muted);">£${acc.balance.toFixed(2)} GBP</div>` : ''}
-                </div>
-            `;
-            container.appendChild(item);
-        });
-    }
-
-    // ─── QUICK EXPENSE LOGGER ─────────────────────────────────────────────────
-    function openQuickAddDrawer() {
-        document.getElementById('quick-add-drawer').classList.add('active');
-        document.getElementById('quick-add-backdrop').classList.add('active');
-        document.getElementById('qa-amount').value = '';
-        document.getElementById('qa-merchant').value = '';
-    }
-
-    function closeQuickAddDrawer() {
-        document.getElementById('quick-add-drawer').classList.remove('active');
-        document.getElementById('quick-add-backdrop').classList.remove('active');
-    }
-
-    function submitQuickExpense(e) {
-        e.preventDefault();
-        const amt = parseFloat(document.getElementById('qa-amount').value);
-        const merchant = document.getElementById('qa-merchant').value.trim();
-        const category = document.getElementById('qa-category').value;
-        const account = document.getElementById('qa-account').value;
-
-        if (isNaN(amt) || !merchant) {
-            alert("Please provide a valid amount and merchant.");
-            return;
-        }
-
-        const todayISO = new Date().toISOString().split('T')[0];
-        const tier = (category === "Mortgage" || category === "Utilities" || category === "HOA") ? "Fixed" :
-                     (category === "Renovation" ? "Home" : "Living");
-
-        const tx = {
-            tx_id: "qa_" + Date.now(),
-            date: todayISO,
-            merchant: merchant,
-            amount_usd: amt,
-            amount_native: amt,
-            currency_native: "USD",
-            account: account,
-            tier: tier,
-            category: category,
-            source: "Manual"
-        };
-
-        appState.transactions.unshift(tx);
-        saveState();
-        renderAll();
-        closeQuickAddDrawer();
-    }
-
-    // ─── CSV PARSER & UPLOADER ────────────────────────────────────────────────
-    function handleCsvUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const text = evt.target.result;
-            const lines = text.split(/\r?\n/);
-            let imported = 0;
-
-            lines.forEach(line => {
-                const p = line.split(/,|\t/).map(s => s.replace(/^"|"$/g, '').trim());
-                if (p.length < 3) return;
-                if (p[0].toLowerCase().includes("date") || p[1].toLowerCase().includes("amount")) return;
-
-                const dateStr = p[0];
-                const merchant = p[1];
-                const rawAmt = parseFloat(p[2].replace(/[^0-9.-]/g, ''));
-                if (isNaN(rawAmt)) return;
-
-                const amtUSD = rawAmt < 0 ? Math.abs(rawAmt) : -Math.abs(rawAmt);
-                const txId = "csv_" + dateStr.replace(/\D/g, '') + "_" + merchant.replace(/\W/g, '').substring(0, 10) + "_" + Math.abs(amtUSD);
-
-                if (!appState.transactions.some(t => t.tx_id === txId)) {
-                    appState.transactions.push({
-                        tx_id: txId,
-                        date: dateStr,
-                        merchant: merchant,
-                        amount_usd: amtUSD,
-                        amount_native: rawAmt,
-                        currency_native: "USD",
-                        account: "Banco Popular",
-                        tier: "Living",
-                        category: "Other",
-                        source: "CSV"
-                    });
-                    imported++;
-                }
-            });
-
-            saveState();
-            renderAll();
-            alert(`✅ Successfully imported ${imported} transactions from statement.`);
-        };
-        reader.readAsText(file);
-    }
-
-    // ─── CLOUD SYNC & LOCAL STORAGE ───────────────────────────────────────────
-    function saveSettings() {
-        const url = document.getElementById('setting-sheets-url').value.trim();
-        localStorage.setItem('vc_sheets_sync_url', url);
-        if (url) {
-            syncFromCloud(url);
-        } else {
-            alert("Settings saved locally.");
-        }
-    }
-
-    async function syncFromCloud(url) {
+    // Load from localStorage
+    function loadState() {
         try {
-            const res = await fetch(url);
-            if (res.ok) {
-                const data = await res.json();
-                if (data.config) {
-                    if (data.config.living_ceiling) appState.living_ceiling = parseFloat(data.config.living_ceiling) || appState.living_ceiling;
-                    if (data.config.mortgage_payment) appState.mortgage_payment = parseFloat(data.config.mortgage_payment) || appState.mortgage_payment;
-                    if (data.config.runway_months) appState.runway_months = parseInt(data.config.runway_months) || appState.runway_months;
-                }
-                if (data.accounts && Array.isArray(data.accounts)) {
-                    data.accounts.forEach(cA => {
-                        const m = appState.accounts.find(a => a.name.toLowerCase() === (cA.name || '').toLowerCase() || (cA.name || '').toLowerCase().includes(a.name.toLowerCase()));
-                        const rawBal = typeof cA.balance === "number" ? cA.balance : parseFloat((cA.balance || "0").toString().replace(/[^0-9.-]/g, ''));
-                        if (m && !isNaN(rawBal)) {
-                            m.balance = rawBal;
-                        }
-                    });
-                }
-                if (data.transactions && Array.isArray(data.transactions)) {
-                    appState.transactions = data.transactions.map(t => {
-                        let dStr = (t.date || '').toString().trim();
-                        if (dStr.includes('T')) dStr = dStr.split('T')[0];
-                        const amt = typeof t.amount_usd === 'number' ? t.amount_usd :
-                                    (typeof t.amount === 'number' ? t.amount :
-                                    parseFloat((t.amount_usd || t.amount || 0).toString().replace(/[^0-9.-]/g, '')));
-                        return {
-                            tx_id: t.tx_id || ('tx_' + Math.random()),
-                            date: dStr,
-                            merchant: t.merchant || 'Unknown',
-                            amount_usd: isNaN(amt) ? 0 : amt,
-                            amount_native: isNaN(amt) ? 0 : amt,
-                            currency_native: t.currency || "USD",
-                            account: t.account || "Banco Popular",
-                            tier: t.tier || "Living",
-                            category: t.category || "Other",
-                            source: "Cloud"
-                        };
-                    });
-                }
-                saveState();
-                renderAll();
-                alert(`✅ Synced with Google Sheets!\n\nLoaded ${appState.transactions.length} transactions and updated account balances.`);
-            } else {
-                alert(`Cloud sync HTTP error ${res.status}: Check that your Apps Script Web App access is set to 'Anyone'.`);
+            const saved = localStorage.getItem('vc_lifestyle_tracker');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.actual_utilities = parsed.actual_utilities !== undefined ? parsed.actual_utilities : 750.00;
+                state.utility_label = parsed.utility_label || 'Baseline Upper';
+                state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
             }
-        } catch (err) {
-            console.warn("Cloud sync failed", err);
-            alert("Sync failed: " + err.message);
+        } catch (e) {
+            console.error("Failed to load state", e);
         }
     }
 
     function saveState() {
-        localStorage.setItem('vc_budget_state', JSON.stringify(appState));
-    }
-
-    function loadState() {
-        const stored = localStorage.getItem('vc_budget_state');
-        const url = localStorage.getItem('vc_sheets_sync_url');
-        if (url) document.getElementById('setting-sheets-url').value = url;
-
-        if (stored) {
-            try {
-                appState = JSON.parse(stored);
-            } catch (e) {}
-        }
-
-        // Ensure Monzo Current has £15,000 GBP configured
-        const monzo = appState.accounts.find(a => a.name.toLowerCase().includes("monzo current"));
-        if (monzo) {
-            if (!monzo.balance || monzo.balance === 0) {
-                monzo.balance = 15000.00;
-            }
-            monzo.include_in_available = true;
-            monzo.currency = "GBP";
-            monzo.status = "Winding Down";
-        }
-
-        if (url) syncFromCloud(url);
-    }
-
-    function resetAppData() {
-        if (confirm("Reset all local cache to defaults?")) {
-            localStorage.removeItem('vc_budget_state');
-            location.reload();
+        try {
+            localStorage.setItem('vc_lifestyle_tracker', JSON.stringify({
+                actual_utilities: state.actual_utilities,
+                utility_label: state.utility_label,
+                expenses: state.expenses
+            }));
+        } catch (e) {
+            console.error("Failed to save state", e);
         }
     }
 
-    // ─── HELPERS ──────────────────────────────────────────────────────────────
-    function fmtUSD(val) {
-        if (val === undefined || isNaN(val)) return "$0.00";
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(val);
-    }
-
-    function getFutureMonth(monthsAhead) {
-        const d = new Date();
-        d.setMonth(d.getMonth() + monthsAhead);
-        return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    }
-
-    function getCatIcon(cat) {
-        const icons = {
-            "Groceries": "🛒", "Dining": "🍔", "Transport": "🚗",
-            "Travel": "✈️", "Health": "🏋️", "Shopping": "🛍️", "Other": "📦"
+    // Date calculations
+    function getDateInfo() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const currentDay = now.getDate();
+        const daysRemaining = Math.max(1, daysInMonth - currentDay + 1);
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        return {
+            monthName: monthNames[month] + " " + year,
+            daysInMonth,
+            currentDay,
+            daysRemaining
         };
-        return icons[cat] || "🏷️";
     }
+
+    // Category Selector
+    function selectCategory(btn, cat) {
+        document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        state.selected_category = cat;
+    }
+
+    // Utility Preset Selector
+    function setUtilityPreset(amt, label) {
+        state.actual_utilities = parseFloat(amt);
+        state.utility_label = label;
+        document.getElementById('actual-util-input').value = amt.toFixed(2);
+        
+        document.querySelectorAll('.preset-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.innerText.includes(amt.toString())) {
+                b.classList.add('active');
+            }
+        });
+
+        saveState();
+        render();
+    }
+
+    function onCustomUtilityChange(val) {
+        const amt = parseFloat(val);
+        if (!isNaN(amt) && amt >= 0) {
+            state.actual_utilities = amt;
+            state.utility_label = 'Custom Input';
+            
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            saveState();
+            render();
+        }
+    }
+
+    // Expense Management
+    function addExpense() {
+        const amtInput = document.getElementById('log-amount');
+        const noteInput = document.getElementById('log-note');
+        
+        const amt = parseFloat(amtInput.value);
+        if (isNaN(amt) || amt <= 0) {
+            alert("Please enter a valid expense amount.");
+            return;
+        }
+
+        const newTx = {
+            id: Date.now(),
+            amount: amt,
+            category: state.selected_category || 'Other',
+            note: noteInput.value.trim() || state.selected_category,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        };
+
+        state.expenses.unshift(newTx);
+        saveState();
+
+        amtInput.value = '';
+        noteInput.value = '';
+        render();
+    }
+
+    function deleteExpense(id) {
+        state.expenses = state.expenses.filter(tx => tx.id !== id);
+        saveState();
+        render();
+    }
+
+    // Main Calculation & Render
+    function render() {
+        const dateInfo = getDateInfo();
+
+        // 1. Header
+        document.getElementById('hdr-month').innerText = dateInfo.monthName;
+        document.getElementById('hdr-days').innerText = `Day ${dateInfo.currentDay} of ${dateInfo.daysInMonth} · ${dateInfo.daysRemaining}d left`;
+
+        // 2. Dynamic Utility Adjustment
+        // If actual utilities are LESS than $750 baseline, delta is POSITIVE (added to lifestyle).
+        // If actual utilities are MORE than $750 baseline, delta is NEGATIVE (deducted from lifestyle).
+        const utilDelta = BASE_UTILITIES - state.actual_utilities;
+        const adjustedLifestyleLimit = Math.max(0, BASE_LIFESTYLE + utilDelta);
+
+        const badge = document.getElementById('util-impact-badge');
+        const explainer = document.getElementById('util-explainer-text');
+
+        if (utilDelta > 0) {
+            badge.className = 'util-impact-badge bonus';
+            badge.innerText = `+$${utilDelta.toFixed(2)} Added to Lifestyle`;
+            explainer.innerHTML = `Utilities are <strong>$${utilDelta.toFixed(2)} under baseline</strong> ($${state.actual_utilities.toFixed(2)} vs $750). This bonus is added directly to your lifestyle spend!`;
+        } else if (utilDelta < 0) {
+            const absDelta = Math.abs(utilDelta);
+            badge.className = 'util-impact-badge penalty';
+            badge.innerText = `-$${absDelta.toFixed(2)} Deducted from Lifestyle`;
+            explainer.innerHTML = `Utilities are <strong>$${absDelta.toFixed(2)} over baseline</strong> ($${state.actual_utilities.toFixed(2)} vs $750). This is deducted from lifestyle so your <strong>$2,000 savings is 100% protected</strong>.`;
+        } else {
+            badge.className = 'util-impact-badge neutral';
+            badge.innerText = `$0 Delta (On Baseline)`;
+            explainer.innerHTML = `Utilities are exactly on baseline ($750.00/mo). Your standard lifestyle limit is <strong>$3,137.75/month</strong> ($101.22/day).`;
+        }
+
+        // 3. Lifestyle Spent Calculation
+        const totalSpent = state.expenses.reduce((sum, tx) => sum + tx.amount, 0);
+        const remaining = adjustedLifestyleLimit - totalSpent;
+        const isOver = remaining < 0;
+        const absRemaining = Math.abs(remaining);
+
+        // Daily pacing
+        const dailyAllowance = remaining > 0 ? (remaining / dateInfo.daysRemaining) : 0;
+        const dailyPace = dateInfo.currentDay > 0 ? (totalSpent / dateInfo.currentDay) : 0;
+
+        // 4. Update Hero Card
+        const heroPill = document.getElementById('hero-pill');
+        const heroPillText = document.getElementById('hero-pill-text');
+        const heroVal = document.getElementById('hero-remaining-val');
+        const heroSub = document.getElementById('hero-remaining-sub');
+        const heroProgress = document.getElementById('hero-progress');
+
+        if (isOver) {
+            heroPill.className = 'status-pill over';
+            heroPillText.innerText = 'OVER BUDGET';
+            heroVal.className = 'metric-value over';
+            heroVal.innerText = `-$${absRemaining.toFixed(2)}`;
+            heroSub.innerHTML = `You are <strong>$${absRemaining.toFixed(2)} over budget</strong> for ${dateInfo.monthName.split(' ')[0]}. Stop non-essential spend!`;
+            heroProgress.style.backgroundColor = 'var(--red)';
+            heroProgress.style.width = '100%';
+        } else {
+            heroPill.className = 'status-pill under';
+            heroPillText.innerText = 'UNDER BUDGET';
+            heroVal.className = 'metric-value under';
+            heroVal.innerText = `$${remaining.toFixed(2)}`;
+            heroSub.innerHTML = `You have <strong>$${dailyAllowance.toFixed(2)} / day</strong> safe to spend for the remaining ${dateInfo.daysRemaining} days`;
+            
+            const pct = Math.min(100, (totalSpent / adjustedLifestyleLimit) * 100);
+            heroProgress.style.width = `${pct}%`;
+            heroProgress.style.backgroundColor = pct > 85 ? 'var(--gold)' : 'var(--green)';
+        }
+
+        // Stats grid
+        document.getElementById('stat-adjusted-budget').innerText = `$${adjustedLifestyleLimit.toFixed(2)}`;
+        document.getElementById('stat-total-spent').innerText = `$${totalSpent.toFixed(2)}`;
+        document.getElementById('stat-daily-pace').innerText = `$${dailyPace.toFixed(2)} / day`;
+
+        // 5. Transactions List
+        const txList = document.getElementById('tx-list');
+        document.getElementById('tx-count').innerText = `${state.expenses.length} item${state.expenses.length === 1 ? '' : 's'}`;
+
+        if (state.expenses.length === 0) {
+            txList.innerHTML = '<div class="tx-empty">No expenses logged yet this month. Enter your first one above!</div>';
+        } else {
+            txList.innerHTML = state.expenses.map(tx => `
+                <div class="tx-item">
+                    <div class="tx-left">
+                        <span class="tx-desc">${escapeHtml(tx.note)}</span>
+                        <span class="tx-meta">${tx.category} · ${tx.date}</span>
+                    </div>
+                    <div class="tx-right">
+                        <span class="tx-amount">$${tx.amount.toFixed(2)}</span>
+                        <button class="tx-del" title="Delete" onclick="deleteExpense(${tx.id})">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/[&<>"']/g, m => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[m]);
+    }
+
+    // Initialize
+    loadState();
+    render();
 </script>
+
 </body>
 </html>

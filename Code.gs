@@ -146,7 +146,8 @@ function buildConfigTab_(sheet, ss) {
   sheet.getRange("B2:D2").setValues([["Setting", "Value", "Notes"]]).setFontWeight("bold");
 
   const configRows = [
-    ["LIVING_CEILING", "Living monthly ceiling (USD)", 3500, "$#,##0.00", true, "Hard cap. Owner-stated."],
+    ["LIVING_CEILING", "Living monthly ceiling (USD)", 3137.75, "$#,##0.00", true, "Hard cap adjusted to preserve $2,000/mo liquid bank injection ($101.22/day)."],
+    ["TARGET_MONTHLY_SAVINGS", "Target monthly liquid bank injection (USD)", 2000, "$#,##0.00", true, "Strict $2,000/mo injected into Banco Popular liquid reserves."],
     ["MORTGAGE_PAYMENT", "Mortgage monthly payment (USD)", 3305.55, "$#,##0.00", true, "Years 1–11, includes FHA MIP."],
     ["MORTGAGE_PAYMENT_POST_MIP", "Mortgage payment after MIP drops (USD)", 3053.47, "$#,##0.00", true, "Years 12–30."],
     ["MORTGAGE_MIP_PAYMENT_COUNT", "Payments until MIP cancels", 132, "#,##0", true, "11 years."],
@@ -473,19 +474,19 @@ function buildDashboardTab_(sheet) {
   sheet.getRange("B5:E5").merge().setValue("PHASE 1 MOVE-IN FUNDING GAP (THE ASK)")
     .setFontSize(10).setFontWeight("bold").setFontColor(SCRIPT_CONFIG.COLORS.BORDER_ORANGE);
 
-  sheet.getRange("B6:E7").merge().setValue(39091.00)
+  sheet.getRange("B6:E7").merge().setValue(37591.00)
     .setFontSize(32).setFontWeight("bold").setNumberFormat("$#,##0.00").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_OVER_TXT);
 
-  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($42,091.00) − Daniel October contribution ($3,000.00) = Request for Parents ($39,091.00)")
+  sheet.getRange("B8:E8").merge().setValue("Phase 1 still to pay ($42,091.00) − Daniel October contribution ($4,500.00) = Request for Parents ($37,591.00)")
     .setFontSize(9).setFontColor(SCRIPT_CONFIG.COLORS.GRAY_TEXT);
 
-  sheet.getRange("F6:H6").merge().setValue("Daniel pays: $14,189.00 ($11.2k furn + $3k Oct)")
+  sheet.getRange("F6:H6").merge().setValue("Daniel pays: $15,689.00 ($11.2k furn + $4.5k Oct)")
     .setFontSize(11).setFontWeight("bold");
 
   sheet.getRange("F7:H7").merge().setValue("🔴 Funding Request")
     .setFontSize(12).setFontWeight("bold");
 
-  sheet.getRange("B9:H9").merge().setValue("📋 Capital Plan: Parents fund P1 Move-In ($39.1k) + P2 ($4.3k) = $43.3k. Daniel self-funds P3 ($6.8k) & P4 ($16.3k) in 2028 ($23.1k). Monzo £8k reserve 100% untouched.")
+  sheet.getRange("B9:H9").merge().setValue("📋 Capital Plan: Parents fund P1 ($37.6k) + P2 in Dec ($7.6k) = $45.2k Total 2026 Ask ($0 in 2027+). Daniel self-funds P3 in Jul 2027 ($6.8k) & P4 in 2028 ($16.3k) from bonus pool while saving $2k/mo strictly.")
     .setFontSize(9).setFontStyle("italic").setFontColor(SCRIPT_CONFIG.COLORS.STATUS_WATCH_TXT);
 
   // ── BLOCK 2: MORTGAGE (Rows 11–15, Cols B:E) ──
@@ -643,9 +644,9 @@ function buildHomeTab_(sheet) {
   sheet.getRange("B10:F10").setValues([["Work Phase & Timing", "Building Works", "Furniture", "Expected Total", "Still to Pay"]]).setFontWeight("bold");
   sheet.getRange("B11:F15").setValues([
     ["Phase 1: Moving Essentials (Aug–Oct)", 39900, 24080, 63980, 42091],
-    ["Phase 2: TVs, Audio, Guest 1 (Dec–Mar)", 0, 7602, 7602, 7602],
-    ["Phase 3: Suites, Computer & Art (2028 Self-Funded)", 0, 6770, 6770, 6770],
-    ["Phase 4: Pergola, BBQ, Glass & Art (2028 Self-Funded)", 13500, 2835, 16335, 16335],
+    ["Phase 2: Tech & Guest Room (Dec 2026)", 0, 7602, 7602, 7602],
+    ["Phase 3: Art & 2nd Guest Bedroom (Jul 2027 Self-Funded)", 0, 6770, 6770, 6770],
+    ["Phase 4: Terrace (2028 Self-Funded)", 13500, 2835, 16335, 16335],
     ["Grand All-In Total (All 4 Phases)", 53400, 41287, 94687, 72798]
   ]);
   sheet.getRange("C11:F15").setNumberFormat("$#,##0.00");
@@ -656,13 +657,13 @@ function buildHomeTab_(sheet) {
   sheet.getRange("B19:F23").setValues([
     ["Davis Facias Deposit (50%)", "07/12/2026", "✅ Paid", "Davis Facias", 10700],
     ["Davis Facias Progress (25%)", "Sep 2026", "⏳ Pending", "Davis Facias", 5350],
-    ["Davis Facias Final (25%)", "Oct 2026", "⏳ Pending", "Davis Facias", 5350],
-    ["Davis Contingencies & Incidentals", "Oct 2026", "⏳ Pending", "Owner Allocation", 2000],
+    ["Davis Facias Final (25% upon signoff)", "Sep 2026", "⏳ Pending", "Davis Facias", 5350],
+    ["Davis Contingencies & Incidentals", "Sep 2026", "⏳ Pending", "Owner Allocation", 2000],
     ["8x Specialty Trades (Closet, Bar, TV, Wallpaper, Glass, Curtains)", "Oct 2026", "⏳ Pending", "Specialists", 16500]
   ]);
   sheet.getRange("F19:F23").setNumberFormat("$#,##0.00");
 
-  sheet.getRange("B25:F26").merge().setValue("📋 Capital Plan: Parents fund P1 ($39,091) + P2 ($4,251) = $43,342. Daniel self-funds P3 ($6,770) & P4 ($16,335) in 2028 ($23,105). Monzo £8k reserve 100% untouched.");
+  sheet.getRange("B25:F26").merge().setValue("📋 Capital Plan: Parents fund P1 ($37,591) + P2 in Dec ($7,602) = $45,193 Total 2026 Ask ($0 in 2027+). Daniel self-funds P3 in Jul 2027 ($6,770) & P4 in 2028 ($16,335) from bonus pool while saving $2k/mo strictly.");
 
   sheet.getRange("B26:F26").merge().setFormula('=IF(RENO_TOTAL_BUDGET=0, "Running total only — no project budget set.", "Budget: $" & TEXT(RENO_TOTAL_BUDGET, "#,##0") & " · " & TEXT(D5/RENO_TOTAL_BUDGET, "0.0%") & " committed")')
     .setFontSize(10).setFontWeight("bold");
