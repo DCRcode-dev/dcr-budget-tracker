@@ -1239,11 +1239,11 @@ function doGet(e) {
         living_ceiling: ss.getRangeByName("LIVING_CEILING").getValue(),
         mortgage_payment: ss.getRangeByName("MORTGAGE_PAYMENT").getValue(),
         hoa_amount: ss.getRangeByName("HOA_AMOUNT").getValue() || 375,
-        utilities_est: ss.getRangeByName("UTILITIES_EST").getValue() || 0,
+        utilities_est: ss.getRangeByName("UTILITIES_EST").getValue() || 750,
         runway_months: ss.getRangeByName("RUNWAY_MONTHS").getValue(),
         move_in_date: ss.getRangeByName("MOVE_IN_DATE").getValue(),
-        monthly_salary: 6700,
-        first_paycheck: 5136.67
+        monthly_salary: ss.getRangeByName("MONTHLY_SALARY").getValue() || 9568.30,
+        first_paycheck: ss.getRangeByName("FIRST_PAYCHECK_EST").getValue() || 3827.31
       },
       accounts: accounts.slice(1).map(r => ({
         name: r[0],
