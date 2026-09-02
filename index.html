@@ -2,52 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DCR Ledger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DCR Ledger · Private Wealth &amp; Living</title>
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FAF7F2">
+    <meta name="theme-color" content="#F9F8F5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
-    <!-- Premium Typography -->
+    <!-- Editorial & Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Warm luxury palette */
-            --bg: #FAF7F2;          /* vellum paper */
-            --card: #FFFFFF;        /* card surface */
-            --card-subtle: #F5F1EA;
-            --border: #EDE6DC;      /* delicate divider */
-            --text: #2A2421;        /* espresso */
-            --text-muted: #756D65;  /* taupe gray */
-            --text-dim: #9C9389;    /* muted stone */
+            /* Editorial Luxury Palette (Alabaster, Obsidian & Champagne Gold) */
+            --bg-base: #F8F6F0;
+            --bg-surface: #FFFFFF;
+            --bg-subtle: #F3EFE6;
+            --bg-glass: rgba(255, 255, 255, 0.85);
             
-            --green: #1B5E20;       /* deep forest green for under budget */
-            --green-bg: #E8F5E9;
-            --green-border: #C8E6C9;
+            --border-hairline: rgba(30, 41, 59, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.6);
+            --border-accent: #E2D9C8;
             
-            --red: #B71C1C;         /* crimson for over budget */
-            --red-bg: #FFEBEE;
-            --red-border: #FFCDD2;
+            --ink-primary: #121820;       /* Obsidian */
+            --ink-secondary: #5A6472;     /* Slate Taupe */
+            --ink-dim: #94A3B8;           /* Muted Stone */
             
-            --blue: #0D47A1;        /* navy */
-            --blue-bg: #E3F2FD;
-            --blue-border: #BBDEFB;
+            --gold: #C29236;              /* Champagne Gold */
+            --gold-glow: rgba(194, 146, 54, 0.18);
+            --gold-bg: #FCF7EE;
             
-            --gold: #B78103;        /* warm gold */
-            --gold-bg: #FFF8E1;
-            --gold-border: #FFE082;
+            --emerald: #0D824D;           /* Deep Forest Green */
+            --emerald-bg: #EAF7EE;
+            --emerald-glow: rgba(13, 130, 77, 0.2);
             
-            --font-hero: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --crimson: #C5221F;           /* Crimson */
+            --crimson-bg: #FDF0EE;
             
-            --shadow-sm: 0 2px 8px rgba(42, 36, 33, 0.04);
-            --shadow-md: 0 6px 20px rgba(42, 36, 33, 0.06);
+            --navy-badge: #1E293B;
+            
+            --font-editorial: 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --shadow-float: 0 16px 36px -8px rgba(18, 24, 32, 0.07), 0 4px 12px -2px rgba(18, 24, 32, 0.03);
+            --shadow-card: 0 4px 20px rgba(18, 24, 32, 0.04);
+            --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+            
+            --radius-xl: 24px;
             --radius-lg: 18px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -61,714 +67,902 @@
         }
 
         body {
-            font-family: var(--font-body);
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--ink-primary);
             line-height: 1.45;
             min-height: 100svh;
             -webkit-font-smoothing: antialiased;
             display: flex;
             justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Subtle background noise texture */
+        /* Ambient Glow & Grain Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120vw;
+            height: 60vh;
+            background: radial-gradient(circle at 50% 20%, rgba(194, 146, 54, 0.08) 0%, rgba(248, 246, 240, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         body::after {
             content: '';
             position: fixed; inset: 0; z-index: 999; pointer-events: none;
-            opacity: 0.02; mix-blend-mode: multiply;
+            opacity: 0.022; mix-blend-mode: multiply;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 480px;
-            padding: 20px 16px 85px;
+            max-width: 460px;
+            padding: 24px 18px 100px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Header */
+        /* ── HEADER ── */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .header-brand {
+            display: flex;
+            flex-direction: column;
         }
 
         .brand-title {
-            font-family: var(--font-hero);
-            font-size: 1.65rem;
+            font-family: var(--font-editorial);
+            font-size: 1.85rem;
             font-weight: 700;
-            letter-spacing: -0.01em;
-            color: var(--text);
+            letter-spacing: -0.02em;
+            color: var(--ink-primary);
             line-height: 1;
         }
 
-        .header-right {
+        .brand-sub {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-top: 3px;
+        }
+
+        .header-controls {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .month-pill {
-            display: inline-flex;
+        .date-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
             flex-direction: column;
             align-items: flex-end;
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 5px 10px;
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-card);
         }
 
-        .month-name {
+        .date-chip-month {
             font-size: 11px;
             font-weight: 700;
-            color: var(--text);
+            letter-spacing: 0.03em;
+            color: var(--ink-primary);
+            text-transform: uppercase;
+        }
+
+        .date-chip-days {
+            font-size: 9.5px;
+            font-family: var(--font-mono);
+            color: var(--ink-secondary);
+        }
+
+        .sync-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sync-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* ── HERO RADIAL RING CARD ── */
+        .hero-gauge-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-xl);
+            padding: 26px 20px 22px;
+            box-shadow: var(--shadow-float);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .hero-gauge-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #C29236, #0D824D, #2563EB);
+        }
+
+        /* The SVG Radial Ring */
+        .gauge-wrap {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-track {
+            fill: none;
+            stroke: var(--bg-subtle);
+            stroke-width: 12;
+            stroke-linecap: round;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke: var(--emerald);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.5s ease;
+        }
+
+        .gauge-inner-content {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .gauge-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-secondary);
+            margin-bottom: 2px;
+        }
+
+        .gauge-digits {
+            font-family: var(--font-editorial);
+            font-size: 2.85rem;
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            color: var(--ink-primary);
+        }
+
+        .gauge-digits.under {
+            color: var(--emerald);
+        }
+
+        .gauge-digits.over {
+            color: var(--crimson);
+        }
+
+        .gauge-status-tag {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
 
-        .month-days {
-            font-size: 9.5px;
-            color: var(--text-muted);
-            font-weight: 500;
+        .gauge-status-tag.under {
+            background: var(--emerald-bg);
+            color: var(--emerald);
+            border: 1px solid rgba(13, 130, 77, 0.2);
         }
 
-        .sync-icon-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            width: 34px;
-            height: 34px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease;
+        .gauge-status-tag.over {
+            background: var(--crimson-bg);
+            color: var(--crimson);
+            border: 1px solid rgba(197, 34, 31, 0.2);
         }
 
-        .sync-icon-btn:active {
-            transform: scale(0.92);
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulseGlow 2s infinite ease-in-out;
         }
 
-        /* Hero Card: The Lifestyle Monitor */
-        .hero-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 24px 20px;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        @keyframes pulseGlow {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
         }
 
-        .hero-badge-row {
+        /* Pacing Velocity & Safe Burn Banner */
+        .burn-banner {
+            width: 100%;
+            background: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-
-        .status-pill.under {
-            background: var(--green-bg);
-            color: var(--green);
-            border: 1px solid var(--green-border);
-        }
-
-        .status-pill.over {
-            background: var(--red-bg);
-            color: var(--red);
-            border: 1px solid var(--red-border);
-        }
-
-        .util-auto-tag {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--blue);
-            background: var(--blue-bg);
-            border: 1px solid var(--blue-border);
-            padding: 3px 8px;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .hero-metric {
+        .burn-banner-left {
             display: flex;
             flex-direction: column;
-            gap: 4px;
         }
 
-        .metric-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
+        .burn-banner-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--ink-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .metric-value {
-            font-family: var(--font-hero);
-            font-size: 3.5rem;
+        .burn-banner-val {
+            font-family: var(--font-editorial);
+            font-size: 1.45rem;
             font-weight: 700;
-            line-height: 0.95;
-            letter-spacing: -0.02em;
+            color: var(--ink-primary);
+            line-height: 1.1;
         }
 
-        .metric-value.under {
-            color: var(--green);
-        }
-
-        .metric-value.over {
-            color: var(--red);
-        }
-
-        .metric-sub {
-            font-size: 12.5px;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        /* Progress Bar */
-        .progress-track {
-            width: 100%;
-            height: 10px;
-            background: var(--card-subtle);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid var(--border);
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            border-radius: 10px;
-            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
-        }
-
-        /* 3-Col Quick Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
-        }
-
-        .stat-box {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .stat-box-title {
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .stat-box-val {
-            font-size: 13.5px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        /* Category Spending Card */
-        .cat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .card-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-family: var(--font-hero);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .cat-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .cat-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .cat-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12.5px;
-        }
-
-        .cat-name {
-            font-weight: 600;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cat-numbers {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cat-amount {
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .cat-pct {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .cat-bar-track {
-            width: 100%;
-            height: 6px;
-            background: var(--card-subtle);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .cat-bar-fill {
-            height: 100%;
-            border-radius: 6px;
-            background: var(--text);
-            transition: width 0.3s ease;
-        }
-
-        /* TAB 2: EXPENSES STREAM */
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
-
-        .tx-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 16px 18px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            background: var(--bg);
-            outline: none;
-            font-family: var(--font-body);
-        }
-
-        .search-input:focus {
-            border-color: var(--text);
-            background: #FFFFFF;
-        }
-
-        .tx-stream {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 520px;
-            overflow-y: auto;
-        }
-
-        .tx-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            border-radius: var(--radius-sm);
-            background: var(--bg);
-            border: 1px solid var(--border);
-        }
-
-        .tx-row-left {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .tx-merchant {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .tx-details {
-            font-size: 10.5px;
-            color: var(--text-muted);
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .tx-account-tag {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 1px 5px;
-            border-radius: 4px;
-            font-size: 9.5px;
-            font-weight: 600;
-        }
-
-        .tx-amount-val {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
+        .burn-banner-right {
             text-align: right;
         }
 
-        .tx-empty-state {
-            text-align: center;
-            padding: 30px 10px;
-            color: var(--text-muted);
-            font-size: 12.5px;
+        .burn-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--bg-surface);
+            color: var(--emerald);
+            border: 1px solid var(--border-hairline);
+            font-family: var(--font-mono);
         }
 
-        /* Bottom Nav Tabs */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(250, 247, 242, 0.94);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .nav-inner {
+        /* 3-Col KPI Metrics */
+        .kpi-row {
             width: 100%;
-            max-width: 480px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            padding: 8px 16px;
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-hairline);
         }
 
-        .nav-tab {
+        .kpi-col {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 0;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .kpi-title {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--ink-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .kpi-num {
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--ink-primary);
+        }
+
+        /* ── BACKGROUND UTILITY CHIP ── */
+        .util-silent-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            border: none;
-            background: transparent;
-            font-size: 13px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+        }
+
+        .util-chip-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--ink-secondary);
+        }
+
+        .util-chip-status {
+            font-size: 10.5px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--gold);
+            background: var(--gold-bg);
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        /* ── CATEGORY BREAKDOWN CARDS ── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px;
+        }
+
+        .section-title {
+            font-family: var(--font-editorial);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .section-meta {
+            font-size: 11px;
+            color: var(--ink-secondary);
+            font-weight: 600;
+        }
+
+        .cat-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .cat-card-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        .nav-tab.active {
-            background: var(--text);
-            color: #FFFFFF;
+        .cat-card-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-float);
         }
 
-        /* Settings Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(42, 36, 33, 0.4);
-            backdrop-filter: blur(4px);
-            display: none;
+        .cat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cat-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .cat-icon-pill {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--bg-subtle);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-            padding: 20px;
+            font-size: 14px;
         }
 
-        .modal-overlay.open {
+        .cat-card-metrics {
             display: flex;
+            align-items: baseline;
+            gap: 6px;
         }
 
-        .modal-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+        .cat-spent-val {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--ink-primary);
+        }
+
+        .cat-limit-val {
+            font-size: 11px;
+            color: var(--ink-dim);
+            font-family: var(--font-mono);
+        }
+
+        .cat-meter-track {
             width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            box-shadow: var(--shadow-md);
-            display: flex;
+            height: 6px;
+            background: var(--bg-subtle);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cat-meter-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: var(--ink-primary);
+            transition: width 0.4s ease;
+        }
+
+        /* ── TAB 2: BANK FEEDS ── */
+        .tab-pane {
+            display: none;
             flex-direction: column;
             gap: 14px;
         }
 
-        .modal-title {
-            font-family: var(--font-hero);
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text);
+        .tab-pane.active {
+            display: flex;
         }
 
-        .modal-sub {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            line-height: 1.4;
+        .search-pill {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 8px 14px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            color: var(--ink-primary);
+        }
+
+        .stream-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tx-card-row {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.15s ease;
+        }
+
+        .tx-card-row:active {
+            transform: scale(0.98);
+        }
+
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tx-cat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .tx-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tx-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .tx-meta-line {
+            font-size: 10px;
+            color: var(--ink-secondary);
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tx-account-badge {
+            background: var(--bg-subtle);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .tx-right-val {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .empty-tx-box {
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-accent);
+            border-radius: var(--radius-lg);
+            padding: 40px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--ink-secondary);
+        }
+
+        .empty-tx-icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        /* ── FLOATING GLASS DOCK (BOTTOM NAV) ── */
+        .dock-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 36px);
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 30px;
+            padding: 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            box-shadow: 0 12px 32px rgba(18, 24, 32, 0.12);
+            z-index: 1000;
+        }
+
+        .dock-item {
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--ink-secondary);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dock-item.active {
+            background: var(--ink-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(18, 24, 32, 0.2);
+        }
+
+        /* ── CLOUD SYNC MODAL ── */
+        .modal-veil {
+            position: fixed; inset: 0;
+            background: rgba(18, 24, 32, 0.5);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 2000;
+        }
+
+        .modal-veil.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            box-shadow: var(--shadow-float);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-title {
+            font-family: var(--font-editorial);
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .modal-p {
+            font-size: 12px;
+            color: var(--ink-secondary);
+            line-height: 1.45;
         }
 
         .modal-input {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
+            padding: 11px 12px;
+            border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            font-size: 12.5px;
+            font-family: var(--font-mono);
+            font-size: 11.5px;
             outline: none;
-            font-family: var(--font-body);
         }
 
-        .modal-actions {
+        .modal-btns {
             display: flex;
-            gap: 8px;
             justify-content: flex-end;
+            gap: 8px;
         }
 
-        .btn-secondary {
-            background: var(--card-subtle);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
+        .btn-cancel {
+            background: var(--bg-subtle);
+            border: none;
+            padding: 9px 14px;
             border-radius: var(--radius-sm);
             font-size: 12px;
             font-weight: 600;
-            color: var(--text);
+            color: var(--ink-primary);
             cursor: pointer;
         }
 
-        .btn-primary {
-            background: var(--text);
+        .btn-confirm {
+            background: var(--ink-primary);
             border: none;
             color: #FFFFFF;
-            padding: 8px 16px;
+            padding: 9px 18px;
             border-radius: var(--radius-sm);
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
     <!-- Header -->
     <header>
-        <div class="brand-title">DCR Ledger</div>
-        <div class="header-right">
-            <div class="month-pill">
-                <span class="month-name" id="hdr-month">September 2026</span>
-                <span class="month-days" id="hdr-days">Day 2 of 30 · 28d left</span>
+        <div class="header-brand">
+            <h1 class="brand-title">DCR Ledger</h1>
+            <span class="brand-sub">Private Wealth &amp; Living</span>
+        </div>
+        <div class="header-controls">
+            <div class="date-chip">
+                <span class="date-chip-month" id="hdr-month-name">September 2026</span>
+                <span class="date-chip-days" id="hdr-day-count">Day 2 of 30 · 28d left</span>
             </div>
-            <button class="sync-icon-btn" onclick="openSyncModal()" title="Sync Feeds">🔄</button>
+            <button class="sync-btn" onclick="openSyncModal()" title="Cloud Sync">
+                <span id="sync-btn-icon">🔄</span>
+            </button>
         </div>
     </header>
 
-    <!-- TAB 1: LIFESTYLE SPEND -->
-    <div id="tab-lifestyle" class="tab-content active">
-        <!-- Hero: Lifestyle Spend Remaining -->
-        <div class="hero-card">
-            <div class="hero-badge-row">
-                <div class="status-pill under" id="hero-pill">
-                    <span id="hero-pill-icon">●</span> <span id="hero-pill-text">UNDER BUDGET</span>
-                </div>
-                <div class="util-auto-tag" id="util-auto-badge">
-                    ⚡ Auto-adjusted: +$620 Util Bonus
-                </div>
-            </div>
-
-            <div class="hero-metric">
-                <div class="metric-label">Lifestyle Spend Remaining</div>
-                <div class="metric-value under" id="hero-remaining-val">$3,137.75</div>
-                <div class="metric-sub" id="hero-remaining-sub">
-                    You have <strong>$112.06 / day</strong> safe to spend for the next 28 days
+    <!-- TAB 1: LIFESTYLE DASHBOARD -->
+    <div id="tab-lifestyle" class="tab-pane active">
+        <!-- Hero Radial Ring Card -->
+        <div class="hero-gauge-card">
+            <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 200 200">
+                    <circle class="gauge-track" cx="100" cy="100" r="90"></circle>
+                    <circle class="gauge-fill" id="radial-gauge-fill" cx="100" cy="100" r="90"></circle>
+                </svg>
+                <div class="gauge-inner-content">
+                    <span class="gauge-label">Remaining Spend</span>
+                    <span class="gauge-digits under" id="hero-remaining-digits">$3,137.75</span>
+                    <div class="gauge-status-tag under" id="hero-status-tag">
+                        <span class="pulse-dot"></span>
+                        <span id="hero-status-txt">100% Intact · Under</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="progress-track">
-                <div class="progress-fill" id="hero-progress" style="width: 0%; background-color: var(--green);"></div>
+            <!-- Safe Burn Pacing Banner -->
+            <div class="burn-banner">
+                <div class="burn-banner-left">
+                    <span class="burn-banner-label">Safe Daily Allowance</span>
+                    <span class="burn-banner-val" id="burn-daily-val">$108.20 / day</span>
+                </div>
+                <div class="burn-banner-right">
+                    <span class="burn-badge" id="burn-pace-badge">Pacing: 0.0% Burned</span>
+                </div>
             </div>
 
-            <!-- 3-Col Quick Stats -->
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-box-title">Adjusted Budget</div>
-                    <div class="stat-box-val" id="stat-adjusted-budget">$3,137.75</div>
+            <!-- 3-Col Key Performance Metrics -->
+            <div class="kpi-row">
+                <div class="kpi-col">
+                    <span class="kpi-title">Monthly Cap</span>
+                    <span class="kpi-num" id="kpi-budget-cap">$3,137.75</span>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-box-title">Total Spent</div>
-                    <div class="stat-box-val" id="stat-total-spent">$0.00</div>
+                <div class="kpi-col">
+                    <span class="kpi-title">Spent to Date</span>
+                    <span class="kpi-num" id="kpi-spent-total">$0.00</span>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-box-title">Daily Pace</div>
-                    <div class="stat-box-val" id="stat-daily-pace">$0.00 / day</div>
+                <div class="kpi-col">
+                    <span class="kpi-title">Daily Velocity</span>
+                    <span class="kpi-num" id="kpi-daily-velocity">$0.00 / day</span>
                 </div>
             </div>
         </div>
 
-        <!-- Category Breakdown Card -->
-        <div class="cat-card">
-            <div class="card-header-row">
-                <div class="card-title">Spending by Category</div>
-                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="cat-month-indicator">September 2026</span>
+        <!-- Background Utility Intelligence Status -->
+        <div class="util-silent-chip" id="util-status-chip">
+            <div class="util-chip-left">
+                <span>⚡</span>
+                <span id="util-chip-text">Utility Intelligence: Baseline $750.00/mo Active</span>
             </div>
+            <span class="util-chip-status" id="util-chip-delta">$0 Delta</span>
+        </div>
 
-            <div class="cat-list" id="cat-list">
-                <!-- Dynamically populated categories -->
-            </div>
+        <!-- Category Breakdown -->
+        <div class="section-header">
+            <h2 class="section-title">Category Allocations</h2>
+            <span class="section-meta" id="cat-month-meta">September 2026 Target</span>
+        </div>
+
+        <div class="cat-grid" id="category-grid">
+            <!-- Populated dynamically with high-polish category cards -->
         </div>
     </div>
 
-    <!-- TAB 2: EXPENSES STREAM -->
-    <div id="tab-expenses" class="tab-content">
-        <div class="tx-card">
-            <div class="card-header-row">
-                <div class="card-title">Live Bank Transactions</div>
-                <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="stream-count">0 items</span>
-            </div>
+    <!-- TAB 2: LIVE BANK TRANSACTIONS -->
+    <div id="tab-feeds" class="tab-pane">
+        <div class="search-pill">
+            <span>🔍</span>
+            <input type="text" id="tx-search-input" class="search-input" placeholder="Search merchant, category, or account..." oninput="onSearchFilter(this.value)">
+        </div>
 
-            <div class="search-row">
-                <input type="text" id="tx-search" class="search-input" placeholder="Search merchant or category..." oninput="filterTransactions(this.value)">
-            </div>
+        <div class="section-header" style="margin-top: 4px;">
+            <h2 class="section-title" style="font-size: 1.2rem;">Live Feeds Stream</h2>
+            <span class="section-meta" id="feed-count-badge">0 items</span>
+        </div>
 
-            <div class="tx-stream" id="tx-stream">
-                <!-- Dynamically populated from SimpleFIN / Bank Feeds -->
-            </div>
+        <div class="stream-list" id="transactions-stream">
+            <!-- Populated dynamically from SimpleFIN / Bank integration -->
         </div>
     </div>
 </div>
 
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-    <div class="nav-inner">
-        <button class="nav-tab active" id="btn-tab-lifestyle" onclick="switchTab('lifestyle')">
-            <span>📊</span> Lifestyle Spend
-        </button>
-        <button class="nav-tab" id="btn-tab-expenses" onclick="switchTab('expenses')">
-            <span>📋</span> Bank Feeds
-        </button>
-    </div>
+<!-- Floating Glass Dock -->
+<nav class="dock-bar">
+    <button class="dock-item active" id="dock-btn-lifestyle" onclick="switchTab('lifestyle')">
+        <span>📊</span> Lifestyle Spend
+    </button>
+    <button class="dock-item" id="dock-btn-feeds" onclick="switchTab('feeds')">
+        <span>📋</span> Bank Feeds
+    </button>
 </nav>
 
 <!-- Cloud Sync Modal -->
-<div class="modal-overlay" id="sync-modal">
-    <div class="modal-box">
-        <div class="modal-title">SimpleFIN &amp; Cloud Feed</div>
-        <div class="modal-sub">
-            Your transactions feed directly from SimpleFIN via your Google Sheet Web App. Paste your deployed Web App URL below to refresh live transactions.
-        </div>
-        <input type="text" class="modal-input" id="sheets-url-input" placeholder="https://script.google.com/macros/s/.../exec">
-        <div class="modal-actions">
-            <button class="btn-secondary" onclick="closeSyncModal()">Cancel</button>
-            <button class="btn-primary" onclick="saveAndSync()">Sync Now</button>
+<div class="modal-veil" id="sync-modal-veil">
+    <div class="modal-card">
+        <h3 class="modal-title">Bank Feeds &amp; SimpleFIN</h3>
+        <p class="modal-p">
+            Connect directly with your Google Sheet Web App to refresh your live bank transactions from Banco Popular and Capital One.
+        </p>
+        <input type="text" id="sheets-url-box" class="modal-input" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeSyncModal()">Cancel</button>
+            <button class="btn-confirm" onclick="confirmSync()">Sync Feeds</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ── FINANCIAL CONSTANTS ──
-    const BASE_LIFESTYLE = 3137.75;      // Target lifestyle cap ($101.22/day)
-    const BASE_UTILITIES = 750.00;       // Upper baseline utility estimate
-    const SEP_OCT_CONSTRUCTION_UTIL = 130.00; // Expected construction utilities in Sep/Oct
+    // ── CORE FINANCIAL TARGETS ──
+    const BASE_LIFESTYLE = 3137.75;
+    const BASE_UTILITIES = 750.00;
 
-    // Live SimpleFIN / Bank feed starts clean at $0.00
-    const DEFAULT_TRANSACTIONS = [];
+    // Standard Category Limits Breakdown
+    const CATEGORY_LIMITS = {
+        'Dining': { limit: 700.00, icon: '🍽️', label: 'Dining & Restaurants' },
+        'Groceries': { limit: 600.00, icon: '🛒', label: 'Groceries & Supermarket' },
+        'Shopping': { limit: 450.00, icon: '🛍️', label: 'Shopping & Personal' },
+        'Transport': { limit: 350.00, icon: '🚕', label: 'Transport & Uber' },
+        'Coffee': { limit: 250.00, icon: '☕', label: 'Coffee, Subs & Leisure' },
+        'Other': { limit: 187.75, icon: '📦', label: 'Buffer & Miscellaneous' }
+    };
 
     let state = {
         sheets_api_url: '',
         transactions: [],
-        search_filter: ''
+        filter_term: ''
     };
 
     function loadState() {
         try {
-            const saved = localStorage.getItem('dcr_ledger_state');
+            const saved = localStorage.getItem('dcr_ledger_v23');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 state.sheets_api_url = parsed.sheets_api_url || '';
-                // Filter out any legacy mock data (tx_1, tx_2, etc.)
-                const rawTxs = Array.isArray(parsed.transactions) ? parsed.transactions : [];
-                state.transactions = rawTxs.filter(t => !['tx_1', 'tx_2', 'tx_3', 'tx_4', 'tx_5', 'tx_6', 'tx_7', 'tx_8'].includes(t.tx_id));
+                // Filter out any legacy mock data
+                const raw = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+                state.transactions = raw.filter(t => !['tx_1', 'tx_2', 'tx_3', 'tx_4', 'tx_5', 'tx_6', 'tx_7', 'tx_8'].includes(t.tx_id));
             } else {
                 state.transactions = [];
             }
         } catch (e) {
             state.transactions = [];
         }
-        document.getElementById('sheets-url-input').value = state.sheets_api_url;
+        document.getElementById('sheets-url-box').value = state.sheets_api_url;
     }
 
     function saveState() {
         try {
-            localStorage.setItem('dcr_ledger_state', JSON.stringify({
+            localStorage.setItem('dcr_ledger_v23', JSON.stringify({
                 sheets_api_url: state.sheets_api_url,
                 transactions: state.transactions
             }));
         } catch (e) {}
     }
 
-    // Date calculations
     function getDateInfo() {
         const now = new Date();
         const year = now.getFullYear();
@@ -782,222 +976,203 @@
             year,
             month,
             monthKey: `${year}-${String(month + 1).padStart(2, '0')}`,
-            monthName: monthNames[month] + " " + year,
+            monthName: `${monthNames[month]} ${year}`,
             daysInMonth,
             currentDay,
-            daysRemaining
+            daysRemaining,
+            pctMonthElapsed: (currentDay / daysInMonth) * 100
         };
     }
 
-    // Tab Switching
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    // Tab Navigation
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
 
-        if (tabId === 'lifestyle') {
+        if (tab === 'lifestyle') {
             document.getElementById('tab-lifestyle').classList.add('active');
-            document.getElementById('btn-tab-lifestyle').classList.add('active');
+            document.getElementById('dock-btn-lifestyle').classList.add('active');
         } else {
-            document.getElementById('tab-expenses').classList.add('active');
-            document.getElementById('btn-tab-expenses').classList.add('active');
+            document.getElementById('tab-feeds').classList.add('active');
+            document.getElementById('dock-btn-feeds').classList.add('active');
         }
     }
 
     // Modal
     function openSyncModal() {
-        document.getElementById('sync-modal').classList.add('open');
+        document.getElementById('sync-modal-veil').classList.add('open');
     }
 
     function closeSyncModal() {
-        document.getElementById('sync-modal').classList.remove('open');
+        document.getElementById('sync-modal-veil').classList.remove('open');
     }
 
-    async function saveAndSync() {
-        const url = document.getElementById('sheets-url-input').value.trim();
+    async function confirmSync() {
+        const url = document.getElementById('sheets-url-box').value.trim();
         state.sheets_api_url = url;
         saveState();
         closeSyncModal();
 
         if (url) {
-            await fetchFeedFromCloud(url);
-        } else {
-            render();
-        }
-    }
-
-    async function fetchFeedFromCloud(url) {
-        try {
-            const btn = document.querySelector('.sync-icon-btn');
-            btn.innerText = '⏳';
-            const res = await fetch(url);
-            if (res.ok) {
-                const data = await res.json();
-                if (data.transactions && Array.isArray(data.transactions)) {
-                    state.transactions = data.transactions.map(t => ({
-                        tx_id: t.tx_id || ('tx_' + Math.random()),
-                        date: (t.date || '').split('T')[0],
-                        merchant: t.merchant || 'Unknown',
-                        amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
-                        category: t.category || categorizeMerchant(t.merchant),
-                        account: t.account || 'Banco Popular'
-                    }));
-                    saveState();
+            const icon = document.getElementById('sync-btn-icon');
+            icon.innerText = '⏳';
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.transactions && Array.isArray(data.transactions)) {
+                        state.transactions = data.transactions.map(t => ({
+                            tx_id: t.tx_id || ('tx_' + Math.random()),
+                            date: (t.date || '').split('T')[0],
+                            merchant: t.merchant || 'Unknown',
+                            amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
+                            category: t.category || mapCategory(t.merchant),
+                            account: t.account || 'Banco Popular'
+                        }));
+                        saveState();
+                    }
                 }
+            } catch (err) {
+                console.error("Sync error", err);
             }
-            btn.innerText = '🔄';
-        } catch (e) {
-            console.error("Cloud fetch failed", e);
-            document.querySelector('.sync-icon-btn').innerText = '🔄';
+            icon.innerText = '🔄';
         }
         render();
     }
 
-    function categorizeMerchant(m) {
+    function mapCategory(m) {
         const str = (m || '').toLowerCase();
-        if (str.includes('luma') || str.includes('aaa') || str.includes('electric') || str.includes('water') || str.includes('power')) return 'Utilities';
-        if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket') || str.includes('grocery')) return 'Groceries';
-        if (str.includes('restaurant') || str.includes('dinner') || str.includes('cafe') || str.includes('bistro') || str.includes('pizza') || str.includes('burger')) return 'Dining';
-        if (str.includes('uber') || str.includes('gas') || str.includes('shell') || str.includes('total') || str.includes('transport')) return 'Transport';
-        if (str.includes('walgreens') || str.includes('amazon') || str.includes('cvs') || str.includes('target')) return 'Shopping';
+        if (str.includes('luma') || str.includes('aaa') || str.includes('water') || str.includes('electric')) return 'Utilities';
+        if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket')) return 'Groceries';
+        if (str.includes('dinner') || str.includes('restaurant') || str.includes('cafe')) return 'Dining';
+        if (str.includes('uber') || str.includes('gas') || str.includes('shell')) return 'Transport';
+        if (str.includes('walgreens') || str.includes('amazon') || str.includes('cvs')) return 'Shopping';
         return 'Other';
     }
 
-    function isUtility(tx) {
-        const cat = (tx.category || '').toLowerCase();
+    function isUtilityTx(tx) {
+        const c = (tx.category || '').toLowerCase();
         const m = (tx.merchant || '').toLowerCase();
-        return cat === 'utilities' || m.includes('luma') || m.includes('aaa') || m.includes('acueducto') || m.includes('electric') || m.includes('water');
+        return c === 'utilities' || m.includes('luma') || m.includes('aaa') || m.includes('electric') || m.includes('water');
     }
 
-    function filterTransactions(term) {
-        state.search_filter = (term || '').toLowerCase();
+    function onSearchFilter(val) {
+        state.filter_term = (val || '').toLowerCase();
         renderTransactionsOnly();
     }
 
-    // MAIN RENDER
+    // ── MAIN RENDER ENGINE ──
     function render() {
         const dateInfo = getDateInfo();
 
         // 1. Header
-        document.getElementById('hdr-month').innerText = dateInfo.monthName;
-        document.getElementById('hdr-days').innerText = `Day ${dateInfo.currentDay} of ${dateInfo.daysInMonth} · ${dateInfo.daysRemaining}d left`;
-        document.getElementById('cat-month-indicator').innerText = dateInfo.monthName;
+        document.getElementById('hdr-month-name').innerText = dateInfo.monthName;
+        document.getElementById('hdr-day-count').innerText = `Day ${dateInfo.currentDay} of ${dateInfo.daysInMonth} · ${dateInfo.daysRemaining}d left`;
+        document.getElementById('cat-month-meta').innerText = `${dateInfo.monthName.split(' ')[0]} Target`;
 
-        // 2. Filter this month's transactions
-        const currentMonthTxs = state.transactions.filter(tx => {
-            const d = (tx.date || '');
-            return d.startsWith(dateInfo.monthKey);
-        });
+        // 2. Filter Current Month Transactions
+        const currentMonthTxs = state.transactions.filter(tx => (tx.date || '').startsWith(dateInfo.monthKey));
 
-        // 3. BACKGROUND UTILITY AUTO-ADJUSTMENT
-        // Scan for utility payments in current month
-        const utilTxs = currentMonthTxs.filter(isUtility);
+        // 3. Background Utility Adjustment Engine
+        const utilTxs = currentMonthTxs.filter(isUtilityTx);
         const actualUtilities = utilTxs.reduce((sum, tx) => sum + tx.amount, 0);
 
         let utilDelta = 0;
-        const autoBadge = document.getElementById('util-auto-badge');
+        const chipText = document.getElementById('util-chip-text');
+        const chipDelta = document.getElementById('util-chip-delta');
 
         if (actualUtilities > 0) {
-            // Actual payment was found! Compare to baseline $750
             utilDelta = BASE_UTILITIES - actualUtilities;
-            autoBadge.style.display = 'inline-flex';
             if (utilDelta >= 0) {
-                autoBadge.className = 'util-auto-tag';
-                autoBadge.innerText = `⚡ Util Auto-Adjusted: +$${utilDelta.toFixed(2)} Added`;
+                chipText.innerText = `⚡ Auto-Adjusted: $${actualUtilities.toFixed(2)} Logged vs $750 Baseline`;
+                chipDelta.style.color = 'var(--emerald)';
+                chipDelta.style.background = 'var(--emerald-bg)';
+                chipDelta.innerText = `+$${utilDelta.toFixed(2)} Bonus`;
             } else {
-                autoBadge.className = 'util-auto-tag';
-                autoBadge.style.color = 'var(--red)';
-                autoBadge.style.background = 'var(--red-bg)';
-                autoBadge.style.borderColor = 'var(--red-border)';
-                autoBadge.innerText = `⚡ Util Over: -$${Math.abs(utilDelta).toFixed(2)} Deducted`;
+                chipText.innerText = `⚡ Auto-Adjusted: $${actualUtilities.toFixed(2)} Logged vs $750 Baseline`;
+                chipDelta.style.color = 'var(--crimson)';
+                chipDelta.style.background = 'var(--crimson-bg)';
+                chipDelta.innerText = `-$${Math.abs(utilDelta).toFixed(2)} Deducted`;
             }
         } else {
-            // No utility payment logged yet this month. If Sep/Oct, note construction baseline
-            autoBadge.style.display = 'none';
+            chipText.innerText = `⚡ Utility Intelligence: Baseline $750.00/mo Active`;
+            chipDelta.style.color = 'var(--gold)';
+            chipDelta.style.background = 'var(--gold-bg)';
+            chipDelta.innerText = `$0 Delta`;
         }
 
         const adjustedLifestyleLimit = Math.max(0, BASE_LIFESTYLE + utilDelta);
 
-        // 4. Calculate Lifestyle Spend (Excluding Utilities & Fixed Housing)
-        const lifestyleTxs = currentMonthTxs.filter(tx => !isUtility(tx));
-        const totalLifestyleSpent = lifestyleTxs.reduce((sum, tx) => sum + tx.amount, 0);
-        const remaining = adjustedLifestyleLimit - totalLifestyleSpent;
+        // 4. Lifestyle Spend (Excludes utilities & mortgage)
+        const lifestyleTxs = currentMonthTxs.filter(tx => !isUtilityTx(tx));
+        const totalSpent = lifestyleTxs.reduce((sum, tx) => sum + tx.amount, 0);
+        const remaining = adjustedLifestyleLimit - totalSpent;
         const isOver = remaining < 0;
         const absRemaining = Math.abs(remaining);
 
-        // Daily pacing
+        // Daily Pacing
         const dailyAllowance = remaining > 0 ? (remaining / dateInfo.daysRemaining) : 0;
-        const dailyPace = dateInfo.currentDay > 0 ? (totalLifestyleSpent / dateInfo.currentDay) : 0;
+        const dailyVelocity = dateInfo.currentDay > 0 ? (totalSpent / dateInfo.currentDay) : 0;
 
-        // 5. Update Hero Card
-        const heroPill = document.getElementById('hero-pill');
-        const heroPillText = document.getElementById('hero-pill-text');
-        const heroVal = document.getElementById('hero-remaining-val');
-        const heroSub = document.getElementById('hero-remaining-sub');
-        const heroProgress = document.getElementById('hero-progress');
+        // 5. Update Radial Gauge
+        const gaugeFill = document.getElementById('radial-gauge-fill');
+        const heroDigits = document.getElementById('hero-remaining-digits');
+        const statusTag = document.getElementById('hero-status-tag');
+        const statusTxt = document.getElementById('hero-status-txt');
+
+        // Circumference of r=90 circle is 2 * PI * 90 = 565.48
+        const C = 565.48;
+        const pctSpent = Math.min(100, (totalSpent / adjustedLifestyleLimit) * 100);
+        const offset = C - (pctSpent / 100) * C;
+
+        gaugeFill.style.strokeDashoffset = offset;
 
         if (isOver) {
-            heroPill.className = 'status-pill over';
-            heroPillText.innerText = 'OVER BUDGET';
-            heroVal.className = 'metric-value over';
-            heroVal.innerText = `-$${absRemaining.toFixed(2)}`;
-            heroSub.innerHTML = `You are <strong>$${absRemaining.toFixed(2)} over budget</strong> for ${dateInfo.monthName.split(' ')[0]}.`;
-            heroProgress.style.backgroundColor = 'var(--red)';
-            heroProgress.style.width = '100%';
+            gaugeFill.style.stroke = 'var(--crimson)';
+            heroDigits.className = 'gauge-digits over';
+            heroDigits.innerText = `-$${absRemaining.toFixed(2)}`;
+            statusTag.className = 'gauge-status-tag over';
+            statusTxt.innerText = `Over Budget by $${absRemaining.toFixed(2)}`;
         } else {
-            heroPill.className = 'status-pill under';
-            heroPillText.innerText = 'UNDER BUDGET';
-            heroVal.className = 'metric-value under';
-            heroVal.innerText = `$${remaining.toFixed(2)}`;
-            heroSub.innerHTML = `You have <strong>$${dailyAllowance.toFixed(2)} / day</strong> safe to spend for the remaining ${dateInfo.daysRemaining} days`;
-            
-            const pct = Math.min(100, (totalLifestyleSpent / adjustedLifestyleLimit) * 100);
-            heroProgress.style.width = `${pct}%`;
-            heroProgress.style.backgroundColor = pct > 85 ? 'var(--gold)' : 'var(--green)';
+            gaugeFill.style.stroke = pctSpent > 80 ? 'var(--gold)' : 'var(--emerald)';
+            heroDigits.className = 'gauge-digits under';
+            heroDigits.innerText = `$${remaining.toFixed(2)}`;
+            statusTag.className = 'gauge-status-tag under';
+            statusTxt.innerText = `${(100 - pctSpent).toFixed(0)}% Intact · Under`;
         }
 
-        // Stats grid
-        document.getElementById('stat-adjusted-budget').innerText = `$${adjustedLifestyleLimit.toFixed(2)}`;
-        document.getElementById('stat-total-spent').innerText = `$${totalLifestyleSpent.toFixed(2)}`;
-        document.getElementById('stat-daily-pace').innerText = `$${dailyPace.toFixed(2)} / day`;
+        // Pacing Banner & KPI
+        document.getElementById('burn-daily-val').innerText = `$${dailyAllowance.toFixed(2)} / day`;
+        document.getElementById('burn-pace-badge').innerText = `Burned ${pctSpent.toFixed(1)}% · Month ${dateInfo.pctMonthElapsed.toFixed(1)}%`;
+        document.getElementById('kpi-budget-cap').innerText = `$${adjustedLifestyleLimit.toFixed(2)}`;
+        document.getElementById('kpi-spent-total').innerText = `$${totalSpent.toFixed(2)}`;
+        document.getElementById('kpi-daily-velocity').innerText = `$${dailyVelocity.toFixed(2)} / day`;
 
-        // 6. CATEGORY BREAKDOWN LIST
-        const catMap = {};
+        // 6. CATEGORY BREAKDOWN CARDS
+        const catSpentMap = {};
         lifestyleTxs.forEach(tx => {
             const cat = tx.category || 'Other';
-            catMap[cat] = (catMap[cat] || 0) + tx.amount;
+            catSpentMap[cat] = (catSpentMap[cat] || 0) + tx.amount;
         });
 
-        // Ensure default categories exist for clean display
-        const standardCats = ['Dining', 'Groceries', 'Transport', 'Shopping', 'Other'];
-        standardCats.forEach(c => { if (catMap[c] === undefined) catMap[c] = 0; });
-
-        const catList = document.getElementById('cat-list');
-        const sortedCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
-
-        const catIcons = {
-            'Dining': '🍽️',
-            'Groceries': '🛒',
-            'Transport': '🚕',
-            'Shopping': '🛍️',
-            'Coffee': '☕',
-            'Other': '📦'
-        };
-
-        catList.innerHTML = sortedCats.map(([cat, amt]) => {
-            const pctOfTotal = totalLifestyleSpent > 0 ? (amt / totalLifestyleSpent) * 100 : 0;
-            const pctOfBudget = (amt / adjustedLifestyleLimit) * 100;
-            const icon = catIcons[cat] || '🏷️';
+        const grid = document.getElementById('category-grid');
+        grid.innerHTML = Object.entries(CATEGORY_LIMITS).map(([key, def]) => {
+            const spent = catSpentMap[key] || 0;
+            const pct = Math.min(100, (spent / def.limit) * 100);
             return `
-                <div class="cat-item">
-                    <div class="cat-item-header">
-                        <span class="cat-name">${icon} ${escapeHtml(cat)}</span>
-                        <div class="cat-numbers">
-                            <span class="cat-amount">$${amt.toFixed(2)}</span>
-                            <span class="cat-pct">(${pctOfTotal.toFixed(0)}%)</span>
+                <div class="cat-card-item" onclick="filterByCategory('${key}')">
+                    <div class="cat-card-header">
+                        <div class="cat-card-title">
+                            <span class="cat-icon-pill">${def.icon}</span>
+                            <span>${def.label}</span>
+                        </div>
+                        <div class="cat-card-metrics">
+                            <span class="cat-spent-val">$${spent.toFixed(2)}</span>
+                            <span class="cat-limit-val">/ $${def.limit.toFixed(0)}</span>
                         </div>
                     </div>
-                    <div class="cat-bar-track">
-                        <div class="cat-bar-fill" style="width: ${Math.min(100, pctOfBudget)}%;"></div>
+                    <div class="cat-meter-track">
+                        <div class="cat-meter-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--crimson)' : (pct > 75 ? 'var(--gold)' : 'var(--ink-primary)')}"></div>
                     </div>
                 </div>
             `;
@@ -1006,10 +1181,16 @@
         renderTransactionsOnly();
     }
 
+    function filterByCategory(cat) {
+        switchTab('feeds');
+        document.getElementById('tx-search-input').value = cat;
+        onSearchFilter(cat);
+    }
+
     function renderTransactionsOnly() {
-        const stream = document.getElementById('tx-stream');
-        const term = state.search_filter;
-        
+        const stream = document.getElementById('transactions-stream');
+        const term = state.filter_term;
+
         const filtered = state.transactions.filter(tx => {
             if (!term) return true;
             return (tx.merchant || '').toLowerCase().includes(term) ||
@@ -1017,29 +1198,51 @@
                    (tx.account || '').toLowerCase().includes(term);
         });
 
-        document.getElementById('stream-count').innerText = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+        document.getElementById('feed-count-badge').innerText = `${filtered.length} transaction${filtered.length === 1 ? '' : 's'}`;
 
         if (filtered.length === 0) {
-            stream.innerHTML = '<div class="tx-empty-state">No transactions match your search.</div>';
+            stream.innerHTML = `
+                <div class="empty-tx-box">
+                    <div class="empty-tx-icon">🍃</div>
+                    <strong>No transactions logged yet</strong>
+                    <span>Your bank feed is clean. Live expenses from SimpleFIN will appear here automatically.</span>
+                </div>
+            `;
             return;
         }
 
-        stream.innerHTML = filtered.map(tx => `
-            <div class="tx-row">
-                <div class="tx-row-left">
-                    <span class="tx-merchant">${escapeHtml(tx.merchant)}</span>
-                    <div class="tx-details">
-                        <span>${escapeHtml(tx.category || 'Other')}</span>
-                        <span>•</span>
-                        <span>${escapeHtml(tx.date || '')}</span>
-                        <span class="tx-account-tag">${escapeHtml(tx.account || 'Bank')}</span>
+        const catIcons = {
+            'Dining': '🍽️',
+            'Groceries': '🛒',
+            'Shopping': '🛍️',
+            'Transport': '🚕',
+            'Coffee': '☕',
+            'Utilities': '⚡',
+            'Other': '📦'
+        };
+
+        stream.innerHTML = filtered.map(tx => {
+            const icon = catIcons[tx.category] || '💳';
+            return `
+                <div class="tx-card-row">
+                    <div class="tx-left">
+                        <div class="tx-cat-icon">${icon}</div>
+                        <div class="tx-info">
+                            <span class="tx-name">${escapeHtml(tx.merchant)}</span>
+                            <div class="tx-meta-line">
+                                <span>${escapeHtml(tx.category || 'Other')}</span>
+                                <span>•</span>
+                                <span>${escapeHtml(tx.date || '')}</span>
+                                <span class="tx-account-badge">${escapeHtml(tx.account || 'Bank')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tx-right-val">
+                        -$${tx.amount.toFixed(2)}
                     </div>
                 </div>
-                <div class="tx-amount-val">
-                    $${tx.amount.toFixed(2)}
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     function escapeHtml(str) {
