@@ -116,21 +116,6 @@
             gap: 8px;
         }
 
-        .date-chip {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-hairline);
-            padding: 6px 12px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-card);
-        }
-
-        .date-chip-month {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            color: var(--ink-secondary);
-            text-transform: uppercase;
-        }
 
         .icon-btn {
             background: var(--bg-surface);
@@ -856,9 +841,6 @@
     <header>
         <h1 class="brand-title">DCR Ledger</h1>
         <div class="header-controls">
-            <div class="date-chip">
-                <span class="date-chip-month" id="hdr-month-name">September 2026</span>
-            </div>
             <button class="icon-btn" onclick="lockVault()" title="Lock Vault">🔒</button>
             <button class="icon-btn" onclick="openSyncModal()" title="Cloud Sync">
                 <span id="sync-btn-icon">🔄</span>
@@ -877,7 +859,7 @@
                 </svg>
                 <div class="gauge-inner-content">
                     <span class="gauge-label">Remaining Spend</span>
-                    <span class="gauge-digits under" id="hero-remaining-digits">$3,137.75</span>
+                    <span class="gauge-digits under" id="hero-remaining-digits">$3,137</span>
                     <div class="gauge-status-tag under" id="hero-status-tag">
                         <span class="pulse-dot"></span>
                         <span id="hero-status-txt">100% Intact</span>
@@ -889,10 +871,10 @@
             <div class="burn-banner">
                 <div class="burn-banner-left">
                     <span class="burn-banner-label">Safe Daily Allowance</span>
-                    <span class="burn-banner-val" id="burn-daily-val">$108.20 / day</span>
+                    <span class="burn-banner-val" id="burn-daily-val">$108 / day</span>
                 </div>
                 <div class="burn-banner-right">
-                    <span class="burn-badge" id="burn-pace-badge">Pacing: 0.0% Burned</span>
+                    <span class="burn-badge" id="burn-pace-badge">Pacing: 0% Burned</span>
                 </div>
             </div>
 
@@ -900,15 +882,15 @@
             <div class="kpi-row">
                 <div class="kpi-col">
                     <span class="kpi-title">Monthly Cap</span>
-                    <span class="kpi-num" id="kpi-budget-cap">$3,137.75</span>
+                    <span class="kpi-num" id="kpi-budget-cap">$3,137</span>
                 </div>
                 <div class="kpi-col">
                     <span class="kpi-title">Spent to Date</span>
-                    <span class="kpi-num" id="kpi-spent-total">$0.00</span>
+                    <span class="kpi-num" id="kpi-spent-total">$0</span>
                 </div>
                 <div class="kpi-col">
                     <span class="kpi-title">Daily Pace</span>
-                    <span class="kpi-num" id="kpi-daily-velocity">$0.00 / day</span>
+                    <span class="kpi-num" id="kpi-daily-velocity">$0 / day</span>
                 </div>
             </div>
         </div>
@@ -917,7 +899,7 @@
         <div class="util-silent-chip" id="util-status-chip">
             <div class="util-chip-left">
                 <span>⚡</span>
-                <span id="util-chip-text">Utility Intelligence: Baseline $750.00/mo Active</span>
+                <span id="util-chip-text">Utility Intelligence: Baseline $750/mo Active</span>
             </div>
             <span class="util-chip-status" id="util-chip-delta">$0 Delta</span>
         </div>
@@ -925,7 +907,7 @@
         <!-- Category Breakdown -->
         <div class="section-header">
             <h2 class="section-title">Category Allocations</h2>
-            <span class="section-meta" id="cat-month-meta">September Target</span>
+            <span class="section-meta">Monthly Targets</span>
         </div>
 
         <div class="cat-grid" id="category-grid">
@@ -1173,13 +1155,15 @@
         renderTransactionsOnly();
     }
 
+    function fmtUSD(val, roundDown = false) {
+        if (isNaN(val)) return "0";
+        const n = roundDown ? Math.floor(Math.abs(val)) : Math.round(Math.abs(val));
+        return n.toLocaleString('en-US');
+    }
+
     // ── MAIN RENDER ──
     function render() {
         const dateInfo = getDateInfo();
-
-        document.getElementById('hdr-month-name').innerText = dateInfo.monthName;
-        document.getElementById('cat-month-meta').innerText = `${dateInfo.monthName.split(' ')[0]} Target`;
-
         const currentMonthTxs = state.transactions.filter(tx => (tx.date || '').startsWith(dateInfo.monthKey));
 
         const utilTxs = currentMonthTxs.filter(isUtilityTx);
@@ -1192,18 +1176,18 @@
         if (actualUtilities > 0) {
             utilDelta = BASE_UTILITIES - actualUtilities;
             if (utilDelta >= 0) {
-                chipText.innerText = `⚡ Auto-Adjusted: $${actualUtilities.toFixed(2)} Logged vs $750 Baseline`;
+                chipText.innerText = `⚡ Auto-Adjusted: $${fmtUSD(actualUtilities)} Logged vs $750 Baseline`;
                 chipDelta.style.color = 'var(--emerald)';
                 chipDelta.style.background = 'var(--emerald-bg)';
-                chipDelta.innerText = `+$${utilDelta.toFixed(2)} Bonus`;
+                chipDelta.innerText = `+$${fmtUSD(utilDelta)} Bonus`;
             } else {
-                chipText.innerText = `⚡ Auto-Adjusted: $${actualUtilities.toFixed(2)} Logged vs $750 Baseline`;
+                chipText.innerText = `⚡ Auto-Adjusted: $${fmtUSD(actualUtilities)} Logged vs $750 Baseline`;
                 chipDelta.style.color = 'var(--crimson)';
                 chipDelta.style.background = 'var(--crimson-bg)';
-                chipDelta.innerText = `-$${Math.abs(utilDelta).toFixed(2)} Deducted`;
+                chipDelta.innerText = `-$${fmtUSD(Math.abs(utilDelta))} Deducted`;
             }
         } else {
-            chipText.innerText = `⚡ Utility Intelligence: Baseline $750.00/mo Active`;
+            chipText.innerText = `⚡ Utility Intelligence: Baseline $750/mo Active`;
             chipDelta.style.color = 'var(--gold)';
             chipDelta.style.background = 'var(--gold-bg)';
             chipDelta.innerText = `$0 Delta`;
@@ -1235,22 +1219,22 @@
         if (isOver) {
             gaugeFill.style.stroke = 'var(--crimson)';
             heroDigits.className = 'gauge-digits over';
-            heroDigits.innerText = `-$${absRemaining.toFixed(2)}`;
+            heroDigits.innerText = `-$${fmtUSD(absRemaining, false)}`;
             statusTag.className = 'gauge-status-tag over';
             statusTxt.innerText = `Over Budget`;
         } else {
             gaugeFill.style.stroke = pctSpent > 80 ? 'var(--gold)' : 'var(--emerald)';
             heroDigits.className = 'gauge-digits under';
-            heroDigits.innerText = `$${remaining.toFixed(2)}`;
+            heroDigits.innerText = `$${fmtUSD(remaining, true)}`; // Rounded down to whole dollar
             statusTag.className = 'gauge-status-tag under';
-            statusTxt.innerText = `${(100 - pctSpent).toFixed(0)}% Intact`;
+            statusTxt.innerText = `${Math.round(100 - pctSpent)}% Intact`;
         }
 
-        document.getElementById('burn-daily-val').innerText = `$${dailyAllowance.toFixed(2)} / day`;
-        document.getElementById('burn-pace-badge').innerText = `Burned ${pctSpent.toFixed(1)}%`;
-        document.getElementById('kpi-budget-cap').innerText = `$${adjustedLifestyleLimit.toFixed(2)}`;
-        document.getElementById('kpi-spent-total').innerText = `$${totalSpent.toFixed(2)}`;
-        document.getElementById('kpi-daily-velocity').innerText = `$${dailyVelocity.toFixed(2)} / day`;
+        document.getElementById('burn-daily-val').innerText = `$${fmtUSD(dailyAllowance, true)} / day`;
+        document.getElementById('burn-pace-badge').innerText = `Burned ${Math.round(pctSpent)}%`;
+        document.getElementById('kpi-budget-cap').innerText = `$${fmtUSD(adjustedLifestyleLimit, false)}`;
+        document.getElementById('kpi-spent-total').innerText = `$${fmtUSD(totalSpent, false)}`;
+        document.getElementById('kpi-daily-velocity').innerText = `$${fmtUSD(dailyVelocity, false)} / day`;
 
         // Category Cards
         const catSpentMap = {};
@@ -1271,8 +1255,8 @@
                             <span>${def.label}</span>
                         </div>
                         <div class="cat-card-metrics">
-                            <span class="cat-spent-val">$${spent.toFixed(2)}</span>
-                            <span class="cat-limit-val">/ $${def.limit.toFixed(0)}</span>
+                            <span class="cat-spent-val">$${fmtUSD(spent, false)}</span>
+                            <span class="cat-limit-val">/ $${fmtUSD(def.limit, false)}</span>
                         </div>
                     </div>
                     <div class="cat-meter-track">
@@ -1342,7 +1326,7 @@
                         </div>
                     </div>
                     <div class="tx-right-val">
-                        -$${tx.amount.toFixed(2)}
+                        -$${fmtUSD(tx.amount, false)}
                     </div>
                 </div>
             `;
