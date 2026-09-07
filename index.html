@@ -342,35 +342,162 @@
             font-feature-settings: "tnum" 1;
         }
 
-        /* ── BACKGROUND UTILITY CHIP ── */
-        .util-silent-chip {
+        /* ── FIXED HOUSING & UTILITIES TRACKER (EXCLUDED FROM LIFESTYLE) ── */
+        .fixed-housing-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fixed-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fixed-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fixed-icon-pill {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--bg-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .fixed-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .fixed-subtitle {
+            font-size: 9.5px;
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        .fixed-status-badge {
+            font-size: 9.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--emerald-bg);
+            color: var(--emerald);
+        }
+
+        .fixed-items-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+        }
+
+        .fixed-sub-item {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-sm);
+            padding: 6px 9px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .fixed-sub-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .fixed-sub-val {
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: var(--font-numbers);
+            color: var(--ink-primary);
+        }
+
+        .fixed-sub-budget {
+            font-size: 9.5px;
+            font-weight: 500;
+            color: var(--ink-muted);
+        }
+
+        .capital-facility-chip {
             background: var(--bg-surface);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            padding: 9px 12px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-card);
         }
 
-        .util-chip-left {
+        .cap-chip-left {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 10.5px;
+            font-weight: 600;
             color: var(--ink-secondary);
         }
 
-        .util-chip-status {
-            font-size: 10.5px;
+        .cap-chip-status {
+            font-size: 9.5px;
             font-family: var(--font-numbers);
-            font-weight: 600;
-            color: var(--gold);
-            background: var(--gold-bg);
+            font-weight: 700;
+            color: #0F2537;
+            background: #EBF3FA;
             padding: 2px 7px;
             border-radius: 4px;
+        }
+
+        .tx-account-badge.util {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+
+        .tx-account-badge.mortgage {
+            background: #FEF3C7;
+            color: #B45309;
+            font-weight: 600;
+        }
+
+        .tx-account-badge.hoa {
+            background: #F3E8FF;
+            color: #7E22CE;
+            font-weight: 600;
+        }
+
+        .tx-account-badge.debt {
+            background: #ECFDF5;
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .tx-excluded-tag {
+            font-weight: 600;
+            color: var(--emerald);
+        }
+
+        .tx-card-row.fixed-tx-row {
+            background: #FAFAFA;
+            border-left: 3px solid var(--emerald);
+        }
+
+        .tx-right-val.fixed-tx-val {
+            color: var(--ink-secondary);
         }
 
         /* ── CATEGORY BREAKDOWN ── */
@@ -859,7 +986,7 @@
                 </svg>
                 <div class="gauge-inner-content">
                     <span class="gauge-label">Remaining Spend</span>
-                    <span class="gauge-digits under" id="hero-remaining-digits">$3,137</span>
+                    <span class="gauge-digits under" id="hero-remaining-digits">$3,000</span>
                     <div class="gauge-status-tag under" id="hero-status-tag">
                         <span class="pulse-dot"></span>
                         <span id="hero-status-txt">100% Intact</span>
@@ -871,7 +998,7 @@
             <div class="burn-banner">
                 <div class="burn-banner-left">
                     <span class="burn-banner-label">Safe Daily Allowance</span>
-                    <span class="burn-banner-val" id="burn-daily-val">$108 / day</span>
+                    <span class="burn-banner-val" id="burn-daily-val">$97 / day</span>
                 </div>
                 <div class="burn-banner-right">
                     <span class="burn-badge" id="burn-pace-badge">Pacing: 0% Burned</span>
@@ -882,7 +1009,7 @@
             <div class="kpi-row">
                 <div class="kpi-col">
                     <span class="kpi-title">Monthly Cap</span>
-                    <span class="kpi-num" id="kpi-budget-cap">$3,137</span>
+                    <span class="kpi-num" id="kpi-budget-cap">$3,000</span>
                 </div>
                 <div class="kpi-col">
                     <span class="kpi-title">Spent to Date</span>
@@ -895,13 +1022,45 @@
             </div>
         </div>
 
-        <!-- Background Utility Intelligence Status -->
-        <div class="util-silent-chip" id="util-status-chip">
-            <div class="util-chip-left">
-                <span>⚡</span>
-                <span id="util-chip-text">Utility Intelligence: Baseline $750/mo Active</span>
+        <!-- Fixed Housing & Utilities Tracking Card (Excluded from Lifestyle) -->
+        <div class="fixed-housing-card">
+            <div class="fixed-card-header">
+                <div class="fixed-title-wrap">
+                    <span class="fixed-icon-pill">🏠</span>
+                    <div>
+                        <div class="fixed-title">Fixed Housing &amp; Utilities</div>
+                        <div class="fixed-subtitle">Excluded from Lifestyle Spend ($3,000 intact)</div>
+                    </div>
+                </div>
+                <span class="fixed-status-badge" id="fixed-total-status">Active</span>
             </div>
-            <span class="util-chip-status" id="util-chip-delta">$0 Delta</span>
+            <div class="fixed-items-grid">
+                <div class="fixed-sub-item">
+                    <div class="fixed-sub-label">⚡ LUMA (Power)</div>
+                    <div class="fixed-sub-val" id="fixed-luma-val">$0 <span class="fixed-sub-budget">/ $600</span></div>
+                </div>
+                <div class="fixed-sub-item">
+                    <div class="fixed-sub-label">💧 AAA (Water)</div>
+                    <div class="fixed-sub-val" id="fixed-aaa-val">$0 <span class="fixed-sub-budget">/ $150</span></div>
+                </div>
+                <div class="fixed-sub-item">
+                    <div class="fixed-sub-label">🏦 BPPR Mortgage</div>
+                    <div class="fixed-sub-val" id="fixed-mortgage-val">$0 <span class="fixed-sub-budget">/ $3,306</span></div>
+                </div>
+                <div class="fixed-sub-item">
+                    <div class="fixed-sub-label">🏢 Victoria HOA</div>
+                    <div class="fixed-sub-val" id="fixed-hoa-val">$0 <span class="fixed-sub-budget">/ $375</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Capital Facility Pill -->
+        <div class="capital-facility-chip">
+            <div class="cap-chip-left">
+                <span>🏛️</span>
+                <span>Merrill 5% Loan Facility: $154.3k ($2,000/mo paydown)</span>
+            </div>
+            <span class="cap-chip-status">5.0% APR</span>
         </div>
 
         <!-- Category Breakdown -->
@@ -959,16 +1118,17 @@
 </div>
 
 <script>
-    const BASE_LIFESTYLE = 3137.75;
+    const BASE_LIFESTYLE = 3000.00;
     const BASE_UTILITIES = 750.00;
 
     const CATEGORY_LIMITS = {
-        'Dining': { limit: 700.00, icon: '🍽️', label: 'Dining & Restaurants' },
-        'Groceries': { limit: 600.00, icon: '🛒', label: 'Groceries & Supermarket' },
-        'Shopping': { limit: 450.00, icon: '🛍️', label: 'Shopping & Personal' },
-        'Transport': { limit: 350.00, icon: '🚕', label: 'Transport & Uber' },
-        'Coffee': { limit: 250.00, icon: '☕', label: 'Coffee, Subs & Leisure' },
-        'Other': { limit: 187.75, icon: '📦', label: 'Buffer & Miscellaneous' }
+        'Dining': { limit: 680.00, icon: '🍽️', label: 'Dining & Restaurants' },
+        'Groceries': { limit: 580.00, icon: '🛒', label: 'Groceries & Supermarket' },
+        'Shopping': { limit: 430.00, icon: '🛍️', label: 'Shopping & Personal' },
+        'Transport': { limit: 330.00, icon: '🚕', label: 'Transport, Uber & Gas' },
+        'Fitness': { limit: 300.00, icon: '💪', label: 'Fitness & Wellness' },
+        'Coffee': { limit: 240.00, icon: '☕', label: 'Coffee, Subs & Hobbies' },
+        'Other': { limit: 440.00, icon: '📦', label: 'Buffer & Miscellaneous' }
     };
 
     let state = {
@@ -1048,6 +1208,36 @@
             state.transactions = [];
         }
         document.getElementById('sheets-url-box').value = state.sheets_api_url;
+
+        // Auto-fetch if on local server
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            fetch('/api/data')
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.transactions && Array.isArray(data.transactions) && data.transactions.length > 0) {
+                        state.transactions = data.transactions;
+                        saveState();
+                        render();
+                    }
+                }).catch(() => {});
+        } else if (state.sheets_api_url) {
+            fetch(state.sheets_api_url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.transactions && Array.isArray(data.transactions)) {
+                        state.transactions = data.transactions.map(t => ({
+                            tx_id: t.tx_id || ('tx_' + Math.random()),
+                            date: (t.date || '').split('T')[0],
+                            merchant: t.merchant || 'Unknown',
+                            amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
+                            category: t.category || mapCategory(t.merchant),
+                            account: t.account || 'Banco Popular'
+                        }));
+                        saveState();
+                        render();
+                    }
+                }).catch(() => {});
+        }
     }
 
     function saveState() {
@@ -1136,18 +1326,58 @@
 
     function mapCategory(m) {
         const str = (m || '').toLowerCase();
-        if (str.includes('luma') || str.includes('aaa') || str.includes('water') || str.includes('electric')) return 'Utilities';
-        if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket')) return 'Groceries';
-        if (str.includes('dinner') || str.includes('restaurant') || str.includes('cafe')) return 'Dining';
-        if (str.includes('uber') || str.includes('gas') || str.includes('shell')) return 'Transport';
-        if (str.includes('walgreens') || str.includes('amazon') || str.includes('cvs')) return 'Shopping';
+        if (str.includes('luma') || str.includes('aee') || str.includes('electric')) return 'Utilities (LUMA)';
+        if (str.includes('aaa') || str.includes('acueduct') || str.includes('water') || str.includes('alcantarill') || str.includes('aqueduct')) return 'Utilities (AAA)';
+        if (str.includes('popular mortgage') || str.includes('hipoteca') || (str.includes('banco popular') && str.includes('mortgage'))) return 'Housing (Mortgage)';
+        if (str.includes('hoa') || str.includes('victoria court')) return 'Housing (HOA)';
+        if (str.includes('merrill') || str.includes('bofa')) return 'Debt Service';
+        if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket') || str.includes('grocery') || str.includes('waitrose')) return 'Groceries';
+        if (str.includes('dinner') || str.includes('restaurant') || str.includes('cafe') || str.includes('food') || str.includes('pret') || str.includes('mcdonald')) return 'Dining';
+        if (str.includes('uber') || str.includes('gas') || str.includes('shell') || str.includes('transit') || str.includes('tfl')) return 'Transport';
+        if (str.includes('gym') || str.includes('fitness') || str.includes('wellness')) return 'Fitness';
+        if (str.includes('coffee') || str.includes('starbucks') || str.includes('netflix') || str.includes('spotify') || str.includes('apple')) return 'Coffee';
+        if (str.includes('walgreens') || str.includes('amazon') || str.includes('cvs') || str.includes('zara') || str.includes('best buy')) return 'Shopping';
         return 'Other';
     }
 
-    function isUtilityTx(tx) {
-        const c = (tx.category || '').toLowerCase();
+    // ── FIXED HOUSING & UTILITIES DETECTION (DOES NOT COUNT INTO LIFESTYLE) ──
+    function isLumaTx(tx) {
         const m = (tx.merchant || '').toLowerCase();
-        return c === 'utilities' || m.includes('luma') || m.includes('aaa') || m.includes('electric') || m.includes('water');
+        const c = (tx.category || '').toLowerCase();
+        return m.includes('luma') || m.includes('aee') || m.includes('electric') || c.includes('luma') || c.includes('electric');
+    }
+
+    function isAAATx(tx) {
+        const m = (tx.merchant || '').toLowerCase();
+        const c = (tx.category || '').toLowerCase();
+        return m.includes('aaa') || m.includes('acueduct') || m.includes('alcantarill') || m.includes('prasa') || m.includes('water') || c.includes('aaa') || c.includes('water') || m.includes('aqueduct');
+    }
+
+    function isMortgageTx(tx) {
+        const m = (tx.merchant || '').toLowerCase();
+        const c = (tx.category || '').toLowerCase();
+        return m.includes('popular mortgage') || m.includes('hipoteca') || 
+              (m.includes('banco popular') && (m.includes('mortgage') || m.includes('prestamo') || m.includes('loan') || tx.amount >= 3000)) ||
+              c.includes('mortgage') || c.includes('hipoteca');
+    }
+
+    function isHOATx(tx) {
+        const m = (tx.merchant || '').toLowerCase();
+        const c = (tx.category || '').toLowerCase();
+        return m.includes('hoa') || m.includes('victoria court') || m.includes('condominio') || c.includes('hoa') || m.includes('mantenimiento');
+    }
+
+    function isDebtServiceTx(tx) {
+        const m = (tx.merchant || '').toLowerCase();
+        const c = (tx.category || '').toLowerCase();
+        return m.includes('merrill') || m.includes('bofa') || m.includes('line of credit') || c.includes('debt');
+    }
+
+    function isExcludedFromLifestyle(tx) {
+        return isLumaTx(tx) || isAAATx(tx) || isMortgageTx(tx) || isHOATx(tx) || isDebtServiceTx(tx) || 
+               (tx.category || '').toLowerCase().includes('utilit') || 
+               (tx.category || '').toLowerCase().includes('housing') || 
+               (tx.category || '').toLowerCase().includes('debt');
     }
 
     function onSearchFilter(val) {
@@ -1166,38 +1396,34 @@
         const dateInfo = getDateInfo();
         const currentMonthTxs = state.transactions.filter(tx => (tx.date || '').startsWith(dateInfo.monthKey));
 
-        const utilTxs = currentMonthTxs.filter(isUtilityTx);
-        const actualUtilities = utilTxs.reduce((sum, tx) => sum + tx.amount, 0);
+        // 1. Separate Fixed Housing & Utilities from Lifestyle
+        const lifestyleTxs = currentMonthTxs.filter(tx => !isExcludedFromLifestyle(tx));
+        const lumaTxs = currentMonthTxs.filter(isLumaTx);
+        const aaaTxs = currentMonthTxs.filter(isAAATx);
+        const mortgageTxs = currentMonthTxs.filter(isMortgageTx);
+        const hoaTxs = currentMonthTxs.filter(isHOATx);
 
-        let utilDelta = 0;
-        const chipText = document.getElementById('util-chip-text');
-        const chipDelta = document.getElementById('util-chip-delta');
+        const lumaSpent = lumaTxs.reduce((s, t) => s + t.amount, 0);
+        const aaaSpent = aaaTxs.reduce((s, t) => s + t.amount, 0);
+        const mortgageSpent = mortgageTxs.reduce((s, t) => s + t.amount, 0);
+        const hoaSpent = hoaTxs.reduce((s, t) => s + t.amount, 0);
 
-        if (actualUtilities > 0) {
-            utilDelta = BASE_UTILITIES - actualUtilities;
-            if (utilDelta >= 0) {
-                chipText.innerText = `⚡ Auto-Adjusted: $${fmtUSD(actualUtilities)} Logged vs $750 Baseline`;
-                chipDelta.style.color = 'var(--emerald)';
-                chipDelta.style.background = 'var(--emerald-bg)';
-                chipDelta.innerText = `+$${fmtUSD(utilDelta)} Bonus`;
-            } else {
-                chipText.innerText = `⚡ Auto-Adjusted: $${fmtUSD(actualUtilities)} Logged vs $750 Baseline`;
-                chipDelta.style.color = 'var(--crimson)';
-                chipDelta.style.background = 'var(--crimson-bg)';
-                chipDelta.innerText = `-$${fmtUSD(Math.abs(utilDelta))} Deducted`;
-            }
-        } else {
-            chipText.innerText = `⚡ Utility Intelligence: Baseline $750/mo Active`;
-            chipDelta.style.color = 'var(--gold)';
-            chipDelta.style.background = 'var(--gold-bg)';
-            chipDelta.innerText = `$0 Delta`;
-        }
+        // Update Fixed Housing & Utilities UI (Excluded from Lifestyle)
+        const isMortgageActive = (dateInfo.year > 2026 || (dateInfo.year === 2026 && dateInfo.month >= 11)); // Dec 2026 is month index 11
+        document.getElementById('fixed-luma-val').innerHTML = `$${fmtUSD(lumaSpent)} <span class="fixed-sub-budget">/ $600</span>`;
+        document.getElementById('fixed-aaa-val').innerHTML = `$${fmtUSD(aaaSpent)} <span class="fixed-sub-budget">/ $150</span>`;
+        document.getElementById('fixed-mortgage-val').innerHTML = isMortgageActive 
+            ? `$${fmtUSD(mortgageSpent)} <span class="fixed-sub-budget">/ $3,306</span>` 
+            : `$0 <span class="fixed-sub-budget">(Starts Dec 1)</span>`;
+        document.getElementById('fixed-hoa-val').innerHTML = `$${fmtUSD(hoaSpent)} <span class="fixed-sub-budget">/ $375</span>`;
 
-        const adjustedLifestyleLimit = Math.max(0, BASE_LIFESTYLE + utilDelta);
+        const totalFixedSpent = lumaSpent + aaaSpent + mortgageSpent + hoaSpent;
+        document.getElementById('fixed-total-status').innerText = totalFixedSpent > 0 ? `$${fmtUSD(totalFixedSpent)} Logged` : 'Active';
 
-        const lifestyleTxs = currentMonthTxs.filter(tx => !isUtilityTx(tx));
+        // 2. LIFESTYLE SPEND: Strictly $3,000.00 cap, NEVER altered by utilities
+        const lifestyleCap = BASE_LIFESTYLE; // Strictly $3,000.00
         const totalSpent = lifestyleTxs.reduce((sum, tx) => sum + tx.amount, 0);
-        const remaining = adjustedLifestyleLimit - totalSpent;
+        const remaining = lifestyleCap - totalSpent;
         const isOver = remaining < 0;
         const absRemaining = Math.abs(remaining);
 
@@ -1206,7 +1432,7 @@
 
         // Radial Gauge: r=80, C = 2 * PI * 80 = 502.65
         const C = 502.65;
-        const pctSpent = Math.min(100, (totalSpent / adjustedLifestyleLimit) * 100);
+        const pctSpent = Math.min(100, (totalSpent / lifestyleCap) * 100);
         const offset = C - (pctSpent / 100) * C;
 
         const gaugeFill = document.getElementById('radial-gauge-fill');
@@ -1232,7 +1458,7 @@
 
         document.getElementById('burn-daily-val').innerText = `$${fmtUSD(dailyAllowance, true)} / day`;
         document.getElementById('burn-pace-badge').innerText = `Burned ${Math.round(pctSpent)}%`;
-        document.getElementById('kpi-budget-cap').innerText = `$${fmtUSD(adjustedLifestyleLimit, false)}`;
+        document.getElementById('kpi-budget-cap').innerText = `$${fmtUSD(lifestyleCap, false)}`;
         document.getElementById('kpi-spent-total').innerText = `$${fmtUSD(totalSpent, false)}`;
         document.getElementById('kpi-daily-velocity').innerText = `$${fmtUSD(dailyVelocity, false)} / day`;
 
@@ -1293,7 +1519,7 @@
                 <div class="empty-tx-box">
                     <div style="font-size: 26px; margin-bottom: 2px;">🍃</div>
                     <strong>No transactions logged yet</strong>
-                    <span>Live expenses from SimpleFIN will appear here automatically.</span>
+                    <span>Live expenses from Banco Popular and AmEx will appear here automatically.</span>
                 </div>
             `;
             return;
@@ -1304,28 +1530,57 @@
             'Groceries': '🛒',
             'Shopping': '🛍️',
             'Transport': '🚕',
+            'Fitness': '💪',
             'Coffee': '☕',
             'Utilities': '⚡',
             'Other': '📦'
         };
 
         stream.innerHTML = filtered.map(tx => {
-            const icon = catIcons[tx.category] || '💳';
+            const isExcluded = isExcludedFromLifestyle(tx);
+            let badgeClass = 'tx-account-badge';
+            let badgeText = escapeHtml(tx.account || 'Bank');
+            let catTag = escapeHtml(tx.category || 'Other');
+
+            if (isLumaTx(tx)) {
+                badgeClass += ' util';
+                badgeText = '⚡ LUMA (Power)';
+                catTag = 'Electricity (Fixed · Excluded)';
+            } else if (isAAATx(tx)) {
+                badgeClass += ' util';
+                badgeText = '💧 AAA (Water)';
+                catTag = 'Water / Aqueduct (Fixed · Excluded)';
+            } else if (isMortgageTx(tx)) {
+                badgeClass += ' mortgage';
+                badgeText = '🏠 BPPR Mortgage';
+                catTag = 'Mortgage (Fixed · Excluded)';
+            } else if (isHOATx(tx)) {
+                badgeClass += ' hoa';
+                badgeText = '🏢 Victoria HOA';
+                catTag = 'HOA Dues (Fixed · Excluded)';
+            } else if (isDebtServiceTx(tx)) {
+                badgeClass += ' debt';
+                badgeText = '💳 Merrill Lynch';
+                catTag = 'Debt Paydown (Excluded)';
+            }
+
+            const icon = isLumaTx(tx) ? '⚡' : (isAAATx(tx) ? '💧' : (isMortgageTx(tx) ? '🏠' : (isHOATx(tx) ? '🏢' : (catIcons[tx.category] || '💳'))));
+
             return `
-                <div class="tx-card-row">
+                <div class="tx-card-row ${isExcluded ? 'fixed-tx-row' : ''}">
                     <div class="tx-left">
                         <div class="tx-cat-icon">${icon}</div>
                         <div class="tx-info">
                             <span class="tx-name">${escapeHtml(tx.merchant)}</span>
                             <div class="tx-meta-line">
-                                <span>${escapeHtml(tx.category || 'Other')}</span>
+                                <span class="${isExcluded ? 'tx-excluded-tag' : ''}">${catTag}</span>
                                 <span>•</span>
                                 <span>${escapeHtml(tx.date || '')}</span>
-                                <span class="tx-account-badge">${escapeHtml(tx.account || 'Bank')}</span>
+                                <span class="${badgeClass}">${badgeText}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="tx-right-val">
+                    <div class="tx-right-val ${isExcluded ? 'fixed-tx-val' : ''}">
                         -$${fmtUSD(tx.amount, false)}
                     </div>
                 </div>
