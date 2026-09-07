@@ -1,4 +1,4 @@
-const CACHE = 'dcr-ledger-v27-lifestyle-fixed';
+const CACHE = 'dcr-ledger-v28-name-update';
 const ASSETS = [
   './index.html',
   './manifest.json',
