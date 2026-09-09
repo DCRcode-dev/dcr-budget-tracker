@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Finance Intelligence — April 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0A1628;color:#F1F5F9;min-height:100vh;padding:40px 32px;}
+.page{max-width:1100px;margin:0 auto;}
+.kpi{background:#152236;border-radius:12px;padding:1.25rem;}
+.kpi-lbl{font-size:12px;color:#94A3B8;margin-bottom:8px;}
+.kpi-val{font-size:28px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2;}
+.kpi-sub{font-size:12px;margin-top:6px;}
+.section{background:#152236;border-radius:16px;padding:1.5rem;margin-bottom:1rem;}
+.stitle{font-size:15px;font-weight:500;margin-bottom:1rem;color:#F1F5F9;}
+.alert{border-radius:10px;padding:14px;margin-bottom:8px;}
+.badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:8px;font-weight:500;}
+.rec-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 3fr;gap:10px;align-items:center;font-size:13px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.rec-hdr{font-size:11px;color:#64748B;font-weight:500;}
+.flag-title{font-size:13px;font-weight:500;margin-bottom:6px;}
+.flag-body{font-size:13px;color:#94A3B8;line-height:1.7;}
+.divider{height:1px;background:rgba(255,255,255,0.07);margin:1.5rem 0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:1.25rem;margin-bottom:2rem;border-bottom:1px solid rgba(255,255,255,0.08);">
+  <div>
+    <p style="font-size:11px;color:#64748B;margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase;">Personal Finance Intelligence</p>
+    <p style="font-size:28px;font-weight:500;margin-bottom:4px;">April 2026 analysis</p>
+    <p style="font-size:14px;color:#64748B;">DCR &nbsp;·&nbsp; Sample data &nbsp;·&nbsp; Generated 30 Apr 2026</p>
+  </div>
+  <span class="badge" style="background:#1E1B4B;color:#A5B4FC;margin-top:6px;">Dry run</span>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;">
+  <div class="kpi">
+    <p class="kpi-lbl">Monthly spend</p>
+    <p class="kpi-val">£2,419</p>
+    <p class="kpi-sub" style="color:#FDA4AF;">↑ £169 over budget</p>
+  </div>
+  <div class="kpi">
+    <p class="kpi-lbl">Budget target</p>
+    <p class="kpi-val">£2,250</p>
+    <p class="kpi-sub" style="color:#64748B;">Base lifestyle</p>
+  </div>
+  <div class="kpi">
+    <p class="kpi-lbl">3-month average</p>
+    <p class="kpi-val">£2,318</p>
+    <p class="kpi-sub" style="color:#64748B;">Feb · Mar · Apr</p>
+  </div>
+  <div class="kpi">
+    <p class="kpi-lbl">Top overage</p>
+    <p class="kpi-val">Shopping</p>
+    <p class="kpi-sub" style="color:#FDA4AF;">+£98 · +32.7%</p>
+  </div>
+</div>
+
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+    <p class="stitle" style="margin-bottom:0;">Category performance — April</p>
+    <div style="display:flex;gap:16px;font-size:12px;color:#64748B;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(148,163,184,0.3);display:inline-block;"></span>Budget</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#3B82F6;display:inline-block;"></span>Within budget</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:2px;background:#EF4444;display:inline-block;"></span>Over budget</span>
+    </div>
+  </div>
+  <div style="position:relative;width:100%;height:400px;">
+    <canvas id="catChart" role="img" aria-label="Horizontal bar chart comparing actual spend against budget for April 2026. Transport and Shopping are over budget.">Category performance data.</canvas>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:5fr 7fr;gap:1rem;margin-bottom:1rem;">
+  <div class="section" style="margin-bottom:0;">
+    <p class="stitle">Spend mix</p>
+    <div style="position:relative;width:100%;height:240px;">
+      <canvas id="donutChart" role="img" aria-label="Donut chart showing April spending distribution across 9 categories">April spend distribution.</canvas>
+    </div>
+  </div>
+  <div class="section" style="margin-bottom:0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;">
+      <p class="stitle" style="margin-bottom:0;">3-month trend</p>
+      <div style="display:flex;gap:12px;font-size:11px;color:#64748B;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:2px;background:#3B82F6;display:inline-block;"></span>Total</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:2px;background:#EF4444;display:inline-block;"></span>Shopping</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:2px;background:#F59E0B;display:inline-block;"></span>Transport</span>
+      </div>
+    </div>
+    <div style="position:relative;width:100%;height:240px;">
+      <canvas id="trendChart" role="img" aria-label="Line chart Feb to Apr showing total spend and problem categories escalating">3-month trend.</canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.07);">
+    <p class="stitle" style="margin-bottom:0;">Analyst brief</p>
+    <span class="badge" style="background:#2D0F0F;color:#FCA5A5;">2 flags · 1 action required</span>
+  </div>
+  <div class="alert" style="background:#1F0E0E;border:1px solid rgba(239,68,68,0.25);">
+    <p class="flag-title" style="color:#FCA5A5;">Flag 1 — Shopping: structural overage, not an anomaly</p>
+    <p class="flag-body">Shopping has exceeded budget in 2 of 3 months (Feb +£42, Apr +£98). March came in at -£10 — a one-off correction, not a trend reversal. The 3-month average is £343 vs a £300 target. Keeping an unrealistic ceiling creates noise without changing behaviour. Recommendation: raise to £350 effective May.</p>
+  </div>
+  <div class="alert" style="background:#1C1408;border:1px solid rgba(245,158,11,0.25);">
+    <p class="flag-title" style="color:#FCD34D;">Flag 2 — Transport: escalating overages, three consecutive months</p>
+    <p class="flag-body">Transport overages are increasing in magnitude: +£35 in Feb, +£18 in Mar, +£62 in Apr. April's £312 is 25% above the £250 budget — and the trajectory is upward. This is a structural increase in London ride-hailing costs, not a behaviour shift. Recommendation: raise to £290, review at end of June.</p>
+  </div>
+  <div class="alert" style="background:#0C1A0E;border:1px solid rgba(34,197,94,0.2);">
+    <p class="flag-title" style="color:#86EFAC;">6 of 9 categories on track</p>
+    <p class="flag-body">Dining, Groceries, Entertainment, Subscriptions, and Personal care are consistently within target. Groceries is particularly stable — important for your lean bulk programme. No adjustments needed on these categories.</p>
+  </div>
+  <div class="alert" style="background:#0D1A2A;border:1px solid rgba(59,130,246,0.25);margin-bottom:0;">
+    <p class="flag-title" style="color:#93C5FD;">Action required — pre-allocate Tuscany travel budget (May 5–11)</p>
+    <p class="flag-body">A 7-day Italy trip starts in 5 days. Without a dedicated travel bucket, Dining and Transport will appear severely over budget in May — corrupting the monthly analysis. Recommended pre-allocation: £1,800. Set this in the May travel budget before departure to keep base categories clean.</p>
+  </div>
+</div>
+
+<div class="section" style="margin-bottom:0;">
+  <p class="stitle">Recommended budget — May 2026</p>
+  <div class="rec-grid rec-hdr">
+    <span>Category</span><span style="text-align:right;">Apr</span><span style="text-align:right;">May</span><span style="text-align:right;">Change</span><span>Rationale</span>
+  </div>
+  <div class="rec-grid"><span>Dining out</span><span style="text-align:right;">£500</span><span style="text-align:right;">£500</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Consistent. No change.</span></div>
+  <div class="rec-grid"><span>Groceries</span><span style="text-align:right;">£400</span><span style="text-align:right;">£400</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Stable. Lean bulk essential.</span></div>
+  <div class="rec-grid"><span>Health</span><span style="text-align:right;">£250</span><span style="text-align:right;">£250</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Apr +£5 is noise, not trend.</span></div>
+  <div class="rec-grid"><span>Transport</span><span style="text-align:right;">£250</span><span style="text-align:right;font-weight:500;">£290</span><span style="text-align:right;color:#FCD34D;">+£40</span><span style="color:#64748B;">Structural cost increase. 3 overages.</span></div>
+  <div class="rec-grid"><span>Shopping</span><span style="text-align:right;">£300</span><span style="text-align:right;font-weight:500;">£350</span><span style="text-align:right;color:#FCD34D;">+£50</span><span style="color:#64748B;">3-month avg £343. Raise to realistic.</span></div>
+  <div class="rec-grid"><span>Entertainment</span><span style="text-align:right;">£150</span><span style="text-align:right;">£150</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Within budget all 3 months.</span></div>
+  <div class="rec-grid"><span>Subscriptions</span><span style="text-align:right;">£120</span><span style="text-align:right;">£120</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Exact match. No action.</span></div>
+  <div class="rec-grid"><span>Personal care</span><span style="text-align:right;">£100</span><span style="text-align:right;">£100</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Consistently on or under target.</span></div>
+  <div class="rec-grid"><span>Misc</span><span style="text-align:right;">£180</span><span style="text-align:right;">£180</span><span style="text-align:right;color:#64748B;">—</span><span style="color:#64748B;">Monitor May. Slight Apr drift.</span></div>
+  <div class="rec-grid" style="border-bottom:none;"><span style="color:#64748B;">Travel (Tuscany)</span><span style="text-align:right;color:#64748B;">—</span><span style="text-align:right;font-weight:500;">£1,800</span><span style="text-align:right;color:#FCD34D;">+£1,800</span><span style="color:#64748B;">Pre-allocated. May 5–11.</span></div>
+  <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 3fr;gap:10px;font-size:14px;font-weight:500;padding-top:14px;margin-top:6px;border-top:1px solid rgba(255,255,255,0.12);">
+    <span>May total</span><span style="text-align:right;">£2,250</span><span style="text-align:right;">£4,130</span><span style="text-align:right;color:#FCA5A5;">+£1,880</span><span style="font-weight:400;color:#64748B;">Travel month. Expected variance.</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+const cats=['Dining out','Groceries','Health','Transport','Shopping','Entertainment','Subscriptions','Personal care','Misc'];
+const budgets=[500,400,250,250,300,150,120,100,180];
+const apr=[498,395,255,312,398,143,120,96,202];
+const bColors=apr.map((v,i)=>v>budgets[i]?'#EF4444':'#3B82F6');
+const tick='rgba(255,255,255,0.4)';
+const grid='rgba(255,255,255,0.06)';
+
+new Chart(document.getElementById('catChart'),{
+  type:'bar',
+  data:{labels:cats,datasets:[
+    {label:'Budget',data:budgets,backgroundColor:'rgba(148,163,184,0.18)',borderColor:'rgba(148,163,184,0.4)',borderWidth:1,borderRadius:3},
+    {label:'Actual',data:apr,backgroundColor:bColors,borderColor:bColors,borderWidth:0,borderRadius:3}
+  ]},
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` £${ctx.raw.toLocaleString()}`}}},
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick,callback:v=>'£'+v},border:{display:false}},
+      y:{grid:{color:'transparent'},ticks:{color:tick},border:{display:false}}
+    }
+  }
+});
+
+new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{labels:cats,datasets:[{data:apr,backgroundColor:['#3B82F6','#22C55E','#14B8A6','#F59E0B','#EF4444','#8B5CF6','#0EA5E9','#EC4899','#6B7280'],borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: £${ctx.raw}`}}}}
+});
+
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:['Feb','Mar','Apr'],
+    datasets:[
+      {label:'Total',data:[2288,2246,2419],borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,0.08)',fill:true,tension:0.35,pointRadius:5,pointBackgroundColor:'#3B82F6'},
+      {label:'Shopping',data:[342,290,398],borderColor:'#EF4444',fill:false,tension:0.35,pointRadius:5,pointBackgroundColor:'#EF4444'},
+      {label:'Transport',data:[285,268,312],borderColor:'#F59E0B',fill:false,tension:0.35,pointRadius:5,pointBackgroundColor:'#F59E0B',borderDash:[5,3]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: £${ctx.raw.toLocaleString()}`}}},
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick},border:{display:false}},
+      y:{grid:{color:grid},ticks:{color:tick,callback:v=>'£'+v},border:{display:false}}
+    }
+  }
+});
+</script>
+</body>
+</html>

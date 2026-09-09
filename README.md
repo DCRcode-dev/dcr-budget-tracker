@@ -21,7 +21,7 @@ Welcome to the **Victoria Court Budget Tracker** system. This system was custom-
 ### Step 2: Create the Google Sheet & Paste the Code
 1. Open Google Drive ([drive.google.com](https://drive.google.com)).
 2. Click **+ New** → **Google Sheets**, and name the spreadsheet:  
-   `Victoria Court Budget Tracker`
+   `DCR Ledger`
 3. In the top menu, go to **Extensions** → **Apps Script**.
 4. Delete any default code in the editor, open [Code.gs](file:///Users/dcr/Documents/LLMs/Projects/Budgeting/Code.gs), copy all of its contents, and paste it into the editor.
 5. Click the **Save** icon (diskette).
@@ -33,19 +33,19 @@ Welcome to the **Victoria Court Budget Tracker** system. This system was custom-
 2. When Google asks for authorization:
    - Click **Review permissions**
    - Select your Google account
-   - Click **Advanced** → **Go to Victoria Court Budget Tracker (unsafe)**
+   - Click **Advanced** → **Go to DCR Ledger (unsafe)**
    - Click **Allow**
 3. Once the script finishes, switch back to your Google Sheet. You will see the entire formatted workbook built with all cards, Named Ranges, conditional formatting, and seed data.
 
 ---
 
 ### Step 4: Connect SimpleFIN & Sync
-1. Refresh your Google Sheet in your browser. You will now see a custom menu at the top: **💰 Budget Tracker**.
-2. Click **💰 Budget Tracker** → **Setup: store SimpleFIN credentials**.
+1. Refresh your Google Sheet in your browser. You will now see a custom menu at the top: **💰 DCR Ledger**.
+2. Click **💰 DCR Ledger** → **Setup: store SimpleFIN credentials**.
 3. Paste the SimpleFIN Access URL you copied in Step 1 and click **OK**.
-4. Click **💰 Budget Tracker** → **Sync banks now**.
+4. Click **💰 DCR Ledger** → **Sync banks now**.
    - Your account balances will populate automatically and 90 days of transactions will be imported and categorized.
-5. Click **💰 Budget Tracker** → **Setup: enable daily sync**.
+5. Click **💰 DCR Ledger** → **Setup: enable daily sync**.
    - This sets an automatic background trigger to refresh your data every morning at 06:00 AM AST.
 
 ---
@@ -65,7 +65,7 @@ The renovation database mirrors your local file `Victoria Court Tracker.xlsx` at
 Whenever you update your Excel file:
 1. Open `Victoria Court Tracker.xlsx` in Excel.
 2. Select the items in the Renovation table, right-click, and choose **Copy**.
-3. In your Google Sheet, click **💰 Budget Tracker** → **Re-sync renovation figures**.
+3. In your Google Sheet, click **💰 DCR Ledger** → **Re-sync renovation figures**.
 4. Paste the text into the prompt window and click **OK**.
 5. Your dashboard figures, contractor disbursements, and The Ask funding gap will update immediately.
 
@@ -76,10 +76,38 @@ Whenever you update your Excel file:
 For your winding-down accounts:
 1. Export a CSV statement from Monzo or Bank of America.
 2. Open the CSV in a text editor, select all lines, and copy them.
-3. In Google Sheets, click **💰 Budget Tracker** → **Import CSV (Monzo / BofA)**.
+3. In Google Sheets, click **💰 DCR Ledger** → **Import CSV (Monzo / BofA)**.
 4. Enter the account name (e.g. `Monzo Current` or `Bank of America`).
 5. Paste the CSV lines and click **OK**.
    - Monzo amounts in GBP will automatically convert to USD using the `GBP_USD_RATE` (1.27) and deduplicate against existing rows using SHA-256 signatures.
+
+---
+
+## 💎 SimpleFIN Bridge & Merrill Lynch Integration
+
+You can tie your **Merrill Lynch investment account**, **Banco Popular checking**, and **credit cards** directly into your ledger using **SimpleFIN Bridge**:
+
+1. Log in to [https://bridge.simplefin.org](https://bridge.simplefin.org).
+2. Connect your **Merrill Lynch** investment/brokerage account and your **Banco Popular** checking.
+3. Click **Generate Access URL** and copy the resulting token.
+4. Run the sync command in Terminal:
+   ```bash
+   python3 Gravity/sync_simplefin.py --url "<YOUR_SIMPLEFIN_ACCESS_URL>"
+   ```
+   *(Or paste your Access URL directly into cell `C27` on the `Config` tab of `DCR Ledger.xlsx` and run `python3 Gravity/sync_simplefin.py` anytime.)*
+5. Your **Net Worth**, **Merrill Lynch portfolio balance**, and **bank float waterline** will update automatically!
+
+---
+
+## 🚀 Interactive Net Worth & Lifetime Wealth Dashboard
+
+The local web app includes a dedicated **💎 Net Worth** dashboard:
+1. Double-click `Gravity/Run Server.command` (or run `python3 Gravity/server.py`).
+2. Open [http://localhost:8080](http://localhost:8080) in your browser.
+3. Tap the **💎 Net Worth** button on the dock to:
+   - View your consolidated balance sheet (Assets, Liabilities, Net Worth, Home Equity).
+   - Use interactive sliders to simulate your **Portfolio Return (4%–12%)**, **Home Appreciation (1%–6%)**, and **Monthly Savings**.
+   - Watch your 30-year lifetime wealth curve and projected Net Worth at ages 40, 50, and 60 recalculate in real-time.
 
 ---
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
-# DCR Budget Tracker — GitHub Pages Deploy Script
+# DCR Ledger — GitHub Pages Deploy Script
 set -e
 
 echo "=========================================================="
-echo "      🚀 DCR Budget Tracker GitHub Uploader"
+echo "      🚀 DCR Ledger GitHub Uploader"
 echo "=========================================================="
 echo ""
 echo "This script initializes a git repository, creates a new public"
@@ -65,8 +65,8 @@ git config user.email "daniel.cruz.rosso@gmail.com"
 # Add tracking files (private spreadsheets and statements are ignored in .gitignore)
 git add index.html manifest.json sw.js icon-192.png icon-512.png server.py Run\ Server.command sync_budget.py Run\ Sync.command BudgetSync.gs deploy.sh .gitignore
 
-read "COMMIT_MSG?Enter commit message [default: deploy budget PWA]: "
-COMMIT_MSG=${COMMIT_MSG:-deploy budget PWA}
+read "COMMIT_MSG?Enter commit message [default: deploy DCR Ledger PWA]: "
+COMMIT_MSG=${COMMIT_MSG:-deploy DCR Ledger PWA}
 
 git commit -m "$COMMIT_MSG" || echo "Nothing new to commit."
 git branch -M main
@@ -81,7 +81,7 @@ git push -u origin main
 
 echo ""
 echo "=========================================================="
-echo "🎉 SUCCESS! Your Budget Tracker has been pushed to GitHub."
+echo "🎉 SUCCESS! Your DCR Ledger has been pushed to GitHub."
 echo "=========================================================="
 echo "Playbook Repo Link: https://github.com/$USERNAME/$REPO_NAME"
 echo "PWA App Link:        https://localhost:8080 (Local)"
