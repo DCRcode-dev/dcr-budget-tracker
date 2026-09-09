@@ -1,5 +1,8 @@
 # Local financial data (MUST NOT BE PUSHED TO GITHUB)
 *.xlsx
+~$*.xlsx
+DCR Ledger.xlsx
+DCR_Ledger.xlsx
 DCR_Budget_Tracker.xlsx
 DCR_Budget_Tracker_backup.xlsx
 Monzo/uploaded_*
@@ -13,3 +16,5 @@ __pycache__/
 *.log
 scratch/
 test_server.py
+_vendor/
+Gravity/

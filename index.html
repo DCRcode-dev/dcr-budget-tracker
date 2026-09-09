@@ -344,124 +344,388 @@
             font-feature-settings: "tnum" 1;
         }
 
-        /* ── FIXED HOUSING & UTILITIES TRACKER (EXCLUDED FROM LIFESTYLE) ── */
-        .fixed-housing-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-hairline);
+        /* ── UTILITIES & POWER INTELLIGENCE TAB STYLES ── */
+        .util-hero-card {
+            background: linear-gradient(145deg, #0F2952 0%, #1A365D 100%);
+            color: #FFFFFF;
             border-radius: var(--radius-lg);
-            padding: 12px 14px;
-            box-shadow: var(--shadow-card);
+            padding: 18px 18px 16px;
+            box-shadow: 0 8px 24px rgba(15, 41, 82, 0.18);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .fixed-card-header {
+        .util-top-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .fixed-title-wrap {
+        .util-badge-wrap {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .fixed-icon-pill {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            background: var(--bg-subtle);
+        .util-icon-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
         }
 
-        .fixed-title {
-            font-size: 12.5px;
+        .util-hero-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+            letter-spacing: -0.2px;
+        }
+
+        .util-hero-sub {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .util-status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.25);
+            color: #34D399;
+        }
+
+        .util-spend-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .util-spend-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.65);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .util-spend-val {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: var(--font-numbers);
+            color: #FFFFFF;
+            line-height: 1;
+        }
+
+        .util-bar-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .util-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #34D399 0%, #FBBF24 80%, #F87171 100%);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        .util-bar-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 500;
+        }
+
+        .util-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .util-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .util-card-title {
+            font-size: 13.5px;
             font-weight: 700;
             color: var(--ink-primary);
-        }
-
-        .fixed-subtitle {
-            font-size: 9.5px;
-            color: var(--emerald);
-            font-weight: 600;
-        }
-
-        .fixed-status-badge {
-            font-size: 9.5px;
-            font-weight: 600;
-            padding: 2px 7px;
-            border-radius: 4px;
-            background: var(--emerald-bg);
-            color: var(--emerald);
-        }
-
-        .fixed-items-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            align-items: center;
             gap: 7px;
         }
 
-        .fixed-sub-item {
-            background: var(--bg-subtle);
-            border-radius: var(--radius-sm);
-            padding: 6px 9px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .fixed-sub-label {
-            font-size: 10px;
+        .util-chip-tag {
+            font-size: 9.5px;
             font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: var(--bg-subtle);
             color: var(--ink-secondary);
         }
 
-        .fixed-sub-val {
+        .util-card-desc {
             font-size: 11.5px;
+            color: var(--ink-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .util-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .util-stat-box {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .util-stat-num {
+            font-size: 18px;
             font-weight: 700;
             font-family: var(--font-numbers);
             color: var(--ink-primary);
         }
 
-        .fixed-sub-budget {
-            font-size: 9.5px;
-            font-weight: 500;
-            color: var(--ink-muted);
-        }
-
-        .capital-facility-chip {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-card);
-        }
-
-        .cap-chip-left {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .util-stat-lbl {
             font-size: 10.5px;
             font-weight: 600;
             color: var(--ink-secondary);
         }
 
-        .cap-chip-status {
-            font-size: 9.5px;
-            font-family: var(--font-numbers);
+        .util-stat-sub {
+            font-size: 9px;
+            color: var(--ink-muted);
+        }
+
+        .util-sim-box {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid var(--border-hairline);
+        }
+
+        .util-sim-title {
+            font-size: 11.5px;
             font-weight: 700;
-            color: #0F2537;
-            background: #EBF3FA;
-            padding: 2px 7px;
+            color: var(--ink-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .util-control-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .util-sim-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .util-btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .sim-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: 14px;
+            padding: 5px 9px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sim-btn.active {
+            background: #0F2952;
+            color: #FFFFFF;
+            border-color: #0F2952;
+        }
+
+        .util-sim-result-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border: 1px solid var(--border-hairline);
+        }
+
+        .util-sim-res-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--ink-primary);
+        }
+
+        .util-sim-badge {
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .util-sim-badge.safe {
+            background: var(--emerald-bg);
+            color: var(--emerald);
+        }
+
+        .util-sim-badge.warn {
+            background: var(--crimson-bg);
+            color: var(--crimson);
+        }
+
+        .climate-card {
+            background: linear-gradient(180deg, #FFFFFF 0%, #FBF9F5 100%);
+        }
+
+        .util-climate-text {
+            font-size: 11.5px;
+            color: var(--ink-primary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .util-climate-bullets {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .climate-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--ink-secondary);
+            line-height: 1.45;
+            background: var(--bg-surface);
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-hairline);
+        }
+
+        .climate-icon {
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .util-history-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .util-hist-row {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .util-hist-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .util-hist-month {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .util-hist-split {
+            font-size: 10px;
+            color: var(--ink-muted);
+        }
+
+        .util-hist-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .util-hist-total {
+            font-size: 13px;
+            font-weight: 700;
+            font-family: var(--font-numbers);
+            color: var(--ink-primary);
+        }
+
+        .util-delta-pill {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 5px;
             border-radius: 4px;
+        }
+
+        .util-delta-pill.down {
+            background: var(--emerald-bg);
+            color: var(--emerald);
+        }
+
+        .util-delta-pill.up {
+            background: var(--crimson-bg);
+            color: var(--crimson);
+        }
+
+        .util-delta-pill.flat {
+            background: var(--bg-surface);
+            color: var(--ink-muted);
+        }
+
+        .fixed-exclusion-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: var(--bg-subtle);
+            border-radius: var(--radius-sm);
+            padding: 9px 11px;
+            font-size: 10.5px;
+            color: var(--ink-secondary);
+            line-height: 1.4;
+            border-left: 3px solid #0F2952;
         }
 
         .tx-account-badge.util {
@@ -642,6 +906,179 @@
             color: var(--ink-primary);
         }
 
+        .filter-clear-btn {
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: var(--ink-dim);
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            transition: color 0.15s ease;
+        }
+        .filter-clear-btn:hover {
+            color: var(--ink-primary);
+        }
+
+        /* ── INTERACTIVE ACCOUNT & CARD FILTER ── */
+        .account-filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-top: 6px;
+        }
+
+        .filter-group-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 2px;
+        }
+        .filter-group-row::-webkit-scrollbar { display: none; }
+
+        .filter-dynamic-chips {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 2px;
+        }
+        .filter-dynamic-chips::-webkit-scrollbar { display: none; }
+
+        .filter-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: 20px;
+            padding: 5px 11px;
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--ink-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            box-shadow: 0 1px 3px rgba(24, 30, 37, 0.02);
+        }
+
+        .filter-chip:hover {
+            border-color: var(--ink-dim);
+            color: var(--ink-primary);
+            background: var(--bg-subtle);
+        }
+
+        .filter-chip.active {
+            background: #0F2952 !important;
+            color: #FFFFFF !important;
+            border-color: #0F2952 !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(15, 41, 82, 0.22);
+        }
+
+        .chip-badge {
+            background: var(--bg-subtle);
+            color: var(--ink-secondary);
+            font-size: 9px;
+            font-weight: 600;
+            padding: 1px 5px;
+            border-radius: 8px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .filter-chip.active .chip-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+        }
+
+        .filter-summary-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-left: 3px solid #0F2952;
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+            margin-top: 1px;
+        }
+
+        .summary-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .summary-filter-name {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--ink-primary);
+        }
+
+        .summary-stat {
+            font-size: 9.5px;
+            color: var(--ink-secondary);
+        }
+
+        .summary-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1px;
+        }
+
+        .summary-amount-label {
+            font-size: 8.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-dim);
+            font-weight: 600;
+        }
+
+        .summary-amount-val {
+            font-family: var(--font-numbers);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0F2952;
+            font-feature-settings: "tnum" 1;
+        }
+
+        .feeds-quick-actions {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+        .quick-action-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-sm);
+            padding: 5px 10px;
+            font-family: var(--font-display);
+            font-size: 10.5px;
+            font-weight: 500;
+            color: var(--ink-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+            box-shadow: var(--shadow-card);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--bg-subtle);
+            color: var(--ink-primary);
+            border-color: var(--border-accent);
+        }
+
         .stream-list {
             display: flex;
             flex-direction: column;
@@ -734,17 +1171,17 @@
             bottom: 18px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 36px);
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.9);
+            width: calc(100% - 28px);
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
             border-radius: 28px;
-            padding: 5px;
+            padding: 4px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
             box-shadow: 0 10px 28px rgba(24, 30, 37, 0.08);
             z-index: 1000;
         }
@@ -752,17 +1189,18 @@
         .dock-item {
             border: none;
             background: transparent;
-            padding: 9px 0;
+            padding: 8px 2px;
             border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
-            font-size: 12px;
+            gap: 5px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--ink-secondary);
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
         }
 
         .dock-item.active {
@@ -939,6 +1377,204 @@
             font-weight: 600;
             cursor: pointer;
         }
+    
+        /* ── NET WORTH & LIFETIME WEALTH STYLING ── */
+        .nw-hero-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-xl);
+            padding: 24px 20px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nw-hero-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #0F2952, #10B981, #D4AF37);
+        }
+
+        .nw-top-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-secondary);
+        }
+
+        .nw-big-digits {
+            font-family: var(--font-numbers);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .nw-pill-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nw-kpi-subgrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .nw-sub-col {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nw-sub-lbl {
+            font-size: 9.5px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .nw-sub-val {
+            font-family: var(--font-numbers);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        /* Asset Breakdown Cards */
+        .nw-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 18px 18px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nw-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nw-card-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nw-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border-hairline);
+        }
+        .nw-item-row:last-child { border-bottom: none; }
+
+        .nw-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nw-item-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--ink-primary);
+        }
+
+        .nw-item-sub {
+            font-size: 11px;
+            color: var(--ink-secondary);
+        }
+
+        .nw-item-val {
+            font-family: var(--font-numbers);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ink-primary);
+            text-align: right;
+        }
+
+        /* Trajectory Interactive Chart & Simulator */
+        .sim-slider-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .sim-slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .sim-slider-input {
+            width: 100%;
+            accent-color: #0F2952;
+            cursor: pointer;
+        }
+
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .milestone-tile {
+            background: var(--bg-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .milestone-target {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink-primary);
+        }
+
+        .milestone-desc {
+            font-size: 10px;
+            color: var(--ink-secondary);
+        }
+
+        .milestone-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+        .milestone-badge.achieved { background: #D1FAE5; color: #065F46; }
+        .milestone-badge.progress { background: #FEF3C7; color: #92400E; }
+
     </style>
 </head>
 <body>
@@ -1024,46 +1660,6 @@
             </div>
         </div>
 
-        <!-- Fixed Housing & Utilities Tracking Card (Excluded from Lifestyle) -->
-        <div class="fixed-housing-card">
-            <div class="fixed-card-header">
-                <div class="fixed-title-wrap">
-                    <span class="fixed-icon-pill">🏠</span>
-                    <div>
-                        <div class="fixed-title">Fixed Housing &amp; Utilities</div>
-                        <div class="fixed-subtitle">Excluded from Lifestyle Spend ($3,000 intact)</div>
-                    </div>
-                </div>
-                <span class="fixed-status-badge" id="fixed-total-status">Active</span>
-            </div>
-            <div class="fixed-items-grid">
-                <div class="fixed-sub-item">
-                    <div class="fixed-sub-label">⚡ LUMA (Power)</div>
-                    <div class="fixed-sub-val" id="fixed-luma-val">$0 <span class="fixed-sub-budget">/ $600</span></div>
-                </div>
-                <div class="fixed-sub-item">
-                    <div class="fixed-sub-label">💧 AAA (Water)</div>
-                    <div class="fixed-sub-val" id="fixed-aaa-val">$0 <span class="fixed-sub-budget">/ $150</span></div>
-                </div>
-                <div class="fixed-sub-item">
-                    <div class="fixed-sub-label">🏦 BPPR Mortgage</div>
-                    <div class="fixed-sub-val" id="fixed-mortgage-val">$0 <span class="fixed-sub-budget">/ $3,306</span></div>
-                </div>
-                <div class="fixed-sub-item">
-                    <div class="fixed-sub-label">🏢 Victoria HOA</div>
-                    <div class="fixed-sub-val" id="fixed-hoa-val">$0 <span class="fixed-sub-budget">/ $375</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Master Capital Facility Pill -->
-        <div class="capital-facility-chip">
-            <div class="cap-chip-left">
-                <span>🏛️</span>
-                <span>Merrill 5% Loan Facility: $177.1k ($2,000/mo paydown)</span>
-            </div>
-            <span class="cap-chip-status">5.0% APR</span>
-        </div>
 
         <!-- Category Breakdown -->
         <div class="section-header">
@@ -1076,11 +1672,256 @@
         </div>
     </div>
 
+
+    <!-- TAB 3: NET WORTH & LIFETIME WEALTH DASHBOARD -->
+    <div id="tab-networth" class="tab-pane">
+        <!-- Hero Net Worth Card -->
+        <div class="nw-hero-card">
+            <div class="nw-top-label">Total Net Worth</div>
+            <div class="nw-big-digits" id="nw-total-digits">$100,169</div>
+            <div class="nw-pill-row">
+                <span class="gauge-status-tag under">
+                    <span class="pulse-dot"></span>
+                    <span id="nw-status-tag">🟢 Solvency Positive</span>
+                </span>
+                <span class="fixed-status-badge" style="background:#0F2952; color:#fff;">SimpleFIN Connected</span>
+            </div>
+
+            <!-- 3-Col KPI Subgrid -->
+            <div class="nw-kpi-subgrid">
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Liquid Net Worth</span>
+                    <span class="nw-sub-val" id="nw-liquid-val" style="color:#047857;">$135,000</span>
+                </div>
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Home Equity</span>
+                    <span class="nw-sub-val" id="nw-equity-val" style="color:#0284C7;">$170,000</span>
+                </div>
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Total Debt</span>
+                    <span class="nw-sub-val" id="nw-debt-val" style="color:#DC2626;">$684,831</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Asset Holdings -->
+        <div class="nw-card">
+            <div class="nw-card-header">
+                <div class="nw-card-title"><span>📈</span> Asset Portfolio</div>
+                <span class="section-meta" id="nw-assets-total-badge">$785,000 Total</span>
+            </div>
+            
+            <div class="nw-item-row">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Merrill Lynch Investment Account</div>
+                    <div class="nw-item-sub">SimpleFIN Synced · Equities &amp; Index Funds</div>
+                </div>
+                <div class="nw-item-val" id="nw-merrill-val" style="color:#0F2952;">$125,000</div>
+            </div>
+
+            <div class="nw-item-row">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Victoria Court Primary Residence</div>
+                    <div class="nw-item-sub">Appraised / Renovated Market Value ($232k buildout)</div>
+                </div>
+                <div class="nw-item-val" id="nw-house-val" style="color:#0F2952;">$650,000</div>
+            </div>
+
+            <div class="nw-item-row" onclick="switchTab('feeds'); setAccountFilter('ACCOUNTS');" style="cursor:pointer;" title="View bank account transactions in Feeds">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Banco Popular Operating Float <span>👉</span></div>
+                    <div class="nw-item-sub">Checking Cash Waterline Float</div>
+                </div>
+                <div class="nw-item-val" id="nw-popular-val" style="color:#0F2952;">$5,000</div>
+            </div>
+
+            <div class="nw-item-row">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Emergency Cash Buffer</div>
+                    <div class="nw-item-sub">Operating Contingency Reserve</div>
+                </div>
+                <div class="nw-item-val" id="nw-buffer-val" style="color:#0F2952;">$5,000</div>
+            </div>
+        </div>
+
+        <!-- Section: Liabilities & Debt Facilities -->
+        <div class="nw-card">
+            <div class="nw-card-header">
+                <div class="nw-card-title"><span>🏛️</span> Debt &amp; Liabilities</div>
+                <span class="section-meta" style="color:#DC2626;" id="nw-liab-total-badge">$684,831 Total</span>
+            </div>
+
+            <div class="nw-item-row">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">FHA 30-Year Mortgage</div>
+                    <div class="nw-item-sub">Starts Dec 1, 2026 · $3,305.55/mo PITI</div>
+                </div>
+                <div class="nw-item-val" id="nw-mortgage-val" style="color:#DC2626;">$480,000</div>
+            </div>
+
+            <div class="nw-item-row">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Merrill Lynch 5% Loan Facility</div>
+                    <div class="nw-item-sub">5% APR · $2,000/mo paydown (134 months to $0)</div>
+                </div>
+                <div class="nw-item-val" id="nw-merrill-loan-val" style="color:#DC2626;">$204,831</div>
+            </div>
+
+            <div class="nw-item-row" id="nw-card-row" onclick="switchTab('feeds'); setAccountFilter('CARDS');" style="cursor:pointer;" title="View credit card transactions in Feeds">
+                <div class="nw-item-info">
+                    <div class="nw-item-name">Revolving Credit Lines <span>👉</span></div>
+                    <div class="nw-item-sub">SimpleFIN Synced · Capital One Venture X / Amex</div>
+                </div>
+                <div class="nw-item-val" id="nw-card-val" style="color:#DC2626;">$0</div>
+            </div>
+        </div>
+
+        <!-- Section: Interactive 30-Year Lifetime Wealth Trajectory Simulator -->
+        <div class="nw-card">
+            <div class="nw-card-header">
+                <div class="nw-card-title"><span>🚀</span> Lifetime Wealth Simulator (2026–2056+)</div>
+                <span class="section-meta">30-Year Curve</span>
+            </div>
+            
+            <p style="font-size:12px; color:var(--ink-secondary); margin:0;">
+                Models compounding wealth as debt is eliminated and surplus cash flow accelerates into your Merrill Lynch portfolio:
+            </p>
+
+            <!-- SVG Chart Container -->
+            <div style="background:var(--bg-subtle); border-radius:var(--radius-md); padding:12px 8px; margin:6px 0;">
+                <svg id="trajectory-chart-svg" viewBox="0 0 400 160" style="width:100%; height:auto; overflow:visible;">
+                    <!-- Trajectory path drawn dynamically -->
+                </svg>
+            </div>
+
+            <!-- Interactive Sliders -->
+            <div class="sim-slider-row">
+                <div class="sim-slider-header">
+                    <span>Portfolio Growth (CAGR)</span>
+                    <span id="slider-return-label">7.0%</span>
+                </div>
+                <input type="range" class="sim-slider-input" id="slider-return" min="4" max="12" step="0.5" value="7" oninput="onTrajectorySliderChange()">
+            </div>
+
+            <div class="sim-slider-row">
+                <div class="sim-slider-header">
+                    <span>Home Appreciation (Annual)</span>
+                    <span id="slider-apprec-label">2.5%</span>
+                </div>
+                <input type="range" class="sim-slider-input" id="slider-apprec" min="1" max="6" step="0.5" value="2.5" oninput="onTrajectorySliderChange()">
+            </div>
+
+            <div class="sim-slider-row">
+                <div class="sim-slider-header">
+                    <span>Monthly Added Savings</span>
+                    <span id="slider-savings-label">$1,000 / mo</span>
+                </div>
+                <input type="range" class="sim-slider-input" id="slider-savings" min="500" max="4000" step="250" value="1000" oninput="onTrajectorySliderChange()">
+            </div>
+
+            <!-- Projected Milestones Preview -->
+            <div class="nw-kpi-subgrid" style="margin-top:10px;">
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Age 40 (Year 2036)</span>
+                    <span class="nw-sub-val" id="proj-age40-val" style="color:#0F2952;">$1.05M</span>
+                </div>
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Age 50 (Year 2046)</span>
+                    <span class="nw-sub-val" id="proj-age50-val" style="color:#0F2952;">$2.38M</span>
+                </div>
+                <div class="nw-sub-col">
+                    <span class="nw-sub-lbl">Age 60 (Year 2056)</span>
+                    <span class="nw-sub-val" id="proj-age60-val" style="color:#047857;">$4.82M</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wealth Milestone Roadmap -->
+        <div class="nw-card" style="margin-bottom: 24px;">
+            <div class="nw-card-header">
+                <div class="nw-card-title"><span>🎯</span> Wealth Milestone Roadmap</div>
+                <span class="section-meta">Milestones</span>
+            </div>
+
+            <div class="milestone-grid">
+                <div class="milestone-tile">
+                    <span class="milestone-target">$250,000</span>
+                    <span class="milestone-desc">Phase 1 &amp; 2 Complete</span>
+                    <span class="milestone-badge achieved">Target: 2027</span>
+                </div>
+                <div class="milestone-tile">
+                    <span class="milestone-target">$500,000</span>
+                    <span class="milestone-desc">Half-Million Net Worth</span>
+                    <span class="milestone-badge progress">Target: 2031</span>
+                </div>
+                <div class="milestone-tile">
+                    <span class="milestone-target">$1,000,000</span>
+                    <span class="milestone-desc">Merrill Loan Hits $0</span>
+                    <span class="milestone-badge progress">Target: 2038</span>
+                </div>
+                <div class="milestone-tile">
+                    <span class="milestone-target">$2,000,000+</span>
+                    <span class="milestone-desc">Compounding Acceleration</span>
+                    <span class="milestone-badge progress">Target: 2044</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TAB 2: LIVE BANK TRANSACTIONS -->
     <div id="tab-feeds" class="tab-pane">
+        <!-- Search Bar with Clear Button -->
         <div class="search-pill">
             <span>🔍</span>
             <input type="text" id="tx-search-input" class="search-input" placeholder="Search merchant, category, or account..." oninput="onSearchFilter(this.value)">
+            <button id="clear-search-btn" class="filter-clear-btn" style="display: none;" onclick="clearSearchFilter()" title="Clear search">✕</button>
+        </div>
+
+        <!-- Interactive Account & Card Filter Bar -->
+        <div class="account-filter-container">
+            <!-- Group Toggles: All, Credit Cards, Bank Accounts -->
+            <div class="filter-group-row">
+                <button class="filter-chip active" id="chip-filter-ALL" onclick="setAccountFilter('ALL')">
+                    <span>🌐</span> All Accounts <span class="chip-badge" id="chip-count-all">0</span>
+                </button>
+                <button class="filter-chip" id="chip-filter-CARDS" onclick="setAccountFilter('CARDS')">
+                    <span>💳</span> Credit Cards <span class="chip-badge" id="chip-count-cards">0</span>
+                </button>
+                <button class="filter-chip" id="chip-filter-ACCOUNTS" onclick="setAccountFilter('ACCOUNTS')">
+                    <span>🏦</span> Bank Accounts <span class="chip-badge" id="chip-count-accounts">0</span>
+                </button>
+            </div>
+
+            <!-- Dynamic Account Specific Chips -->
+            <div class="filter-dynamic-chips" id="filter-dynamic-chips">
+                <!-- Injected dynamically from unique accounts -->
+            </div>
+        </div>
+
+        <!-- Dynamic Filter Summary Bar -->
+        <div class="filter-summary-bar" id="filter-summary-bar">
+            <div class="summary-left">
+                <span class="summary-filter-name" id="summary-filter-name">Showing All Accounts</span>
+                <span class="summary-stat" id="summary-filter-count">0 transactions</span>
+            </div>
+            <div class="summary-right">
+                <span class="summary-amount-label">Filtered Spend</span>
+                <span class="summary-amount-val" id="summary-filter-amount">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Feeds Actions Bar: SimpleFIN Sync, Statement Upload, Refresh -->
+        <div class="feeds-quick-actions">
+            <button class="quick-action-btn" onclick="openSyncModal()">
+                <span>⚡</span> Sync SimpleFIN
+            </button>
+            <label class="quick-action-btn" style="cursor: pointer;">
+                <span>📥</span> Upload Statement
+                <input type="file" id="statement-file-input" accept=".csv,.pdf" style="display: none;" onchange="uploadStatementFile(this)">
+            </label>
+            <button class="quick-action-btn" onclick="refreshLocalData()" title="Reload from Excel">
+                <span>🔄</span> Refresh
+            </button>
         </div>
 
         <div class="section-header" style="margin-top: 4px;">
@@ -1092,15 +1933,195 @@
             <!-- Populated dynamically -->
         </div>
     </div>
+
+    <!-- TAB 3: UTILITIES & COOLING INTELLIGENCE -->
+    <div id="tab-utilities" class="tab-pane">
+        <!-- Hero Energy & Power Card -->
+        <div class="util-hero-card">
+            <div class="util-top-row">
+                <div class="util-badge-wrap">
+                    <span class="util-icon-badge">⚡</span>
+                    <div>
+                        <div class="util-hero-title">LUMA Energy · Electricity</div>
+                        <div class="util-hero-sub">San Juan Grid · Excluded from Lifestyle</div>
+                    </div>
+                </div>
+                <span class="util-status-pill" id="luma-status-pill">Active</span>
+            </div>
+
+            <div class="util-spend-row">
+                <div>
+                    <div class="util-spend-label">Current Month Spend</div>
+                    <div class="util-spend-val" id="util-luma-spent">$0</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="util-spend-label">Baseline Budget</div>
+                    <div class="util-spend-val" style="color: rgba(255,255,255,0.7);">$600</div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="util-bar-track">
+                <div class="util-bar-fill" id="luma-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="util-bar-legend">
+                <span id="luma-headroom-text">$600 Headroom Remaining</span>
+                <span id="luma-pct-text">0% Utilized</span>
+            </div>
+        </div>
+
+        <!-- A/C Cooling & Electricity Intelligence Engine -->
+        <div class="util-card">
+            <div class="util-card-header">
+                <div class="util-card-title">
+                    <span>❄️</span> Air Conditioning Intelligence
+                </div>
+                <span class="util-chip-tag">~28¢ / kWh (LUMA)</span>
+            </div>
+
+            <p class="util-card-desc">
+                Inverter split A/Cs draw ~1.05 kW/hr (~$0.29/hr). Under your <strong>$600 monthly electricity allocation</strong>, here is your available cooling capacity:
+            </p>
+
+            <!-- A/C Metrics Grid -->
+            <div class="util-grid-2">
+                <div class="util-stat-box">
+                    <div class="util-stat-num" id="ac-remaining-hours">2,040 hrs</div>
+                    <div class="util-stat-lbl">Cooling Hours Left</div>
+                    <div class="util-stat-sub">Under $600 baseline</div>
+                </div>
+                <div class="util-stat-box">
+                    <div class="util-stat-num" id="ac-daily-capacity">68 hrs / day</div>
+                    <div class="util-stat-lbl">Daily Cooling Budget</div>
+                    <div class="util-stat-sub">Across all rooms combined</div>
+                </div>
+            </div>
+
+            <!-- Interactive Cooling Load Simulator -->
+            <div class="util-sim-box">
+                <div class="util-sim-title">⚡ A/C Usage Simulator</div>
+                
+                <div class="util-control-row">
+                    <label class="util-sim-label">Active A/C Units:</label>
+                    <div class="util-btn-group" id="sim-units-group">
+                        <button class="sim-btn" onclick="setSimUnits(1)">1 Unit (Bed)</button>
+                        <button class="sim-btn active" onclick="setSimUnits(2)">2 Units (Bed + Living)</button>
+                        <button class="sim-btn" onclick="setSimUnits(3)">3 Units (Full Home)</button>
+                    </div>
+                </div>
+
+                <div class="util-control-row">
+                    <label class="util-sim-label">Daily Runtime:</label>
+                    <div class="util-btn-group" id="sim-hours-group">
+                        <button class="sim-btn" onclick="setSimHours(8)">8 hrs (Night)</button>
+                        <button class="sim-btn active" onclick="setSimHours(12)">12 hrs (Night+Day)</button>
+                        <button class="sim-btn" onclick="setSimHours(16)">16 hrs (Heavy)</button>
+                        <button class="sim-btn" onclick="setSimHours(24)">24 hrs (Constant)</button>
+                    </div>
+                </div>
+
+                <div class="util-sim-result-card" id="sim-result-card">
+                    <div class="util-sim-res-top">
+                        <span>Simulated Monthly Power:</span>
+                        <strong id="sim-estimated-bill">$212 / month</strong>
+                    </div>
+                    <div class="util-sim-badge safe" id="sim-status-badge">
+                        🟢 Safely within $600 budget (+$388 buffer left)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- January Move-In Thermal Reality & Puerto Rico Transition -->
+        <div class="util-card climate-card">
+            <div class="util-card-header">
+                <div class="util-card-title">
+                    <span>🌴</span> January Move-In Thermal Transition
+                </div>
+                <span class="util-chip-tag" style="background:#0F2952; color:#fff;">San Juan Climate</span>
+            </div>
+            
+            <p class="util-climate-text">
+                <strong>Why January is the Best Month to Move:</strong><br>
+                January is the coolest, driest month in San Juan (average high <strong>83°F</strong>, low <strong>72°F</strong>) with refreshing 14-mph trade winds off Miramar/Condado lagoon.
+            </p>
+            <div class="util-climate-bullets">
+                <div class="climate-bullet">
+                    <span class="climate-icon">🌬️</span>
+                    <div>
+                        <strong>Natural Cross-Ventilation:</strong> With your new 12' hurricane sliding doors and bioclimatic motorized pergola, daytime cooling can be supplemented by trade breezes.
+                    </div>
+                </div>
+                <div class="climate-bullet">
+                    <span class="climate-icon">❄️</span>
+                    <div>
+                        <strong>Unconstrained A/C Capacity:</strong> Winter daytime thermal load is ~40% lower than summer. Running your bedroom and family room A/Cs around the clock will typically cost only <strong>$280–$350/month</strong>, leaving ample surplus under your $600 allowance.
+                    </div>
+                </div>
+                <div class="climate-bullet">
+                    <span class="climate-icon">☀️</span>
+                    <div>
+                        <strong>Summer Peak Preparation:</strong> In July–September (ambient 90°F+, humidity 80%+), cooling demand reaches its peak. Your $600 allocation is calibrated to absorb that maximum load comfortably without pinching your lifestyle spend.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Month-over-Month Utility Tracking History -->
+        <div class="util-card">
+            <div class="util-card-header">
+                <div class="util-card-title">
+                    <span>📊</span> Monthly Utility History &amp; Trends
+                </div>
+                <span class="section-meta">Track Changes Every Month</span>
+            </div>
+            
+            <div class="util-history-feed" id="util-history-feed">
+                <!-- Populated dynamically from transactions -->
+            </div>
+        </div>
+
+        <!-- AAA Water & Fixed Housing Exclusions Summary -->
+        <div class="util-card">
+            <div class="util-card-header">
+                <div class="util-card-title">
+                    <span>💧</span> AAA Acueductos (Water)
+                </div>
+                <span class="util-chip-tag" id="aaa-status-tag">Baseline $150/mo</span>
+            </div>
+            
+            <div class="util-spend-row" style="margin-top: 6px;">
+                <div>
+                    <div class="util-spend-label" style="color: var(--ink-muted);">Current Month Water Spend</div>
+                    <div class="util-spend-val" id="util-aaa-spent" style="color: var(--ink-primary);">$0</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="util-spend-label" style="color: var(--ink-muted);">Water Baseline</div>
+                    <div class="util-spend-val" style="color: var(--ink-dim);">$150</div>
+                </div>
+            </div>
+
+            <div class="fixed-exclusion-notice">
+                <span>🛡️</span>
+                <span><strong>Ring-Fence Governance:</strong> All outgoing payments for LUMA electricity, AAA water, Banco Popular mortgage, and Victoria Court HOA are permanently excluded from your $3,000 lifestyle allowance.</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Floating Glass Dock -->
 <nav class="dock-bar">
     <button class="dock-item active" id="dock-btn-lifestyle" onclick="switchTab('lifestyle')">
-        <span>📊</span> Lifestyle Spend
+        <span>🌿</span> Lifestyle
     </button>
     <button class="dock-item" id="dock-btn-feeds" onclick="switchTab('feeds')">
-        <span>📋</span> Bank Feeds
+        <span>💳</span> Feed
+    </button>
+    <button class="dock-item" id="dock-btn-utilities" onclick="switchTab('utilities')">
+        <span>⚡</span> Utilities
+    </button>
+    <button class="dock-item" id="dock-btn-networth" onclick="switchTab('networth')">
+        <span>🏛️</span> Net Worth
     </button>
 </nav>
 
@@ -1136,7 +2157,22 @@
     let state = {
         sheets_api_url: '',
         transactions: [],
-        filter_term: ''
+        filter_term: '',
+        account_filter: 'ALL',
+        net_worth: {
+            total_net_worth: 100169,
+            liquid_net_worth: 135000,
+            home_equity: 170000,
+            total_assets: 785000,
+            total_liabilities: 684831,
+            merrill_balance: 125000,
+            banco_popular: 5000,
+            house_value: 650000,
+            mortgage_balance: 480000,
+            merrill_loan: 204831,
+            expected_return: 0.07,
+            home_appreciation: 0.025
+        }
     };
 
     // ── PIXEL 10 PRO BIOMETRIC AUTHENTICATION ──
@@ -1197,19 +2233,35 @@
     // ── DATA PERSISTENCE & COMPUTATIONS ──
     function loadState() {
         try {
+            // Check URL query parameters first (?syncUrl=... or ?url=...)
+            const params = new URLSearchParams(window.location.search);
+            const queryUrl = params.get('syncUrl') || params.get('url');
+
+            // Check permanent dedicated localStorage key
+            const permanentUrl = localStorage.getItem('dcr_apps_script_url') || '';
             const saved = localStorage.getItem('dcr_ledger_v25');
+            let savedObj = null;
             if (saved) {
-                const parsed = JSON.parse(saved);
-                state.sheets_api_url = parsed.sheets_api_url || '';
-                const raw = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+                try { savedObj = JSON.parse(saved); } catch(e){}
+            }
+
+            state.sheets_api_url = queryUrl || permanentUrl || (savedObj && savedObj.sheets_api_url) || '';
+            if (state.sheets_api_url) {
+                localStorage.setItem('dcr_apps_script_url', state.sheets_api_url);
+            }
+
+            if (savedObj) {
+                const raw = Array.isArray(savedObj.transactions) ? savedObj.transactions : [];
                 state.transactions = raw.filter(t => !['tx_1', 'tx_2', 'tx_3', 'tx_4', 'tx_5', 'tx_6', 'tx_7', 'tx_8'].includes(t.tx_id));
+                if (savedObj.net_worth) state.net_worth = savedObj.net_worth;
             } else {
                 state.transactions = [];
             }
         } catch (e) {
             state.transactions = [];
         }
-        document.getElementById('sheets-url-box').value = state.sheets_api_url;
+        const urlBox = document.getElementById('sheets-url-box');
+        if (urlBox) urlBox.value = state.sheets_api_url;
 
         // Auto-fetch if on local server
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -1218,6 +2270,7 @@
                 .then(data => {
                     if (data && data.transactions && Array.isArray(data.transactions) && data.transactions.length > 0) {
                         state.transactions = data.transactions;
+                        if (data.net_worth) state.net_worth = data.net_worth;
                         saveState();
                         render();
                     }
@@ -1235,6 +2288,7 @@
                             category: t.category || mapCategory(t.merchant),
                             account: t.account || 'Banco Popular'
                         }));
+                        if (data.net_worth) state.net_worth = data.net_worth;
                         saveState();
                         render();
                     }
@@ -1244,9 +2298,13 @@
 
     function saveState() {
         try {
+            if (state.sheets_api_url) {
+                localStorage.setItem('dcr_apps_script_url', state.sheets_api_url);
+            }
             localStorage.setItem('dcr_ledger_v25', JSON.stringify({
                 sheets_api_url: state.sheets_api_url,
-                transactions: state.transactions
+                transactions: state.transactions,
+                net_worth: state.net_worth
             }));
         } catch (e) {}
     }
@@ -1277,11 +2335,170 @@
         document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
 
         if (tab === 'lifestyle') {
-            document.getElementById('tab-lifestyle').classList.add('active');
-            document.getElementById('dock-btn-lifestyle').classList.add('active');
+            const p = document.getElementById('tab-lifestyle');
+            const d = document.getElementById('dock-btn-lifestyle');
+            if (p) p.classList.add('active');
+            if (d) d.classList.add('active');
+        } else if (tab === 'utilities') {
+            const p = document.getElementById('tab-utilities');
+            const d = document.getElementById('dock-btn-utilities');
+            if (p) p.classList.add('active');
+            if (d) d.classList.add('active');
+            renderUtilitiesTab();
+        } else if (tab === 'networth') {
+            const p = document.getElementById('tab-networth');
+            const d = document.getElementById('dock-btn-networth');
+            if (p) p.classList.add('active');
+            if (d) d.classList.add('active');
+            renderNetWorth();
         } else {
-            document.getElementById('tab-feeds').classList.add('active');
-            document.getElementById('dock-btn-feeds').classList.add('active');
+            const p = document.getElementById('tab-feeds');
+            const d = document.getElementById('dock-btn-feeds');
+            if (p) p.classList.add('active');
+            if (d) d.classList.add('active');
+        }
+    }
+
+    // ── NET WORTH & LIFETIME WEALTH TRAJECTORY ENGINE ──
+    function renderNetWorth() {
+        const nw = state.net_worth || {
+            total_net_worth: 100169,
+            liquid_net_worth: 135000,
+            home_equity: 170000,
+            total_assets: 785000,
+            total_liabilities: 684831,
+            merrill_balance: 125000,
+            banco_popular: 5000,
+            house_value: 650000,
+            mortgage_balance: 480000,
+            merrill_loan: 204831,
+            expected_return: 0.07,
+            home_appreciation: 0.025
+        };
+
+        const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val;
+        };
+
+        setTxt('nw-total-digits', `$${fmtUSD(nw.total_net_worth)}`);
+        setTxt('nw-liquid-val', `$${fmtUSD(nw.liquid_net_worth)}`);
+        setTxt('nw-equity-val', `$${fmtUSD(nw.home_equity)}`);
+        setTxt('nw-debt-val', `$${fmtUSD(nw.total_liabilities)}`);
+
+        setTxt('nw-assets-total-badge', `$${fmtUSD(nw.total_assets)} Total`);
+        setTxt('nw-liab-total-badge', `$${fmtUSD(nw.total_liabilities)} Total`);
+
+        setTxt('nw-merrill-val', `$${fmtUSD(nw.merrill_balance)}`);
+        setTxt('nw-house-val', `$${fmtUSD(nw.house_value)}`);
+        setTxt('nw-popular-val', `$${fmtUSD(nw.banco_popular)}`);
+        setTxt('nw-mortgage-val', `$${fmtUSD(nw.mortgage_balance)}`);
+        setTxt('nw-merrill-loan-val', `$${fmtUSD(nw.merrill_loan)}`);
+        setTxt('nw-card-val', `$${fmtUSD(nw.credit_card_debt || 0)}`);
+
+        updateTrajectorySimulator();
+    }
+
+    function onTrajectorySliderChange() {
+        updateTrajectorySimulator();
+    }
+
+    function updateTrajectorySimulator() {
+        const sliderRet = document.getElementById('slider-return');
+        const sliderApp = document.getElementById('slider-apprec');
+        const sliderSav = document.getElementById('slider-savings');
+        if (!sliderRet || !sliderApp || !sliderSav) return;
+
+        const retRate = parseFloat(sliderRet.value) / 100;
+        const apprecRate = parseFloat(sliderApp.value) / 100;
+        const monthlySavings = parseFloat(sliderSav.value);
+
+        const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val;
+        };
+
+        setTxt('slider-return-label', (retRate * 100).toFixed(1) + '%');
+        setTxt('slider-apprec-label', (apprecRate * 100).toFixed(1) + '%');
+        setTxt('slider-savings-label', `$${fmtUSD(monthlySavings)} / mo`);
+
+        const nw = state.net_worth || {};
+        let portfolio = nw.merrill_balance || 125000;
+        let houseVal = nw.house_value || 650000;
+        let mortgage = nw.mortgage_balance || 480000;
+        let merrillLoan = nw.merrill_loan || 204831;
+
+        const points = [];
+        const years = 31; // 2026 to 2056
+
+        let age40Val = 0;
+        let age50Val = 0;
+        let age60Val = 0;
+
+        for (let i = 0; i < years; i++) {
+            const yr = 2026 + i;
+            const age = 30 + i;
+
+            if (i > 0) {
+                // Compounding: after 2037, the $2,000/mo loan payment is freed into investments!
+                const addition = yr > 2037 ? (monthlySavings * 12 + 24000) : (monthlySavings * 12);
+                portfolio = portfolio * (1 + retRate) + addition;
+                houseVal = houseVal * (1 + apprecRate);
+                mortgage = Math.max(0, mortgage - 12000);
+                if (yr <= 2037) {
+                    merrillLoan = Math.max(0, merrillLoan - 18000);
+                } else {
+                    merrillLoan = 0;
+                }
+            }
+
+            const equity = houseVal - mortgage;
+            const netWorth = portfolio + equity + 10000 - merrillLoan;
+            points.push({ year: yr, age: age, nw: netWorth });
+
+            if (age === 40) age40Val = netWorth;
+            if (age === 50) age50Val = netWorth;
+            if (age === 60) age60Val = netWorth;
+        }
+
+        const fmtM = v => `$${(v / 1000000).toFixed(2)}M`;
+        setTxt('proj-age40-val', fmtM(age40Val));
+        setTxt('proj-age50-val', fmtM(age50Val));
+        setTxt('proj-age60-val', fmtM(age60Val));
+
+        // Draw dynamic SVG line & area curve
+        const maxNW = Math.max(...points.map(p => p.nw));
+        const minNW = Math.min(...points.map(p => p.nw));
+        const width = 380;
+        const height = 140;
+
+        const pathPoints = points.map((p, idx) => {
+            const x = 10 + (idx / (years - 1)) * (width - 20);
+            const y = height - 10 - ((p.nw - minNW) / (maxNW - minNW || 1)) * (height - 30);
+            return `${x.toFixed(1)},${y.toFixed(1)}`;
+        });
+
+        const pathD = `M ${pathPoints.join(' L ')}`;
+        const areaD = `M 10,${height - 10} L ${pathPoints.join(' L ')} L ${width - 10},${height - 10} Z`;
+
+        const svgEl = document.getElementById('trajectory-chart-svg');
+        if (svgEl) {
+            svgEl.innerHTML = `
+                <defs>
+                    <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#0F2952" stop-opacity="0.30"/>
+                        <stop offset="100%" stop-color="#0F2952" stop-opacity="0.0"/>
+                    </linearGradient>
+                </defs>
+                <path d="${areaD}" fill="url(#chartGrad)" />
+                <path d="${pathD}" fill="none" stroke="#0F2952" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="${pathPoints[0].split(',')[0]}" cy="${pathPoints[0].split(',')[1]}" r="4" fill="#0F2952"/>
+                <circle cx="${pathPoints[10].split(',')[0]}" cy="${pathPoints[10].split(',')[1]}" r="4" fill="#D4AF37"/>
+                <circle cx="${pathPoints[years - 1].split(',')[0]}" cy="${pathPoints[years - 1].split(',')[1]}" r="5" fill="#10B981"/>
+                <text x="10" y="18" fill="#64748B" font-size="9" font-family="sans-serif">2026: $128k</text>
+                <text x="${width / 2 - 25}" y="18" fill="#D4AF37" font-weight="bold" font-size="9" font-family="sans-serif">2036: $1.0M</text>
+                <text x="${width - 70}" y="18" fill="#047857" font-weight="bold" font-size="9" font-family="sans-serif">2056: ${fmtM(points[years-1].nw)}</text>
+            `;
         }
     }
 
@@ -1294,14 +2511,40 @@
     }
 
     async function confirmSync() {
-        const url = document.getElementById('sheets-url-box').value.trim();
+        const urlBox = document.getElementById('sheets-url-box');
+        const url = (urlBox ? urlBox.value : '').trim();
         state.sheets_api_url = url;
         saveState();
         closeSyncModal();
 
-        if (url) {
-            const icon = document.getElementById('sync-btn-icon');
-            icon.innerText = '⏳';
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const icon = document.getElementById('sync-btn-icon');
+        if (icon) icon.innerText = '⏳';
+
+        if (isLocal) {
+            try {
+                const res = await fetch('/api/sync-simplefin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                const resData = await res.json();
+                if (res.ok && resData.data) {
+                    if (resData.data.transactions) state.transactions = resData.data.transactions;
+                    if (resData.data.net_worth) state.net_worth = resData.data.net_worth;
+                    saveState();
+                    render();
+                    if (typeof renderNetWorth === 'function') renderNetWorth();
+                    if (typeof renderUtilitiesTab === 'function') renderUtilitiesTab();
+                    alert(`✅ SimpleFIN sync completed! Refreshed ${resData.synced_accounts || 0} accounts and ${resData.new_transactions || 0} new transactions.`);
+                } else if (resData.error) {
+                    alert(`⚠️ Sync error: ${resData.error}`);
+                }
+            } catch (err) {
+                console.error("Local sync error", err);
+                alert(`⚠️ Sync network error: ${err.message}`);
+            }
+        } else if (url) {
             try {
                 const res = await fetch(url);
                 if (res.ok) {
@@ -1315,15 +2558,26 @@
                             category: t.category || mapCategory(t.merchant),
                             account: t.account || 'Banco Popular'
                         }));
+                        if (data.net_worth) state.net_worth = data.net_worth;
                         saveState();
+                        alert(`✅ Synced ${data.transactions.length} transactions successfully from Google Sheets!`);
+                    } else {
+                        alert("⚠️ Connected to URL, but no transactions array was returned. Check your Apps Script output format.");
                     }
+                } else {
+                    alert(`⚠️ Sync request returned status ${res.status}: ${res.statusText}`);
                 }
             } catch (err) {
                 console.error("Sync error", err);
+                alert(`⚠️ Sync failed: Could not fetch from the provided URL.\n\nDetails: ${err.message}\n\nTip: If using Google Apps Script, ensure your Web App is deployed with 'Execute as: Me' and 'Who has access: Anyone'.`);
             }
-            icon.innerText = '🔄';
+        } else {
+            alert("Please paste a valid Google Apps Script Web App URL or SimpleFIN endpoint.");
         }
+        if (icon) icon.innerText = '🔄';
         render();
+        if (typeof renderNetWorth === 'function') renderNetWorth();
+        if (typeof renderUtilitiesTab === 'function') renderUtilitiesTab();
     }
 
     function mapCategory(m) {
@@ -1383,7 +2637,18 @@
     }
 
     function onSearchFilter(val) {
-        state.filter_term = (val || '').toLowerCase();
+        state.filter_term = (val || '').toLowerCase().trim();
+        const clearBtn = document.getElementById('clear-search-btn');
+        if (clearBtn) clearBtn.style.display = state.filter_term ? 'inline-block' : 'none';
+        renderTransactionsOnly();
+    }
+
+    function clearSearchFilter() {
+        const input = document.getElementById('tx-search-input');
+        if (input) input.value = '';
+        state.filter_term = '';
+        const clearBtn = document.getElementById('clear-search-btn');
+        if (clearBtn) clearBtn.style.display = 'none';
         renderTransactionsOnly();
     }
 
@@ -1391,6 +2656,234 @@
         if (isNaN(val)) return "0";
         const n = roundDown ? Math.floor(Math.abs(val)) : Math.round(Math.abs(val));
         return n.toLocaleString('en-US');
+    }
+
+    // ── UTILITIES & COOLING INTELLIGENCE ENGINE ──
+    let simState = {
+        units: 2,
+        hours: 12
+    };
+
+    function setSimUnits(u) {
+        simState.units = u;
+        const group = document.getElementById('sim-units-group');
+        if (group) {
+            const btns = group.querySelectorAll('.sim-btn');
+            const vals = [1, 2, 3];
+            btns.forEach((btn, idx) => {
+                btn.classList.toggle('active', vals[idx] === u);
+            });
+        }
+        calculateSim();
+    }
+
+    function setSimHours(h) {
+        simState.hours = h;
+        const group = document.getElementById('sim-hours-group');
+        if (group) {
+            const btns = group.querySelectorAll('.sim-btn');
+            const vals = [8, 12, 16, 24];
+            btns.forEach((btn, idx) => {
+                btn.classList.toggle('active', vals[idx] === h);
+            });
+        }
+        calculateSim();
+    }
+
+    function calculateSim() {
+        // Inverter split A/C: ~1.05 kW per unit under typical duty cycle
+        // Puerto Rico LUMA blended rate: ~$0.28 / kWh
+        const kwPerUnit = 1.05;
+        const ratePerKwh = 0.28;
+        const daysPerMonth = 30.4;
+        const totalDailyHours = simState.units * simState.hours;
+        const totalKwhPerMonth = totalDailyHours * kwPerUnit * daysPerMonth;
+        const estimatedMonthlyBill = Math.round(totalKwhPerMonth * ratePerKwh);
+
+        const billEl = document.getElementById('sim-estimated-bill');
+        const badgeEl = document.getElementById('sim-status-badge');
+        if (!billEl || !badgeEl) return;
+
+        billEl.innerText = `$${fmtUSD(estimatedMonthlyBill)} / month`;
+
+        const diff = 600 - estimatedMonthlyBill;
+        if (diff >= 0) {
+            badgeEl.className = 'util-sim-badge safe';
+            badgeEl.innerHTML = `🟢 Safely within $600 budget (+$${fmtUSD(diff)} buffer left)`;
+        } else {
+            badgeEl.className = 'util-sim-badge warn';
+            badgeEl.innerHTML = `⚠️ Exceeds $600 baseline by $${fmtUSD(Math.abs(diff))}/mo`;
+        }
+    }
+
+    function renderUtilitiesTab() {
+        const dateInfo = getDateInfo();
+        const allTxs = state.transactions || [];
+        const currentMonthTxs = allTxs.filter(tx => (tx.date || '').startsWith(dateInfo.monthKey));
+
+        const lumaTxs = currentMonthTxs.filter(isLumaTx);
+        const aaaTxs = currentMonthTxs.filter(isAAATx);
+
+        const lumaSpent = lumaTxs.reduce((s, t) => s + (parseFloat(t.amount) || 0), 0);
+        const aaaSpent = aaaTxs.reduce((s, t) => s + (parseFloat(t.amount) || 0), 0);
+
+        // LUMA electricity baseline $600
+        const lumaBaseline = 600;
+        const lumaRemaining = Math.max(0, lumaBaseline - lumaSpent);
+        const lumaPct = Math.min(100, Math.round((lumaSpent / lumaBaseline) * 100));
+
+        const lumaSpentEl = document.getElementById('util-luma-spent');
+        if (lumaSpentEl) lumaSpentEl.innerText = `$${fmtUSD(lumaSpent)}`;
+
+        const lumaBarFill = document.getElementById('luma-bar-fill');
+        if (lumaBarFill) {
+            lumaBarFill.style.width = `${lumaPct}%`;
+            if (lumaPct > 90) lumaBarFill.style.background = 'var(--crimson)';
+            else if (lumaPct > 70) lumaBarFill.style.background = 'var(--gold)';
+            else lumaBarFill.style.background = 'linear-gradient(90deg, #60A5FA 0%, #34D399 100%)';
+        }
+
+        const lumaHeadroomEl = document.getElementById('luma-headroom-text');
+        if (lumaHeadroomEl) {
+            if (lumaSpent > lumaBaseline) {
+                lumaHeadroomEl.innerText = `-$${fmtUSD(lumaSpent - lumaBaseline)} Over Baseline`;
+                lumaHeadroomEl.style.color = '#FCA5A5';
+            } else {
+                lumaHeadroomEl.innerText = `$${fmtUSD(lumaRemaining)} Headroom Remaining`;
+                lumaHeadroomEl.style.color = 'rgba(255,255,255,0.7)';
+            }
+        }
+
+        const lumaPctEl = document.getElementById('luma-pct-text');
+        if (lumaPctEl) lumaPctEl.innerText = `${lumaPct}% Utilized`;
+
+        const lumaPill = document.getElementById('luma-status-pill');
+        if (lumaPill) {
+            lumaPill.innerText = lumaSpent > 0 ? `$${fmtUSD(lumaSpent)} Billed` : 'Active · Zero Bill';
+        }
+
+        // A/C Cooling Capacity Engine
+        // Rate: $0.28/kWh, ~1.05 kW draw = ~$0.294/cooling hour
+        const hourlyRate = 1.05 * 0.28;
+        const coolingHoursRemaining = Math.max(0, Math.round(lumaRemaining / hourlyRate));
+        const dailyCapacityHours = Math.round(coolingHoursRemaining / dateInfo.daysRemaining);
+
+        const acRemainEl = document.getElementById('ac-remaining-hours');
+        if (acRemainEl) acRemainEl.innerText = `${fmtUSD(coolingHoursRemaining)} hrs`;
+
+        const acDailyEl = document.getElementById('ac-daily-capacity');
+        if (acDailyEl) acDailyEl.innerText = `${fmtUSD(dailyCapacityHours)} hrs / day`;
+
+        // AAA Water
+        const aaaSpentEl = document.getElementById('util-aaa-spent');
+        if (aaaSpentEl) aaaSpentEl.innerText = `$${fmtUSD(aaaSpent)}`;
+
+        const aaaStatusTag = document.getElementById('aaa-status-tag');
+        if (aaaStatusTag) {
+            if (aaaSpent > 150) {
+                aaaStatusTag.innerText = `-$${fmtUSD(aaaSpent - 150)} Over $150`;
+                aaaStatusTag.style.background = '#FEE2E2';
+                aaaStatusTag.style.color = '#991B1B';
+            } else {
+                aaaStatusTag.innerText = `Baseline $150/mo`;
+                aaaStatusTag.style.background = '#E0F2FE';
+                aaaStatusTag.style.color = '#0369A1';
+            }
+        }
+
+        // Calculate and render simulation
+        calculateSim();
+
+        // Render Month-over-Month utility history
+        renderUtilityMonthHistory();
+    }
+
+    function renderUtilityMonthHistory() {
+        const feed = document.getElementById('util-history-feed');
+        if (!feed) return;
+
+        const allTxs = state.transactions || [];
+        const monthMap = {};
+
+        // Aggregate by monthKey
+        allTxs.forEach(tx => {
+            const dateStr = (tx.date || '').split('T')[0];
+            if (!dateStr || dateStr.length < 7) return;
+            const mKey = dateStr.substring(0, 7); // 'YYYY-MM'
+            if (!monthMap[mKey]) {
+                monthMap[mKey] = {
+                    luma: 0,
+                    aaa: 0,
+                    total: 0
+                };
+            }
+            if (isLumaTx(tx)) {
+                monthMap[mKey].luma += (parseFloat(tx.amount) || 0);
+                monthMap[mKey].total += (parseFloat(tx.amount) || 0);
+            } else if (isAAATx(tx)) {
+                monthMap[mKey].aaa += (parseFloat(tx.amount) || 0);
+                monthMap[mKey].total += (parseFloat(tx.amount) || 0);
+            }
+        });
+
+        const sortedMonths = Object.keys(monthMap).sort().reverse();
+
+        // If no utility transactions yet, show baseline default projection
+        if (sortedMonths.length === 0 || sortedMonths.every(m => monthMap[m].total === 0)) {
+            const dateInfo = getDateInfo();
+            feed.innerHTML = `
+                <div class="util-hist-row">
+                    <div class="util-hist-left">
+                        <span class="util-hist-month">${dateInfo.monthName}</span>
+                        <span class="util-hist-split">⚡ LUMA: $0 (Cap $600) · 💧 AAA: $0 (Cap $150)</span>
+                    </div>
+                    <div class="util-hist-right">
+                        <span class="util-hist-total">$0 Logged</span>
+                        <span class="util-delta-pill flat">Baseline</span>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        feed.innerHTML = sortedMonths.map((mKey, idx) => {
+            const data = monthMap[mKey];
+            const [yStr, mStr] = mKey.split('-');
+            const mNum = parseInt(mStr, 10) - 1;
+            const monthLabel = `${monthNames[mNum]} ${yStr}`;
+
+            // Calculate MoM delta vs next item in reversed array (previous chronological month)
+            const prevMonthKey = sortedMonths[idx + 1];
+            let deltaHtml = '<span class="util-delta-pill flat">Baseline</span>';
+            if (prevMonthKey && monthMap[prevMonthKey]) {
+                const prevLuma = monthMap[prevMonthKey].luma;
+                const diff = data.luma - prevLuma;
+                if (prevLuma > 0) {
+                    if (diff > 0) {
+                        deltaHtml = `<span class="util-delta-pill up">▲ +$${fmtUSD(diff)} vs ${monthNames[parseInt(prevMonthKey.split('-')[1], 10) - 1]}</span>`;
+                    } else if (diff < 0) {
+                        deltaHtml = `<span class="util-delta-pill down">▼ -$${fmtUSD(Math.abs(diff))} vs ${monthNames[parseInt(prevMonthKey.split('-')[1], 10) - 1]}</span>`;
+                    } else {
+                        deltaHtml = `<span class="util-delta-pill flat">Flat MoM</span>`;
+                    }
+                }
+            }
+
+            return `
+                <div class="util-hist-row">
+                    <div class="util-hist-left">
+                        <span class="util-hist-month">${monthLabel}</span>
+                        <span class="util-hist-split">⚡ LUMA: $${fmtUSD(data.luma)} · 💧 AAA: $${fmtUSD(data.aaa)}</span>
+                    </div>
+                    <div class="util-hist-right">
+                        <span class="util-hist-total">$${fmtUSD(data.total)}</span>
+                        ${deltaHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     // ── MAIN RENDER ──
@@ -1410,17 +2903,22 @@
         const mortgageSpent = mortgageTxs.reduce((s, t) => s + t.amount, 0);
         const hoaSpent = hoaTxs.reduce((s, t) => s + t.amount, 0);
 
-        // Update Fixed Housing & Utilities UI (Excluded from Lifestyle)
+        // Update Fixed Housing & Utilities UI if elements exist
         const isMortgageActive = (dateInfo.year > 2026 || (dateInfo.year === 2026 && dateInfo.month >= 11)); // Dec 2026 is month index 11
-        document.getElementById('fixed-luma-val').innerHTML = `$${fmtUSD(lumaSpent)} <span class="fixed-sub-budget">/ $600</span>`;
-        document.getElementById('fixed-aaa-val').innerHTML = `$${fmtUSD(aaaSpent)} <span class="fixed-sub-budget">/ $150</span>`;
-        document.getElementById('fixed-mortgage-val').innerHTML = isMortgageActive 
+        const fLuma = document.getElementById('fixed-luma-val');
+        if (fLuma) fLuma.innerHTML = `$${fmtUSD(lumaSpent)} <span class="fixed-sub-budget">/ $600</span>`;
+        const fAaa = document.getElementById('fixed-aaa-val');
+        if (fAaa) fAaa.innerHTML = `$${fmtUSD(aaaSpent)} <span class="fixed-sub-budget">/ $150</span>`;
+        const fMortgage = document.getElementById('fixed-mortgage-val');
+        if (fMortgage) fMortgage.innerHTML = isMortgageActive 
             ? `$${fmtUSD(mortgageSpent)} <span class="fixed-sub-budget">/ $3,306</span>` 
             : `$0 <span class="fixed-sub-budget">(Starts Dec 1)</span>`;
-        document.getElementById('fixed-hoa-val').innerHTML = `$${fmtUSD(hoaSpent)} <span class="fixed-sub-budget">/ $375</span>`;
+        const fHoa = document.getElementById('fixed-hoa-val');
+        if (fHoa) fHoa.innerHTML = `$${fmtUSD(hoaSpent)} <span class="fixed-sub-budget">/ $375</span>`;
 
         const totalFixedSpent = lumaSpent + aaaSpent + mortgageSpent + hoaSpent;
-        document.getElementById('fixed-total-status').innerText = totalFixedSpent > 0 ? `$${fmtUSD(totalFixedSpent)} Logged` : 'Active';
+        const fStatus = document.getElementById('fixed-total-status');
+        if (fStatus) fStatus.innerText = totalFixedSpent > 0 ? `$${fmtUSD(totalFixedSpent)} Logged` : 'Active';
 
         // 2. LIFESTYLE SPEND: Strictly $3,000.00 cap, NEVER altered by utilities
         const lifestyleCap = BASE_LIFESTYLE; // Strictly $3,000.00
@@ -1442,27 +2940,36 @@
         const statusTag = document.getElementById('hero-status-tag');
         const statusTxt = document.getElementById('hero-status-txt');
 
-        gaugeFill.style.strokeDashoffset = offset;
+        if (gaugeFill) gaugeFill.style.strokeDashoffset = offset;
 
         if (isOver) {
-            gaugeFill.style.stroke = 'var(--crimson)';
-            heroDigits.className = 'gauge-digits over';
-            heroDigits.innerText = `-$${fmtUSD(absRemaining, false)}`;
-            statusTag.className = 'gauge-status-tag over';
-            statusTxt.innerText = `Over Budget`;
+            if (gaugeFill) gaugeFill.style.stroke = 'var(--crimson)';
+            if (heroDigits) {
+                heroDigits.className = 'gauge-digits over';
+                heroDigits.innerText = `-$${fmtUSD(absRemaining, false)}`;
+            }
+            if (statusTag) statusTag.className = 'gauge-status-tag over';
+            if (statusTxt) statusTxt.innerText = `Over Budget`;
         } else {
-            gaugeFill.style.stroke = pctSpent > 80 ? 'var(--gold)' : 'var(--emerald)';
-            heroDigits.className = 'gauge-digits under';
-            heroDigits.innerText = `$${fmtUSD(remaining, true)}`; // Rounded down to whole dollar
-            statusTag.className = 'gauge-status-tag under';
-            statusTxt.innerText = `${Math.round(100 - pctSpent)}% Intact`;
+            if (gaugeFill) gaugeFill.style.stroke = pctSpent > 80 ? 'var(--gold)' : 'var(--emerald)';
+            if (heroDigits) {
+                heroDigits.className = 'gauge-digits under';
+                heroDigits.innerText = `$${fmtUSD(remaining, true)}`; // Rounded down to whole dollar
+            }
+            if (statusTag) statusTag.className = 'gauge-status-tag under';
+            if (statusTxt) statusTxt.innerText = `${Math.round(100 - pctSpent)}% Intact`;
         }
 
-        document.getElementById('burn-daily-val').innerText = `$${fmtUSD(dailyAllowance, true)} / day`;
-        document.getElementById('burn-pace-badge').innerText = `Burned ${Math.round(pctSpent)}%`;
-        document.getElementById('kpi-budget-cap').innerText = `$${fmtUSD(lifestyleCap, false)}`;
-        document.getElementById('kpi-spent-total').innerText = `$${fmtUSD(totalSpent, false)}`;
-        document.getElementById('kpi-daily-velocity').innerText = `$${fmtUSD(dailyVelocity, false)} / day`;
+        const burnDaily = document.getElementById('burn-daily-val');
+        if (burnDaily) burnDaily.innerText = `$${fmtUSD(dailyAllowance, true)} / day`;
+        const burnPace = document.getElementById('burn-pace-badge');
+        if (burnPace) burnPace.innerText = `Burned ${Math.round(pctSpent)}%`;
+        const kpiCap = document.getElementById('kpi-budget-cap');
+        if (kpiCap) kpiCap.innerText = `$${fmtUSD(lifestyleCap, false)}`;
+        const kpiSpent = document.getElementById('kpi-spent-total');
+        if (kpiSpent) kpiSpent.innerText = `$${fmtUSD(totalSpent, false)}`;
+        const kpiVelocity = document.getElementById('kpi-daily-velocity');
+        if (kpiVelocity) kpiVelocity.innerText = `$${fmtUSD(dailyVelocity, false)} / day`;
 
         // Category Cards
         const catSpentMap = {};
@@ -1472,56 +2979,247 @@
         });
 
         const grid = document.getElementById('category-grid');
-        grid.innerHTML = Object.entries(CATEGORY_LIMITS).map(([key, def]) => {
-            const spent = catSpentMap[key] || 0;
-            const pct = Math.min(100, (spent / def.limit) * 100);
-            return `
-                <div class="cat-card-item" onclick="filterByCategory('${key}')">
-                    <div class="cat-card-header">
-                        <div class="cat-card-title">
-                            <span class="cat-icon-pill">${def.icon}</span>
-                            <span>${def.label}</span>
+        if (grid) {
+            grid.innerHTML = Object.entries(CATEGORY_LIMITS).map(([key, def]) => {
+                const spent = catSpentMap[key] || 0;
+                const pct = Math.min(100, (spent / def.limit) * 100);
+                return `
+                    <div class="cat-card-item" onclick="filterByCategory('${key}')">
+                        <div class="cat-card-header">
+                            <div class="cat-card-title">
+                                <span class="cat-icon-pill">${def.icon}</span>
+                                <span>${def.label}</span>
+                            </div>
+                            <div class="cat-card-metrics">
+                                <span class="cat-spent-val">$${fmtUSD(spent, false)}</span>
+                                <span class="cat-limit-val">/ $${fmtUSD(def.limit, false)}</span>
+                            </div>
                         </div>
-                        <div class="cat-card-metrics">
-                            <span class="cat-spent-val">$${fmtUSD(spent, false)}</span>
-                            <span class="cat-limit-val">/ $${fmtUSD(def.limit, false)}</span>
+                        <div class="cat-meter-track">
+                            <div class="cat-meter-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--crimson)' : (pct > 75 ? 'var(--gold)' : 'var(--ink-primary)')}"></div>
                         </div>
                     </div>
-                    <div class="cat-meter-track">
-                        <div class="cat-meter-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--crimson)' : (pct > 75 ? 'var(--gold)' : 'var(--ink-primary)')}"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
+        }
 
+        renderTransactionsOnly();
+        if (typeof renderUtilitiesTab === 'function') renderUtilitiesTab();
+    }
+
+    function isCreditCardTx(tx) {
+        const acc = (tx.account || '').toLowerCase();
+        return acc.includes('card') || acc.includes('credit') || 
+               acc.includes('venture') || acc.includes('amex') || 
+               acc.includes('flex') || acc.includes('platinum') || 
+               acc.includes('quicksilver') || acc.includes('savor');
+    }
+
+    function isBankCheckingTx(tx) {
+        const acc = (tx.account || '').toLowerCase();
+        if (isCreditCardTx(tx)) return false;
+        return acc.includes('current') || acc.includes('checking') || 
+               acc.includes('popular') || acc.includes('bofa') || 
+               acc.includes('bank of america') || acc.includes('monzo current') ||
+               acc.includes('savings') || acc.includes('bank');
+    }
+
+    function getAccountIcon(acc) {
+        const a = (acc || '').toLowerCase();
+        if (a.includes('venture') || a.includes('capital one')) return '💳';
+        if (a.includes('amex') || a.includes('american express')) return '💳';
+        if (a.includes('flex')) return '💳';
+        if (a.includes('card') || a.includes('credit')) return '💳';
+        if (a.includes('popular') || a.includes('bppr')) return '🏦';
+        if (a.includes('bofa') || a.includes('america')) return '🏛️';
+        if (a.includes('monzo')) return '🟣';
+        return '🪙';
+    }
+
+    function setAccountFilter(filterVal) {
+        state.account_filter = filterVal;
         renderTransactionsOnly();
     }
 
     function filterByCategory(cat) {
         switchTab('feeds');
-        document.getElementById('tx-search-input').value = cat;
+        setAccountFilter('ALL');
+        const input = document.getElementById('tx-search-input');
+        if (input) input.value = cat;
         onSearchFilter(cat);
+    }
+
+    function filterByAccount(acc) {
+        switchTab('feeds');
+        setAccountFilter(acc);
+    }
+
+    async function uploadStatementFile(input) {
+        if (!input.files || input.files.length === 0) return;
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (!isLocal) {
+            alert("Statement upload is supported on the local server at http://localhost:8000");
+            input.value = '';
+            return;
+        }
+
+        try {
+            const badge = document.getElementById('feed-count-badge');
+            if (badge) badge.innerText = 'Parsing statement...';
+
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (res.ok && data.transactions) {
+                state.transactions = data.transactions;
+                saveState();
+                render();
+                alert(`✅ Statement parsed successfully! Added ${data.added_count || 0} new transactions to your ledger.`);
+            } else {
+                alert(`⚠️ Upload error: ${data.error || 'Failed to process statement'}`);
+            }
+        } catch (err) {
+            alert(`⚠️ Upload failed: ${err.message}`);
+        } finally {
+            input.value = '';
+            renderTransactionsOnly();
+        }
+    }
+
+    async function refreshLocalData() {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isLocal) {
+            try {
+                const res = await fetch('/api/data');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.transactions && Array.isArray(data.transactions)) {
+                        state.transactions = data.transactions;
+                    }
+                    if (data.net_worth) state.net_worth = data.net_worth;
+                    saveState();
+                    render();
+                    if (typeof renderNetWorth === 'function') renderNetWorth();
+                    alert("🔄 Refreshed live data from DCR Ledger.xlsx");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
     }
 
     function renderTransactionsOnly() {
         const stream = document.getElementById('transactions-stream');
+        if (!stream) return;
         const term = state.filter_term;
+        const activeFilter = state.account_filter || 'ALL';
+        const allTxs = state.transactions || [];
 
-        const filtered = state.transactions.filter(tx => {
-            if (!term) return true;
-            return (tx.merchant || '').toLowerCase().includes(term) ||
-                   (tx.category || '').toLowerCase().includes(term) ||
-                   (tx.account || '').toLowerCase().includes(term);
+        // 1. Calculate Account Metrics
+        const cardCount = allTxs.filter(isCreditCardTx).length;
+        const bankCount = allTxs.filter(isBankCheckingTx).length;
+
+        // Distinct Accounts Mapping
+        const accountCounts = {};
+        allTxs.forEach(tx => {
+            const acc = (tx.account || 'Other Account').trim();
+            accountCounts[acc] = (accountCounts[acc] || 0) + 1;
         });
 
-        document.getElementById('feed-count-badge').innerText = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+        // 2. Update Group Filter Badges & States
+        const chipAll = document.getElementById('chip-count-all');
+        if (chipAll) chipAll.innerText = allTxs.length;
+        const chipCards = document.getElementById('chip-count-cards');
+        if (chipCards) chipCards.innerText = cardCount;
+        const chipAccounts = document.getElementById('chip-count-accounts');
+        if (chipAccounts) chipAccounts.innerText = bankCount;
 
+        const allBtn = document.getElementById('chip-filter-ALL');
+        const cardsBtn = document.getElementById('chip-filter-CARDS');
+        const accountsBtn = document.getElementById('chip-filter-ACCOUNTS');
+        if (allBtn) allBtn.classList.toggle('active', activeFilter === 'ALL');
+        if (cardsBtn) cardsBtn.classList.toggle('active', activeFilter === 'CARDS');
+        if (accountsBtn) accountsBtn.classList.toggle('active', activeFilter === 'ACCOUNTS');
+
+        // 3. Render Dynamic Individual Account Chips
+        const dynamicChipsContainer = document.getElementById('filter-dynamic-chips');
+        if (dynamicChipsContainer) {
+            const accountNames = Object.keys(accountCounts).sort();
+            dynamicChipsContainer.innerHTML = accountNames.map(accName => {
+                const isActive = activeFilter === accName;
+                const icon = getAccountIcon(accName);
+                const count = accountCounts[accName];
+                const escapedName = escapeHtml(accName);
+                const jsSafeName = accName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                return `
+                    <button class="filter-chip ${isActive ? 'active' : ''}" onclick="setAccountFilter('${jsSafeName}')">
+                        <span>${icon}</span> ${escapedName} <span class="chip-badge">${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // 4. Filter Transactions
+        const filtered = allTxs.filter(tx => {
+            // Account Filter
+            if (activeFilter === 'CARDS') {
+                if (!isCreditCardTx(tx)) return false;
+            } else if (activeFilter === 'ACCOUNTS') {
+                if (!isBankCheckingTx(tx)) return false;
+            } else if (activeFilter !== 'ALL') {
+                if ((tx.account || '').trim() !== activeFilter) return false;
+            }
+
+            // Search Term
+            if (term) {
+                const m = (tx.merchant || '').toLowerCase();
+                const c = (tx.category || '').toLowerCase();
+                const a = (tx.account || '').toLowerCase();
+                const amt = String(tx.amount || '');
+                if (!m.includes(term) && !c.includes(term) && !a.includes(term) && !amt.includes(term)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // 5. Update Summary Bar
+        const summaryNameEl = document.getElementById('summary-filter-name');
+        const summaryCountEl = document.getElementById('summary-filter-count');
+        const summaryAmountEl = document.getElementById('summary-filter-amount');
+
+        let filterLabel = 'Showing All Accounts';
+        if (activeFilter === 'CARDS') filterLabel = 'Showing 💳 All Credit Cards';
+        else if (activeFilter === 'ACCOUNTS') filterLabel = 'Showing 🏦 All Bank Accounts';
+        else if (activeFilter !== 'ALL') filterLabel = `Showing ${getAccountIcon(activeFilter)} ${escapeHtml(activeFilter)}`;
+
+        if (term) filterLabel += ` · "${escapeHtml(term)}"`;
+
+        const totalFilteredSpend = filtered.reduce((s, t) => s + (parseFloat(t.amount) || 0), 0);
+
+        if (summaryNameEl) summaryNameEl.innerText = filterLabel;
+        if (summaryCountEl) summaryCountEl.innerText = `${filtered.length} transaction${filtered.length === 1 ? '' : 's'}`;
+        if (summaryAmountEl) summaryAmountEl.innerText = `$${fmtUSD(totalFilteredSpend, false)}`;
+        
+        const feedCountBadge = document.getElementById('feed-count-badge');
+        if (feedCountBadge) feedCountBadge.innerText = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+
+        // 6. Handle Empty State
         if (filtered.length === 0) {
             stream.innerHTML = `
                 <div class="empty-tx-box">
-                    <div style="font-size: 26px; margin-bottom: 2px;">🍃</div>
-                    <strong>No transactions logged yet</strong>
-                    <span>Live expenses from Banco Popular and AmEx will appear here automatically.</span>
+                    <div style="font-size: 26px; margin-bottom: 2px;">🔍</div>
+                    <strong>No matching transactions</strong>
+                    <span>No transactions match the selected account filter or search query.</span>
+                    <button class="filter-chip active" style="margin-top: 10px; cursor: pointer;" onclick="setAccountFilter('ALL'); clearSearchFilter();">
+                        Reset Filter to All
+                    </button>
                 </div>
             `;
             return;
@@ -1538,6 +3236,7 @@
             'Other': '📦'
         };
 
+        // 7. Render Stream
         stream.innerHTML = filtered.map(tx => {
             const isExcluded = isExcludedFromLifestyle(tx);
             let badgeClass = 'tx-account-badge';
@@ -1567,6 +3266,8 @@
             }
 
             const icon = isLumaTx(tx) ? '⚡' : (isAAATx(tx) ? '💧' : (isMortgageTx(tx) ? '🏠' : (isHOATx(tx) ? '🏢' : (catIcons[tx.category] || '💳'))));
+            const rawAcc = tx.account || '';
+            const jsSafeAcc = rawAcc.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
             return `
                 <div class="tx-card-row ${isExcluded ? 'fixed-tx-row' : ''}">
@@ -1578,7 +3279,7 @@
                                 <span class="${isExcluded ? 'tx-excluded-tag' : ''}">${catTag}</span>
                                 <span>•</span>
                                 <span>${escapeHtml(tx.date || '')}</span>
-                                <span class="${badgeClass}">${badgeText}</span>
+                                <span class="${badgeClass}" onclick="event.stopPropagation(); setAccountFilter('${jsSafeAcc}');" style="cursor:pointer;" title="Filter to this account">${badgeText}</span>
                             </div>
                         </div>
                     </div>
@@ -1598,6 +3299,8 @@
 
     loadState();
     render();
+    if (typeof renderNetWorth === 'function') renderNetWorth();
+    if (typeof renderUtilitiesTab === 'function') renderUtilitiesTab();
 </script>
 
 </body>

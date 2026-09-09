@@ -14,7 +14,7 @@
 // ─── CONSTANTS & CONFIGURATION ──────────────────────────────────────────────
 
 const SCRIPT_CONFIG = {
-  SPREADSHEET_NAME: "Victoria Court Budget Tracker",
+  SPREADSHEET_NAME: "DCR Ledger",
   TIMEZONE: "America/Puerto_Rico",
   LOCALE: "en_US",
   BASE_CURRENCY: "USD",
@@ -131,7 +131,7 @@ function setupTracker() {
   ss.setActiveSheet(sheets[SCRIPT_CONFIG.TABS.DASHBOARD]);
 
   SpreadsheetApp.flush();
-  Logger.log("✅ Victoria Court Budget Tracker setup completed successfully.");
+  Logger.log("✅ DCR Ledger setup completed successfully.");
 }
 
 /**
@@ -232,15 +232,16 @@ function buildAccountsTab_(sheet) {
   const seedRows = [
     ["Banco Popular", "Banco Popular - Puerto Rico & Virgin Islands", "Checking", "USD", "", '=IF(D2="GBP", E2*GBP_USD_RATE, E2)', "", "Active", true, "SimpleFIN", ""],
     ["Capital One Venture X", "Capital One", "Credit Card", "USD", "", '=IF(D3="GBP", E3*GBP_USD_RATE, E3)', "", "Active", false, "SimpleFIN", ""],
-    ["Bank of America", "Bank of America", "Checking", "USD", "", '=IF(D4="GBP", E4*GBP_USD_RATE, E4)', "", "Winding Down", true, "None", ""],
-    ["Monzo Current", "Monzo", "Checking", "GBP", 15000, '=IF(D5="GBP", E5*GBP_USD_RATE, E5)', new Date(), "Winding Down", true, "Manual", ""],
-    ["Monzo Flex", "Monzo", "Credit Card", "GBP", "", '=IF(D6="GBP", E6*GBP_USD_RATE, E6)', "", "Closed", false, "CSV", ""]
+    ["Merrill Lynch Investment", "Merrill Lynch", "Investment", "USD", 125000, '=IF(D4="GBP", E4*GBP_USD_RATE, E4)', "", "Active", false, "SimpleFIN", ""],
+    ["Bank of America", "Bank of America", "Checking", "USD", "", '=IF(D5="GBP", E5*GBP_USD_RATE, E5)', "", "Winding Down", true, "None", ""],
+    ["Monzo Current", "Monzo", "Checking", "GBP", 15000, '=IF(D6="GBP", E6*GBP_USD_RATE, E6)', new Date(), "Winding Down", true, "Manual", ""],
+    ["Monzo Flex", "Monzo", "Credit Card", "GBP", "", '=IF(D7="GBP", E7*GBP_USD_RATE, E7)', "", "Closed", false, "CSV", ""]
   ];
 
   sheet.getRange(2, 1, seedRows.length, headers.length).setValues(seedRows);
-  sheet.getRange("I2:I6").insertCheckboxes();
-  sheet.getRange("E2:F6").setNumberFormat("$#,##0.00");
-  sheet.getRange("G2:G6").setNumberFormat("MM/DD/YYYY HH:mm");
+  sheet.getRange("I2:I7").insertCheckboxes();
+  sheet.getRange("E2:F7").setNumberFormat("$#,##0.00");
+  sheet.getRange("G2:G7").setNumberFormat("MM/DD/YYYY HH:mm");
 }
 
 /**
@@ -835,7 +836,8 @@ function syncBankData() {
           sOrg.includes(rInst) ||
           rInst.includes(sOrg) ||
           (rName.includes("banco popular") && (sName.includes("popular") || sOrg.includes("popular"))) ||
-          (rName.includes("capital one") && (sName.includes("capital") || sOrg.includes("capital") || sName.includes("venture")))
+          (rName.includes("capital one") && (sName.includes("capital") || sOrg.includes("capital") || sName.includes("venture"))) ||
+          (rName.includes("merrill") && (sName.includes("merrill") || sOrg.includes("merrill") || sName.includes("investment")))
         );
 
         if (matchesId || matchesName) {
@@ -864,6 +866,9 @@ function syncBankData() {
   simpleFinAccounts.forEach(sAcc => {
     const matchedAccountRow = accData.find(r => r[10] === sAcc.id && r[9] === "SimpleFIN" && r[7] !== "Closed");
     if (!matchedAccountRow) return;
+
+    // Skip investment accounts from the spending transaction ledger
+    if (matchedAccountRow[2] === "Investment") return;
 
     const accountName = matchedAccountRow[0];
     const currency = matchedAccountRow[3] || "USD";
@@ -1198,7 +1203,7 @@ function setMonzoBalance() {
  */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu("💰 Budget Tracker")
+  ui.createMenu("💰 DCR Ledger")
     .addItem("Sync banks now", "syncBankData")
     .addItem("Set Monzo balance (£15,000)", "setMonzoBalance")
     .addItem("Import CSV (Monzo / BofA)", "importCsv")
@@ -1271,7 +1276,42 @@ function doGet(e) {
         };
       }),
       renovation_outstanding: 17440,
-      renovation_paid: 10700
+      renovation_paid: 10700,
+      net_worth: (() => {
+        const accList = accounts.slice(1);
+        const popAcc = accList.find(r => (r[0]||"").toString().toLowerCase().includes("popular"));
+        const merAcc = accList.find(r => (r[0]||"").toString().toLowerCase().includes("merrill"));
+        const cardAccs = accList.filter(r => (r[2]||"").toString().toLowerCase().includes("credit") || (r[0]||"").toString().toLowerCase().includes("card") || (r[0]||"").toString().toLowerCase().includes("capital"));
+
+        const popularBal = popAcc ? (parseFloat(popAcc[5] || popAcc[4] || 5000)) : 5000;
+        const merrillBal = merAcc ? (parseFloat(merAcc[5] || merAcc[4] || 125000)) : 125000;
+        let cardDebt = 0;
+        cardAccs.forEach(c => { cardDebt += Math.abs(parseFloat(c[5] || c[4] || 0)); });
+
+        const houseVal = 650000;
+        const mortgageBal = 480000;
+        const merrillLoan = 177115;
+        const buffer = 5000;
+
+        const totAssets = popularBal + merrillBal + houseVal + buffer;
+        const totLiab = mortgageBal + merrillLoan + cardDebt;
+
+        return {
+          total_net_worth: Math.round(totAssets - totLiab),
+          liquid_net_worth: Math.round(popularBal + merrillBal + buffer - cardDebt),
+          home_equity: Math.round(houseVal - mortgageBal),
+          total_assets: Math.round(totAssets),
+          total_liabilities: Math.round(totLiab),
+          merrill_balance: Math.round(merrillBal),
+          banco_popular: Math.round(popularBal),
+          credit_card_debt: Math.round(cardDebt),
+          house_value: houseVal,
+          mortgage_balance: mortgageBal,
+          merrill_loan: merrillLoan,
+          expected_return: 0.07,
+          home_appreciation: 0.025
+        };
+      })()
     };
 
     return ContentService.createTextOutput(JSON.stringify(payload))

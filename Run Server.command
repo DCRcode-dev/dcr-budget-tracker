@@ -1,12 +1,12 @@
 #!/usr/bin/env zsh
-# DCR Budget Tracker Local Server — double-click to start
+# DCR Ledger Local Server — double-click to start
 # Serves the mobile-friendly web app on port 8080 and opens it in the browser.
 
 # Move to the script's directory (works wherever this file is saved)
 cd "$(dirname "$0")"
 
 echo "=================================================="
-echo " Starting DCR Spend Tracker Local Dev Server..."
+echo " Starting DCR Ledger Local Dev Server..."
 echo "=================================================="
 echo ""
 

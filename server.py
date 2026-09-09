@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-server.py — DCR Budget Tracker Local Server
-===========================================
+server.py — DCR Ledger Local Server
+===================================
 Serves the light-themed premium PWA mobile web app (index.html)
 and provides API endpoints to read and write directly to
-DCR_Budget_Tracker.xlsx using openpyxl.
+DCR Ledger.xlsx using openpyxl.
 
 Endpoints:
   GET  /                 → Serves index.html
@@ -24,14 +24,15 @@ import traceback
 from pathlib import Path
 from datetime import date, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
+sys.path.insert(0, str(Path(__file__).parent.parent / "_vendor"))
 import openpyxl
 from openpyxl.styles import Font
 
 # Re-use existing categories, merchant mappings, and helper logic from sync_budget.py
 try:
     import sync_budget
-    XLSX_PATH = sync_budget.XLSX_PATH
+    resolve_xlsx_path = getattr(sync_budget, 'resolve_xlsx_path', lambda: sync_budget.XLSX_PATH)
+    XLSX_PATH = resolve_xlsx_path()
     CATEGORIES = sync_budget.CATEGORIES
     MERCHANT_MAP = sync_budget.MERCHANT_MAP
     MONZO_CAT_MAP = sync_budget.MONZO_CAT_MAP
@@ -46,8 +47,16 @@ except ImportError:
     print("ERROR: sync_budget.py not found in directory. Ensure it is next to server.py.")
     sys.exit(1)
 
-MONZO_DIR = Path(__file__).parent / "Monzo"
-MONZO_DIR.mkdir(exist_ok=True)
+
+def get_xlsx_path() -> Path:
+    global XLSX_PATH
+    if hasattr(sync_budget, 'resolve_xlsx_path'):
+        XLSX_PATH = sync_budget.resolve_xlsx_path()
+    return XLSX_PATH
+
+
+MONZO_DIR = getattr(sync_budget, 'resolve_monzo_dir', lambda: Path(__file__).parent / "Monzo")()
+MONZO_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def parse_monzo_pdf(filepath):
@@ -144,10 +153,11 @@ def parse_monzo_pdf(filepath):
 
 def ensure_config_cells():
     """Initializes the passive observation config cells in Excel if empty."""
-    if not XLSX_PATH.exists():
+    xlsx_file = get_xlsx_path()
+    if not xlsx_file.exists():
         return
         
-    wb = openpyxl.load_workbook(XLSX_PATH, data_only=False)
+    wb = openpyxl.load_workbook(xlsx_file, data_only=False)
     ws = wb["Config"]
     changed = False
     
@@ -179,15 +189,24 @@ def ensure_config_cells():
         changed = True
         
     if changed:
-        wb.save(XLSX_PATH)
-        print("  Initialized Config worksheet rows 35-37.")
+        wb.save(xlsx_file)
+        print(f"  Initialized Config worksheet rows 35-37 in {xlsx_file.name}.")
 
 
 def read_excel_data():
     """Reads dates, starting capital, and full transactions list from Excel."""
     ensure_config_cells()
+    xlsx_file = get_xlsx_path()
+    if not xlsx_file.exists():
+        print(f"Warning: Ledger spreadsheet not found at {xlsx_file}")
+        return {
+            "start_date": "2026-07-01",
+            "end_date": "2026-08-31",
+            "starting_capital": 10000.0,
+            "transactions": []
+        }
     
-    wb = openpyxl.load_workbook(XLSX_PATH, data_only=True)
+    wb = openpyxl.load_workbook(xlsx_file, data_only=True)
     
     # 1. Load config values
     cfg = wb["Config"]
@@ -253,17 +272,82 @@ def read_excel_data():
     # Sort transactions by date descending
     tx_list.sort(key=lambda t: t["date"], reverse=True)
     
+    # Net Worth & Asset Parameters
+    try:
+        merrill_balance = float(cfg["C24"].value or 125000.0)
+    except Exception:
+        merrill_balance = 125000.0
+    try:
+        house_value = float(cfg["C22"].value or 650000.0)
+    except Exception:
+        house_value = 650000.0
+    try:
+        mortgage_balance = float(cfg["C23"].value or 480000.0)
+    except Exception:
+        mortgage_balance = 480000.0
+    try:
+        # Check dedicated live checking balance in C29 first, fallback to waterline C7
+        banco_popular = float(cfg["C29"].value if cfg["C29"].value is not None else (cfg["C7"].value or 5000.0))
+    except Exception:
+        banco_popular = 5000.0
+    try:
+        credit_card_debt = float(cfg["C30"].value or 0.0)
+    except Exception:
+        credit_card_debt = 0.0
+    try:
+        merrill_loan = float(cfg["C11"].value or 204831.0)
+    except Exception:
+        merrill_loan = 204831.0
+    try:
+        expected_return = float(cfg["C25"].value or 0.07)
+    except Exception:
+        expected_return = 0.07
+    try:
+        home_appreciation = float(cfg["C26"].value or 0.025)
+    except Exception:
+        home_appreciation = 0.025
+    simplefin_url = str(cfg["C27"].value or "")
+
+    emergency_buffer = 5000.0
+    total_assets = banco_popular + merrill_balance + house_value + emergency_buffer
+    total_liabilities = mortgage_balance + merrill_loan + credit_card_debt
+    total_net_worth = total_assets - total_liabilities
+    liquid_net_worth = banco_popular + merrill_balance + emergency_buffer - credit_card_debt
+    home_equity = house_value - mortgage_balance
+
     return {
         "start_date":       start_date,
         "end_date":         end_date,
         "starting_capital": starting_capital,
-        "transactions":     tx_list
+        "transactions":     tx_list,
+        "net_worth": {
+            "total_net_worth":    round(total_net_worth, 2),
+            "liquid_net_worth":   round(liquid_net_worth, 2),
+            "home_equity":        round(home_equity, 2),
+            "total_assets":       round(total_assets, 2),
+            "total_liabilities":  round(total_liabilities, 2),
+            "merrill_balance":    round(merrill_balance, 2),
+            "banco_popular":      round(banco_popular, 2),
+            "emergency_buffer":   round(emergency_buffer, 2),
+            "credit_card_debt":   round(credit_card_debt, 2),
+            "house_value":        round(house_value, 2),
+            "mortgage_balance":   round(mortgage_balance, 2),
+            "merrill_loan":       round(merrill_loan, 2),
+            "expected_return":    round(expected_return, 4),
+            "home_appreciation":  round(home_appreciation, 4),
+            "simplefin_url":      simplefin_url
+        }
     }
 
 
 def write_excel_config(start_date_str, end_date_str, starting_capital_float):
     """Writes the updated config parameters back to Excel."""
-    wb = openpyxl.load_workbook(XLSX_PATH, data_only=False)
+    xlsx_file = get_xlsx_path()
+    if not xlsx_file.exists():
+        print(f"Warning: Ledger file not found at {xlsx_file}")
+        return
+
+    wb = openpyxl.load_workbook(xlsx_file, data_only=False)
     ws = wb["Config"]
     
     try:
@@ -281,8 +365,8 @@ def write_excel_config(start_date_str, end_date_str, starting_capital_float):
     except Exception:
         pass
         
-    wb.save(XLSX_PATH)
-    print("  Saved updated config values back to Excel.")
+    wb.save(xlsx_file)
+    print(f"  Saved updated config values back to {xlsx_file.name}.")
 
 
 class BudgetRequestHandler(BaseHTTPRequestHandler):
@@ -448,6 +532,142 @@ class BudgetRequestHandler(BaseHTTPRequestHandler):
                 self.send_cors_headers()
                 self.end_headers()
                 self.wfile.write(json.dumps(updated_data).encode("utf-8"))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                traceback.print_exc()
+        elif self.path == "/api/sync-simplefin":
+            try:
+                content_length = int(self.headers.get("Content-Length", 0))
+                url_param = None
+                if content_length > 0:
+                    raw_body = self.rfile.read(content_length).decode("utf-8")
+                    try:
+                        p = json.loads(raw_body)
+                        url_param = p.get("url") or p.get("token")
+                    except Exception:
+                        url_param = raw_body.strip()
+
+                import sync_simplefin
+                xlsx_path = get_xlsx_path()
+                raw_url = url_param or sync_simplefin.get_stored_url(xlsx_path)
+
+                if not raw_url:
+                    self.send_response(400)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_cors_headers()
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "error": "No SimpleFIN Access URL or Setup Token found. Please provide a setup token or access URL."
+                    }).encode("utf-8"))
+                    return
+
+                access_url = sync_simplefin.resolve_access_url(raw_url)
+                data = sync_simplefin.fetch_simplefin_data(access_url)
+
+                if not data or "accounts" not in data:
+                    self.send_response(502)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_cors_headers()
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        "error": "Failed to retrieve account data from SimpleFIN Bridge API."
+                    }).encode("utf-8"))
+                    return
+
+                # Read and update Excel
+                wb = openpyxl.load_workbook(xlsx_path, data_only=False)
+                cfg = wb["Config"]
+                ws_nw = wb["Net Worth"]
+                ws_tx = wb["Transactions"]
+
+                existing_ids = set()
+                for row in ws_tx.iter_rows(min_row=3, values_only=True):
+                    if row and len(row) >= 8 and row[7]:
+                        existing_ids.add(str(row[7]).strip())
+
+                accounts = data.get("accounts", [])
+                merrill_bal = None
+                popular_bal = None
+                card_bal = 0.0
+                new_txs = []
+
+                for acc in accounts:
+                    aclass, dname = sync_simplefin.classify_account(acc)
+                    try:
+                        bal = float(acc.get("balance") or 0.0)
+                    except ValueError:
+                        bal = 0.0
+
+                    if aclass == "merrill_investment":
+                        merrill_bal = bal
+                    elif aclass == "popular_checking":
+                        popular_bal = bal
+                    elif aclass == "credit_card":
+                        card_bal += abs(bal)
+
+                    if aclass in ["popular_checking", "credit_card"]:
+                        for t in acc.get("transactions", []):
+                            tid = (t.get("id") or "").strip()
+                            if not tid or tid in existing_ids:
+                                continue
+                            raw_a = float(t.get("amount") or 0)
+                            if raw_a == 0:
+                                continue
+                            desc = sync_simplefin.clean_desc(t.get("description") or t.get("payee") or "Unknown")
+                            posted = t.get("posted") or t.get("transacted_at")
+                            tdate = datetime.fromtimestamp(posted) if posted else datetime.now()
+                            cat = sync_simplefin.categorize_tx(desc)
+                            new_txs.append({
+                                "date": tdate, "merchant": desc, "amount": -raw_a,
+                                "category": cat, "account": dname, "month": tdate.month,
+                                "year": tdate.year, "tx_id": tid
+                            })
+                            existing_ids.add(tid)
+
+                if access_url:
+                    cfg["C27"] = access_url
+                if merrill_bal is not None:
+                    cfg["C24"] = round(merrill_bal, 2)
+                if popular_bal is not None:
+                    cfg["C29"] = round(popular_bal, 2)
+                    ws_nw["E9"] = "=IF(ISBLANK(Config!C29), Config!C7, Config!C29)"
+                cfg["C30"] = round(card_bal, 2)
+                ws_nw["E18"] = "=IF(ISBLANK(Config!C30), 0, Config!C30)"
+
+                # Append transactions
+                if new_txs:
+                    start_r = ws_tx.max_row + 1
+                    for i, t in enumerate(new_txs):
+                        cr = start_r + i
+                        ws_tx.cell(row=cr, column=1, value=t["date"]).number_format = "yyyy-mm-dd"
+                        ws_tx.cell(row=cr, column=2, value=t["merchant"])
+                        ws_tx.cell(row=cr, column=3, value=t["amount"]).number_format = "$#,##0.00"
+                        ws_tx.cell(row=cr, column=4, value=t["category"])
+                        ws_tx.cell(row=cr, column=5, value=t["account"])
+                        ws_tx.cell(row=cr, column=6, value=t["month"])
+                        ws_tx.cell(row=cr, column=7, value=t["year"])
+                        ws_tx.cell(row=cr, column=8, value=t["tx_id"])
+
+                wb.save(xlsx_path)
+
+                updated_data = read_excel_data()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_cors_headers()
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "success": True,
+                    "synced_accounts": len(accounts),
+                    "new_transactions": len(new_txs),
+                    "merrill_balance": merrill_bal,
+                    "popular_balance": popular_bal,
+                    "card_balance": card_bal,
+                    "data": updated_data
+                }).encode("utf-8"))
             except Exception as e:
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json")
