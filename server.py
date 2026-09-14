@@ -291,6 +291,14 @@ def read_excel_data():
     except Exception:
         banco_popular = 5000.0
     try:
+        bofa_cash = float(cfg["C33"].value if cfg["C33"].value is not None else 8845.11)
+    except Exception:
+        bofa_cash = 8845.11
+    try:
+        monzo_usd = float(cfg["C34"].value if cfg["C34"].value is not None else 10775.76)
+    except Exception:
+        monzo_usd = 10775.76
+    try:
         credit_card_debt = float(cfg["C30"].value or 0.0)
     except Exception:
         credit_card_debt = 0.0
@@ -308,11 +316,11 @@ def read_excel_data():
         home_appreciation = 0.025
     simplefin_url = str(cfg["C27"].value or "")
 
-    emergency_buffer = 5000.0
-    total_assets = banco_popular + merrill_balance + house_value + emergency_buffer
+    total_cash = banco_popular + bofa_cash + monzo_usd
+    total_assets = total_cash + merrill_balance + house_value
     total_liabilities = mortgage_balance + merrill_loan + credit_card_debt
     total_net_worth = total_assets - total_liabilities
-    liquid_net_worth = banco_popular + merrill_balance + emergency_buffer - credit_card_debt
+    liquid_net_worth = total_cash + merrill_balance - credit_card_debt
     home_equity = house_value - mortgage_balance
 
     return {
@@ -328,7 +336,9 @@ def read_excel_data():
             "total_liabilities":  round(total_liabilities, 2),
             "merrill_balance":    round(merrill_balance, 2),
             "banco_popular":      round(banco_popular, 2),
-            "emergency_buffer":   round(emergency_buffer, 2),
+            "bofa_cash":          round(bofa_cash, 2),
+            "monzo_usd":          round(monzo_usd, 2),
+            "total_cash":         round(total_cash, 2),
             "credit_card_debt":   round(credit_card_debt, 2),
             "house_value":        round(house_value, 2),
             "mortgage_balance":   round(mortgage_balance, 2),

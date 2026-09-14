@@ -955,14 +955,36 @@
             line-height: 1.4;
         }
 
-        .modal-input {
+        .modal-input, .modal-select {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            font-family: var(--font-numbers);
-            font-size: 11.5px;
+            font-family: var(--font-display);
+            font-size: 13px;
+            background: var(--bg-canvas);
+            color: var(--ink-primary);
             outline: none;
+            box-sizing: border-box;
+        }
+
+        .modal-input:focus, .modal-select:focus {
+            border-color: var(--border-accent);
+            background: #FFFFFF;
+        }
+
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--ink-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .modal-btns {
@@ -991,6 +1013,7 @@
             font-size: 11.5px;
             font-weight: 600;
             cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -1074,6 +1097,16 @@
                     <span class="kpi-num" id="kpi-daily-velocity">$0 / day</span>
                 </div>
             </div>
+
+            <!-- Quick Action Buttons -->
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button class="quick-action-btn" style="flex: 1; justify-content: center; padding: 8px 10px; font-size: 11.5px; font-weight: 600; background: #0F2952; color: #FFFFFF; border: none; border-radius: var(--radius-sm);" onclick="openAddExpenseModal()">
+                    <span>➕</span> Log Expense
+                </button>
+                <button class="quick-action-btn" style="flex: 1; justify-content: center; padding: 8px 10px; font-size: 11.5px; font-weight: 600;" onclick="refreshLocalData()">
+                    <span id="sync-lifestyle-icon">🔄</span> Refresh Feed
+                </button>
+            </div>
         </div>
 
 
@@ -1130,17 +1163,16 @@
             </div>
         </div>
 
-        <!-- Feeds Actions Bar: SimpleFIN Sync, Statement Upload, Refresh -->
+        <!-- Feeds Actions Bar: Log Expense, Connect Feed, Refresh -->
         <div class="feeds-quick-actions">
-            <button class="quick-action-btn" onclick="openSyncModal()">
-                <span>⚡</span> Sync SimpleFIN
+            <button class="quick-action-btn" onclick="openAddExpenseModal()">
+                <span>➕</span> Log Expense
             </button>
-            <label class="quick-action-btn" style="cursor: pointer;">
-                <span>📥</span> Upload Statement
-                <input type="file" id="statement-file-input" accept=".csv,.pdf" style="display: none;" onchange="uploadStatementFile(this)">
-            </label>
-            <button class="quick-action-btn" onclick="refreshLocalData()" title="Reload from Excel">
-                <span>🔄</span> Refresh
+            <button class="quick-action-btn" onclick="openSyncModal()">
+                <span>⚡</span> Connect Feed
+            </button>
+            <button class="quick-action-btn" onclick="refreshLocalData()" title="Reload feed">
+                <span id="sync-btn-icon">🔄</span> Refresh
             </button>
         </div>
 
@@ -1180,6 +1212,55 @@
     </div>
 </div>
 
+<!-- Quick Log Expense Modal -->
+<div class="modal-veil" id="add-expense-modal-veil">
+    <div class="modal-card">
+        <h3 class="modal-title">➕ Log Expense</h3>
+        <p class="modal-p">
+            Record spend immediately (e.g. Capital One weekend purchases). Automatically deducts from your $3,000 lifestyle budget.
+        </p>
+        <div class="modal-form-group">
+            <label class="modal-label">Amount ($)</label>
+            <input type="number" id="manual-tx-amount" class="modal-input" placeholder="0.00" step="0.01" min="0.01" style="font-size: 16px; font-weight: 700;">
+        </div>
+        <div class="modal-form-group">
+            <label class="modal-label">Merchant / Description</label>
+            <input type="text" id="manual-tx-desc" class="modal-input" placeholder="e.g. Dinner, Uber, Whole Foods">
+        </div>
+        <div class="modal-form-group">
+            <label class="modal-label">Account / Card</label>
+            <select id="manual-tx-acc" class="modal-select">
+                <option value="Capital One Venture X" selected>💳 Capital One Venture X</option>
+                <option value="Banco Popular">🏦 Banco Popular</option>
+                <option value="Amex Gold">💳 Amex Gold</option>
+                <option value="Amex Platinum">💳 Amex Platinum</option>
+                <option value="Other Card">💳 Other Card</option>
+            </select>
+        </div>
+        <div class="modal-form-group">
+            <label class="modal-label">Category</label>
+            <select id="manual-tx-cat" class="modal-select">
+                <option value="Dining" selected>🍽️ Dining & Restaurants</option>
+                <option value="Groceries">🛒 Groceries & Supermarket</option>
+                <option value="Shopping">🛍️ Shopping & Personal</option>
+                <option value="Transport">🚕 Transport, Uber & Gas</option>
+                <option value="Fitness">💪 Fitness & Wellness</option>
+                <option value="Coffee">☕ Coffee, Subs & Hobbies</option>
+                <option value="Travel">✈️ Travel & Escapes</option>
+                <option value="Other">📦 Other / Misc</option>
+            </select>
+        </div>
+        <div class="modal-form-group">
+            <label class="modal-label">Date</label>
+            <input type="date" id="manual-tx-date" class="modal-input">
+        </div>
+        <div class="modal-btns" style="margin-top: 6px;">
+            <button class="btn-cancel" onclick="closeAddExpenseModal()">Cancel</button>
+            <button class="btn-confirm" onclick="saveManualExpense()">Save Expense</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const BASE_LIFESTYLE = 3000.00;
     const BASE_UTILITIES = 750.00;
@@ -1191,6 +1272,7 @@
         'Transport': { limit: 330.00, icon: '🚕', label: 'Transport, Uber & Gas' },
         'Fitness': { limit: 300.00, icon: '💪', label: 'Fitness & Wellness' },
         'Coffee': { limit: 240.00, icon: '☕', label: 'Coffee, Subs & Hobbies' },
+        'Travel': { limit: 1000.00, icon: '✈️', label: 'Travel & Escapes' },
         'Other': { limit: 440.00, icon: '📦', label: 'Buffer & Miscellaneous' }
     };
 
@@ -1309,30 +1391,13 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data && data.transactions && Array.isArray(data.transactions) && data.transactions.length > 0) {
-                        state.transactions = data.transactions;
-                        if (data.net_worth) state.net_worth = data.net_worth;
+                        mergeIncomingTransactions(data.transactions);
                         saveState();
                         render();
                     }
                 }).catch(() => {});
         } else if (state.sheets_api_url) {
-            fetch(state.sheets_api_url)
-                .then(r => r.json())
-                .then(data => {
-                    if (data && data.transactions && Array.isArray(data.transactions)) {
-                        state.transactions = data.transactions.map(t => ({
-                            tx_id: t.tx_id || ('tx_' + Math.random()),
-                            date: (t.date || '').split('T')[0],
-                            merchant: t.merchant || 'Unknown',
-                            amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
-                            category: t.category || mapCategory(t.merchant),
-                            account: t.account || 'Banco Popular'
-                        }));
-                        if (data.net_worth) state.net_worth = data.net_worth;
-                        saveState();
-                        render();
-                    }
-                }).catch(() => {});
+            syncFromSheetsUrl(state.sheets_api_url, true);
         }
     }
 
@@ -1395,6 +1460,133 @@
         document.getElementById('sync-modal-veil').classList.remove('open');
     }
 
+    function openAddExpenseModal() {
+        const dInput = document.getElementById('manual-tx-date');
+        if (dInput && !dInput.value) {
+            dInput.value = new Date().toISOString().split('T')[0];
+        }
+        const modal = document.getElementById('add-expense-modal-veil');
+        if (modal) modal.classList.add('open');
+        const amtInput = document.getElementById('manual-tx-amount');
+        if (amtInput) amtInput.focus();
+    }
+
+    function closeAddExpenseModal() {
+        const modal = document.getElementById('add-expense-modal-veil');
+        if (modal) modal.classList.remove('open');
+    }
+
+    function saveManualExpense() {
+        const amtEl = document.getElementById('manual-tx-amount');
+        const descEl = document.getElementById('manual-tx-desc');
+        const accEl = document.getElementById('manual-tx-acc');
+        const catEl = document.getElementById('manual-tx-cat');
+        const dateEl = document.getElementById('manual-tx-date');
+
+        const amt = parseFloat(amtEl ? amtEl.value : 0);
+        if (isNaN(amt) || amt <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        const merchant = (descEl && descEl.value ? descEl.value.trim() : '') || 'Card Expense';
+        const account = accEl ? accEl.value : 'Capital One Venture X';
+        const category = catEl ? catEl.value : 'Dining';
+        const date = (dateEl && dateEl.value) ? dateEl.value : new Date().toISOString().split('T')[0];
+
+        const newTx = {
+            tx_id: 'manual_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            date: date,
+            merchant: merchant,
+            amount: amt,
+            category: category,
+            account: account
+        };
+
+        if (!Array.isArray(state.transactions)) state.transactions = [];
+        state.transactions.unshift(newTx);
+        saveState();
+        render();
+        closeAddExpenseModal();
+
+        if (amtEl) amtEl.value = '';
+        if (descEl) descEl.value = '';
+    }
+
+    function mergeIncomingTransactions(incomingList) {
+        if (!Array.isArray(incomingList)) return;
+        const existing = state.transactions || [];
+        const manualOnes = existing.filter(t => (t.tx_id || '').startsWith('manual_'));
+
+        // Filter out manual transactions if an incoming bank transaction matches
+        const activeManual = manualOnes.filter(m => {
+            const hasMatch = incomingList.some(i => 
+                Math.abs((i.amount || 0) - (m.amount || 0)) < 0.05 && 
+                i.date === m.date
+            );
+            return !hasMatch;
+        });
+
+        // Deduplicate incoming by tx_id
+        const seenIds = new Set();
+        const uniqueIncoming = [];
+        incomingList.forEach(t => {
+            const key = t.tx_id || `${t.date}_${t.merchant}_${t.amount}`;
+            if (!seenIds.has(key)) {
+                seenIds.add(key);
+                uniqueIncoming.push(t);
+            }
+        });
+
+        state.transactions = [...activeManual, ...uniqueIncoming].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    async function syncFromSheetsUrl(url, silent = false) {
+        if (!url) return;
+        const icon1 = document.getElementById('sync-btn-icon');
+        const icon2 = document.getElementById('sync-lifestyle-icon');
+        if (icon1) icon1.innerText = '⏳';
+        if (icon2) icon2.innerText = '⏳';
+
+        const feedBadge = document.getElementById('feed-count-badge');
+        if (feedBadge && !silent) feedBadge.innerText = 'Syncing...';
+
+        try {
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.transactions && Array.isArray(data.transactions)) {
+                    const mapped = data.transactions.map(t => ({
+                        tx_id: t.tx_id || ('tx_' + Math.random()),
+                        date: (t.date || '').split('T')[0],
+                        merchant: t.merchant || 'Unknown',
+                        amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
+                        category: t.category || mapCategory(t.merchant),
+                        account: t.account || 'Capital One Venture X'
+                    }));
+                    mergeIncomingTransactions(mapped);
+                    saveState();
+                    render();
+                    if (!silent) {
+                        alert(`✅ Synced ${mapped.length} transactions successfully from Google Sheets!`);
+                    }
+                } else if (!silent) {
+                    alert("⚠️ Connected to Google Sheet, but no transactions array was returned. Check your Apps Script output format.");
+                }
+            } else if (!silent) {
+                alert(`⚠️ Sync request returned status ${res.status}: ${res.statusText}`);
+            }
+        } catch (err) {
+            console.error("Sync error", err);
+            if (!silent) {
+                alert(`⚠️ Sync failed: Could not fetch from the provided URL.\n\nDetails: ${err.message}\n\nTip: If using Google Apps Script, ensure your Web App is deployed with 'Execute as: Me' and 'Who has access: Anyone'.`);
+            }
+        } finally {
+            if (icon1) icon1.innerText = '🔄';
+            if (icon2) icon2.innerText = '🔄';
+        }
+    }
+
     async function confirmSync() {
         const urlBox = document.getElementById('sheets-url-box');
         const url = (urlBox ? urlBox.value : '').trim();
@@ -1403,9 +1595,6 @@
         closeSyncModal();
 
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const icon = document.getElementById('sync-btn-icon');
-        if (icon) icon.innerText = '⏳';
-
         if (isLocal) {
             try {
                 const res = await fetch('/api/sync-simplefin', {
@@ -1415,11 +1604,10 @@
                 });
                 const resData = await res.json();
                 if (res.ok && resData.data) {
-                    if (resData.data.transactions) state.transactions = resData.data.transactions;
-                    if (resData.data.net_worth) state.net_worth = resData.data.net_worth;
+                    if (resData.data.transactions) mergeIncomingTransactions(resData.data.transactions);
                     saveState();
                     render();
-                    alert(`✅ SimpleFIN sync completed! Refreshed ${resData.synced_accounts || 0} accounts and ${resData.new_transactions || 0} new transactions.`);
+                    alert(`✅ SimpleFIN sync completed! Refreshed accounts and new transactions.`);
                 } else if (resData.error) {
                     alert(`⚠️ Sync error: ${resData.error}`);
                 }
@@ -1428,36 +1616,10 @@
                 alert(`⚠️ Sync network error: ${err.message}`);
             }
         } else if (url) {
-            try {
-                const res = await fetch(url);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.transactions && Array.isArray(data.transactions)) {
-                        state.transactions = data.transactions.map(t => ({
-                            tx_id: t.tx_id || ('tx_' + Math.random()),
-                            date: (t.date || '').split('T')[0],
-                            merchant: t.merchant || 'Unknown',
-                            amount: typeof t.amount === 'number' ? t.amount : parseFloat(t.amount_usd || t.amount || 0),
-                            category: t.category || mapCategory(t.merchant),
-                            account: t.account || 'Banco Popular'
-                        }));
-                        if (data.net_worth) state.net_worth = data.net_worth;
-                        saveState();
-                        alert(`✅ Synced ${data.transactions.length} transactions successfully from Google Sheets!`);
-                    } else {
-                        alert("⚠️ Connected to URL, but no transactions array was returned. Check your Apps Script output format.");
-                    }
-                } else {
-                    alert(`⚠️ Sync request returned status ${res.status}: ${res.statusText}`);
-                }
-            } catch (err) {
-                console.error("Sync error", err);
-                alert(`⚠️ Sync failed: Could not fetch from the provided URL.\n\nDetails: ${err.message}\n\nTip: If using Google Apps Script, ensure your Web App is deployed with 'Execute as: Me' and 'Who has access: Anyone'.`);
-            }
+            await syncFromSheetsUrl(url, false);
         } else {
-            alert("Please paste a valid Google Apps Script Web App URL or SimpleFIN endpoint.");
+            alert("Please paste a valid Google Apps Script Web App URL.");
         }
-        if (icon) icon.innerText = '🔄';
         render();
     }
 
@@ -1468,6 +1630,7 @@
         if (str.includes('popular mortgage') || str.includes('hipoteca') || (str.includes('banco popular') && str.includes('mortgage'))) return 'Housing (Mortgage)';
         if (str.includes('hoa') || str.includes('victoria court')) return 'Housing (HOA)';
         if (str.includes('merrill') || str.includes('bofa')) return 'Debt Service';
+        if (str.includes('jetblue') || str.includes('iberia') || str.includes('airline') || str.includes('flight') || str.includes('airbnb') || str.includes('hotel') || str.includes('british airways')) return 'Travel';
         if (str.includes('pueblo') || str.includes('costco') || str.includes('supermarket') || str.includes('grocery') || str.includes('waitrose')) return 'Groceries';
         if (str.includes('dinner') || str.includes('restaurant') || str.includes('cafe') || str.includes('food') || str.includes('pret') || str.includes('mcdonald')) return 'Dining';
         if (str.includes('uber') || str.includes('gas') || str.includes('shell') || str.includes('transit') || str.includes('tfl')) return 'Transport';
@@ -1510,8 +1673,14 @@
         return m.includes('merrill') || m.includes('bofa') || m.includes('line of credit') || c.includes('debt');
     }
 
+    function isTravelTx(tx) {
+        const m = (tx.merchant || '').toLowerCase();
+        const c = (tx.category || '').toLowerCase();
+        return c.includes('travel') || m.includes('jetblue') || m.includes('iberia') || m.includes('airline') || m.includes('flight') || m.includes('airbnb') || m.includes('hotel') || m.includes('british airways');
+    }
+
     function isExcludedFromLifestyle(tx) {
-        return isLumaTx(tx) || isAAATx(tx) || isMortgageTx(tx) || isHOATx(tx) || isDebtServiceTx(tx) || 
+        return isLumaTx(tx) || isAAATx(tx) || isMortgageTx(tx) || isHOATx(tx) || isDebtServiceTx(tx) || isTravelTx(tx) ||
                (tx.category || '').toLowerCase().includes('utilit') || 
                (tx.category || '').toLowerCase().includes('housing') || 
                (tx.category || '').toLowerCase().includes('debt');
@@ -1598,10 +1767,10 @@
         const kpiVelocity = document.getElementById('kpi-daily-velocity');
         if (kpiVelocity) kpiVelocity.innerText = `$${fmtUSD(dailyVelocity, false)} / day`;
 
-        // Category Cards
+        // Category Cards (Lifestyle + Travel)
         const catSpentMap = {};
-        lifestyleTxs.forEach(tx => {
-            const cat = tx.category || 'Other';
+        currentMonthTxs.filter(tx => !isLumaTx(tx) && !isAAATx(tx) && !isMortgageTx(tx) && !isHOATx(tx) && !isDebtServiceTx(tx)).forEach(tx => {
+            const cat = isTravelTx(tx) ? 'Travel' : (tx.category || 'Other');
             catSpentMap[cat] = (catSpentMap[cat] || 0) + tx.amount;
         });
 
@@ -1726,7 +1895,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.transactions && Array.isArray(data.transactions)) {
-                        state.transactions = data.transactions;
+                        mergeIncomingTransactions(data.transactions);
                     }
                     if (data.net_worth) state.net_worth = data.net_worth;
                     saveState();
@@ -1735,6 +1904,12 @@
                 }
             } catch (e) {
                 console.error(e);
+            }
+        } else {
+            if (state.sheets_api_url) {
+                await syncFromSheetsUrl(state.sheets_api_url, false);
+            } else {
+                openSyncModal();
             }
         }
     }
@@ -1836,6 +2011,27 @@
         if (feedCountBadge) feedCountBadge.innerText = `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
 
         // 6. Handle Empty State
+        if (allTxs.length === 0) {
+            stream.innerHTML = `
+                <div class="empty-tx-box" style="padding: 24px 16px; text-align: center;">
+                    <div style="font-size: 30px; margin-bottom: 6px;">🍃</div>
+                    <strong style="font-size: 15px; color: var(--ink-primary);">No Transactions Synced Yet</strong>
+                    <p style="font-size: 12px; color: var(--ink-secondary); margin: 6px 0 16px; line-height: 1.4;">
+                        Your ledger is ready. Connect your live Google Sheet feed to pull Capital One and Banco Popular, or log an expense immediately.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 250px; margin: 0 auto;">
+                        <button class="btn-confirm" style="width: 100%; padding: 10px; font-size: 12px; border-radius: var(--radius-sm);" onclick="openSyncModal()">
+                            ⚡ Connect Google Sheet Feed
+                        </button>
+                        <button class="btn-cancel" style="width: 100%; padding: 10px; font-size: 12px; border-radius: var(--radius-sm);" onclick="openAddExpenseModal()">
+                            ➕ Log Expense Manually
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
         if (filtered.length === 0) {
             stream.innerHTML = `
                 <div class="empty-tx-box">
