@@ -1155,17 +1155,19 @@ function importRenovationCSV() {
 // ─── 7. TRIGGER MANAGEMENT & MENUS ──────────────────────────────────────────
 
 /**
- * Installs daily automatic sync at 06:00 America/Puerto_Rico.
+ * Installs hourly automatic sync for continuous hands-off updates.
  */
 function setupDailyTrigger() {
+  setupHourlyTrigger();
+}
+
+function setupHourlyTrigger() {
   removeDailyTrigger();
   ScriptApp.newTrigger("syncBankData")
     .timeBased()
-    .everyDays(1)
-    .atHour(6)
-    .inTimezone(SCRIPT_CONFIG.TIMEZONE)
+    .everyHours(1)
     .create();
-  SpreadsheetApp.getActiveSpreadsheet().toast("✅ Daily 06:00 AM bank sync trigger enabled.", "Trigger Setup", 5);
+  SpreadsheetApp.getActiveSpreadsheet().toast("✅ Automatic hourly bank sync enabled.", "Auto Sync Active", 5);
 }
 
 /**
@@ -1212,7 +1214,7 @@ function onOpen() {
     .addSeparator()
     .addItem("Setup: create tabs", "setupTracker")
     .addItem("Setup: store SimpleFIN credentials", "storeCredentials")
-    .addItem("Setup: enable daily sync", "setupDailyTrigger")
+    .addItem("Setup: enable automatic hourly sync", "setupHourlyTrigger")
     .addSeparator()
     .addItem("Show Transactions tab", "showTransactions_")
     .addItem("Hide Transactions tab", "hideTransactions_")
@@ -1231,9 +1233,26 @@ function hideTransactions_() {
 
 /**
  * JSON API handler to serve data seamlessly to the mobile PWA.
+ * Automatically synchronizes with SimpleFIN if data is older than 15 minutes.
  */
 function doGet(e) {
   try {
+    // 1. Auto-sync from SimpleFIN if stale (>15 mins) or requested via ?sync=1
+    const forceSync = e && e.parameter && (e.parameter.sync === "1" || e.parameter.sync === "true");
+    const scriptProps = PropertiesService.getScriptProperties();
+    const lastSyncStr = scriptProps.getProperty("LAST_AUTO_SYNC_TIMESTAMP");
+    const now = Date.now();
+    const isStale = !lastSyncStr || (now - parseInt(lastSyncStr, 10) > 15 * 60 * 1000);
+
+    if (forceSync || isStale) {
+      try {
+        syncBankData();
+        scriptProps.setProperty("LAST_AUTO_SYNC_TIMESTAMP", now.toString());
+      } catch (syncErr) {
+        Logger.log("Background SimpleFIN auto-sync inside doGet: " + syncErr.message);
+      }
+    }
+
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const accounts = ss.getSheetByName(SCRIPT_CONFIG.TABS.ACCOUNTS).getDataRange().getValues();
     const transactions = ss.getSheetByName(SCRIPT_CONFIG.TABS.TRANSACTIONS).getDataRange().getValues();
