@@ -1,4 +1,4 @@
-const CACHE = 'dcr-ledger-v32-expense-log-sync';
+const CACHE = 'dcr-ledger-v33-auto-cloud-data';
 const ASSETS = [
   './index.html',
   './manifest.json',

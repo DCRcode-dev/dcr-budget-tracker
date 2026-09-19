@@ -1399,6 +1399,18 @@
                 }).catch(() => {});
         } else if (state.sheets_api_url) {
             syncFromSheetsUrl(state.sheets_api_url, true);
+        } else {
+            // Automatic cloud ingestion: fetch data.json directly from repository
+            fetch('./data.json?t=' + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.transactions && Array.isArray(data.transactions)) {
+                        mergeIncomingTransactions(data.transactions);
+                        if (data.net_worth) state.net_worth = data.net_worth;
+                        saveState();
+                        render();
+                    }
+                }).catch(() => {});
         }
     }
 
@@ -1914,7 +1926,27 @@
             if (state.sheets_api_url) {
                 await syncFromSheetsUrl(state.sheets_api_url, false);
             } else {
-                openSyncModal();
+                const icon = document.getElementById('sync-btn-icon');
+                if (icon) icon.innerText = '⏳';
+                try {
+                    const res = await fetch('./data.json?t=' + Date.now());
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.transactions) {
+                            mergeIncomingTransactions(data.transactions);
+                            if (data.net_worth) state.net_worth = data.net_worth;
+                            saveState();
+                            render();
+                            alert(`✅ Cloud feed refreshed! Loaded ${data.transactions.length} transactions.`);
+                        }
+                    } else {
+                        openSyncModal();
+                    }
+                } catch (e) {
+                    openSyncModal();
+                } finally {
+                    if (icon) icon.innerText = '🔄';
+                }
             }
         }
     }
