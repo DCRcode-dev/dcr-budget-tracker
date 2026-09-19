@@ -1,0 +1,10 @@
+{
+  "format": "dcr-ledger-enc-v1",
+  "encrypted": true,
+  "updated_at": null,
+  "kdf": null,
+  "salt": null,
+  "iv": null,
+  "ciphertext": null,
+  "note": "Encrypted ledger payload. No plaintext financial data is stored in this repository."
+}
