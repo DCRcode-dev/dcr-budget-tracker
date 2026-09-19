@@ -1281,6 +1281,8 @@
         transactions: [],
         filter_term: '',
         account_filter: 'ALL',
+        // Zeroed placeholders only. Real figures arrive from the encrypted
+        // data.json payload at runtime and are never committed to this repo.
         net_worth: {
             total_net_worth: 0,
             liquid_net_worth: 0,
@@ -1288,7 +1290,7 @@
             total_assets: 0,
             total_liabilities: 0,
             merrill_balance: 0,
-            banco_popular: 5000,
+            banco_popular: 0,
             house_value: 0,
             mortgage_balance: 0,
             merrill_loan: 0,
@@ -1400,18 +1402,93 @@
         } else if (state.sheets_api_url) {
             syncFromSheetsUrl(state.sheets_api_url, true);
         } else {
-            // Automatic cloud ingestion: fetch data.json directly from repository
-            fetch('./data.json?t=' + Date.now())
-                .then(r => r.json())
-                .then(data => {
-                    if (data && data.transactions && Array.isArray(data.transactions)) {
-                        mergeIncomingTransactions(data.transactions);
-                        if (data.net_worth) state.net_worth = data.net_worth;
-                        saveState();
-                        render();
-                    }
-                }).catch(() => {});
+            // Automatic cloud ingestion: fetch + decrypt data.json from repository
+            loadLedgerData(true).then(applyLedgerData).catch(() => {});
         }
+    }
+
+    // ---------------------------------------------------------------
+    // Encrypted ledger support (AES-256-GCM / PBKDF2-SHA256).
+    // data.json in the public repo holds ciphertext only; it is
+    // decrypted here, in the browser, with a passphrase that never
+    // leaves this device.
+    // ---------------------------------------------------------------
+    const LEDGER_PASS_KEY = 'dcr_ledger_passphrase';
+
+    function b64ToBytes(b64) {
+        const bin = atob(b64);
+        const out = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+        return out;
+    }
+
+    async function deriveLedgerKey(passphrase, salt, iterations) {
+        const base = await crypto.subtle.importKey(
+            'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']
+        );
+        return crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt: salt, iterations: iterations, hash: 'SHA-256' },
+            base,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+    }
+
+    async function decryptLedger(envelope, passphrase) {
+        const iterations = (envelope.kdf && envelope.kdf.iterations) || 250000;
+        const key = await deriveLedgerKey(passphrase, b64ToBytes(envelope.salt), iterations);
+        const plain = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: b64ToBytes(envelope.iv) },
+            key,
+            b64ToBytes(envelope.ciphertext)
+        );
+        return JSON.parse(new TextDecoder().decode(plain));
+    }
+
+    // Fetches ./data.json and transparently decrypts it if encrypted.
+    // Returns the plaintext ledger object, or null.
+    async function loadLedgerData(interactive) {
+        let envelope;
+        try {
+            const res = await fetch('./data.json?t=' + Date.now());
+            if (!res.ok) return null;
+            envelope = await res.json();
+        } catch (e) {
+            return null;
+        }
+
+        if (!envelope || !envelope.encrypted) return envelope;
+        if (!envelope.ciphertext) return null;   // stub / not yet synced
+
+        let pass = localStorage.getItem(LEDGER_PASS_KEY);
+        for (let attempt = 0; attempt < 3; attempt++) {
+            if (!pass) {
+                if (!interactive) return null;
+                pass = prompt('Enter your DCR Ledger passphrase to unlock your financial data:');
+                if (!pass) return null;
+            }
+            try {
+                const data = await decryptLedger(envelope, pass);
+                localStorage.setItem(LEDGER_PASS_KEY, pass);
+                return data;
+            } catch (e) {
+                localStorage.removeItem(LEDGER_PASS_KEY);
+                pass = null;
+                if (!interactive) return null;
+                alert('Wrong passphrase \u2014 try again.');
+            }
+        }
+        return null;
+    }
+
+    function applyLedgerData(data) {
+        if (!data || !data.transactions || !Array.isArray(data.transactions)) return 0;
+        mergeIncomingTransactions(data.transactions);
+        if (data.net_worth) state.net_worth = data.net_worth;
+        saveState();
+        render();
+        return data.transactions.length;
     }
 
     function saveState() {
@@ -1929,16 +2006,10 @@
                 const icon = document.getElementById('sync-btn-icon');
                 if (icon) icon.innerText = '⏳';
                 try {
-                    const res = await fetch('./data.json?t=' + Date.now());
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data && data.transactions) {
-                            mergeIncomingTransactions(data.transactions);
-                            if (data.net_worth) state.net_worth = data.net_worth;
-                            saveState();
-                            render();
-                            alert(`✅ Cloud feed refreshed! Loaded ${data.transactions.length} transactions.`);
-                        }
+                    const data = await loadLedgerData(true);
+                    if (data && data.transactions) {
+                        const n = applyLedgerData(data);
+                        alert(`✅ Cloud feed refreshed! Loaded ${n} transactions.`);
                     } else {
                         openSyncModal();
                     }

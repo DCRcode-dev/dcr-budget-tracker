@@ -54,6 +54,62 @@ def categorize_tx(clean_name: str) -> str:
             return cat
     return "Other"
 
+# ---------------------------------------------------------------------------
+# Encryption-at-rest (AES-256-GCM, PBKDF2-SHA256).
+# The published data.json contains ONLY ciphertext. The passphrase never
+# leaves the device / CI secret store.
+# ---------------------------------------------------------------------------
+# Baseline (non-transaction) figures are NOT stored in this public repo.
+# Supply them via the LEDGER_BASELINE env var / CI secret as JSON, e.g.
+#   {"banco_popular":0,"merrill_balance":0,"house_value":0,
+#    "mortgage_balance":0,"merrill_loan":0,"home_equity":0,
+#    "monthly_lifestyle_cap":0,"baseline_utilities":0,
+#    "mortgage_monthly":0,"hoa_monthly":0}
+BASELINE_DEFAULTS = {
+    "banco_popular": 0.0, "merrill_balance": 0.0, "house_value": 0.0,
+    "mortgage_balance": 0.0, "merrill_loan": 0.0, "home_equity": 0.0,
+    "monthly_lifestyle_cap": 0.0, "baseline_utilities": 0.0,
+    "mortgage_monthly": 0.0, "hoa_monthly": 0.0,
+}
+
+def load_baseline() -> dict:
+    b = dict(BASELINE_DEFAULTS)
+    raw = os.environ.get("LEDGER_BASELINE")
+    if raw:
+        try:
+            b.update({k: float(v) for k, v in json.loads(raw).items() if k in b})
+        except Exception as e:
+            print(f"Warning: could not parse LEDGER_BASELINE ({e}); using zeros.")
+    return b
+
+
+ENC_FORMAT = "dcr-ledger-enc-v1"
+PBKDF2_ITERATIONS = 250000
+
+def encrypt_payload(payload: dict, passphrase: str) -> dict:
+    import hashlib, secrets
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+    salt = secrets.token_bytes(16)
+    iv = secrets.token_bytes(12)
+    key = hashlib.pbkdf2_hmac("sha256", passphrase.encode("utf-8"), salt, PBKDF2_ITERATIONS, dklen=32)
+    plaintext = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    ciphertext = AESGCM(key).encrypt(iv, plaintext, None)
+
+    b64 = lambda b: base64.b64encode(b).decode("ascii")
+    return {
+        "format": ENC_FORMAT,
+        "encrypted": True,
+        "updated_at": payload.get("updated_at"),
+        "kdf": {"name": "PBKDF2", "hash": "SHA-256", "iterations": PBKDF2_ITERATIONS},
+        "cipher": "AES-GCM",
+        "salt": b64(salt),
+        "iv": b64(iv),
+        "ciphertext": b64(ciphertext),
+        "note": "Encrypted ledger payload. No plaintext financial data is stored in this repository.",
+    }
+
+
 def parse_simplefin_url(access_url: str):
     trimmed = access_url.strip().rstrip("/")
     parsed = urllib.parse.urlparse(trimmed)
@@ -86,16 +142,17 @@ def fetch_simplefin_data(access_url: str, start_days: int = 60):
             print(f"Error fetching from SimpleFIN: {e}")
             return None
 
-def sync_to_data_json(access_url: str, output_path: str = "data.json"):
+def sync_to_data_json(access_url: str, output_path: str = "data.json", passphrase: str = None):
     data = fetch_simplefin_data(access_url)
     if not data or "accounts" not in data:
         print("Failed to get data from SimpleFIN")
         return False
 
+    base = load_baseline()
     accounts = data.get("accounts", [])
     all_txs = []
-    popular_bal = 0.0
-    merrill_bal = 0.00
+    popular_bal = base["banco_popular"]
+    merrill_bal = base["merrill_balance"]
     card_debt = 0.00
 
     for acc in accounts:
@@ -138,30 +195,37 @@ def sync_to_data_json(access_url: str, output_path: str = "data.json"):
     payload = {
         "updated_at": datetime.utcnow().isoformat() + "Z",
         "config": {
-            "monthly_lifestyle_cap": 3000.00,
-            "baseline_utilities": 750.00,
-            "mortgage_monthly": 0,
-            "hoa_monthly": 375.00
+            "monthly_lifestyle_cap": base["monthly_lifestyle_cap"],
+            "baseline_utilities": base["baseline_utilities"],
+            "mortgage_monthly": base["mortgage_monthly"],
+            "hoa_monthly": base["hoa_monthly"]
         },
         "net_worth": {
-            "total_net_worth": round(popular_bal + merrill_bal + 0 - 0 - 0 - card_debt, 2),
+            "total_net_worth": round(popular_bal + merrill_bal + base["house_value"]
+                                     - base["mortgage_balance"] - base["merrill_loan"] - card_debt, 2),
             "liquid_net_worth": round(popular_bal + merrill_bal - card_debt, 2),
-            "home_equity": 0,
-            "total_assets": round(popular_bal + merrill_bal + 0, 2),
-            "total_liabilities": round(0 + 0 + card_debt, 2),
+            "home_equity": round(base["home_equity"], 2),
+            "total_assets": round(popular_bal + merrill_bal + base["house_value"], 2),
+            "total_liabilities": round(base["mortgage_balance"] + base["merrill_loan"] + card_debt, 2),
             "merrill_balance": round(merrill_bal, 2),
             "banco_popular": round(popular_bal, 2),
             "credit_card_debt": round(card_debt, 2),
-            "house_value": 0,
-            "mortgage_balance": 0,
-            "merrill_loan": 0
+            "house_value": round(base["house_value"], 2),
+            "mortgage_balance": round(base["mortgage_balance"], 2),
+            "merrill_loan": round(base["merrill_loan"], 2)
         },
         "transactions": all_txs
     }
 
+    if not passphrase:
+        print("ERROR: no passphrase supplied. Refusing to write plaintext financial data to a public repo.")
+        print("Set LEDGER_PASSPHRASE in the environment (or repo secrets) and re-run.")
+        return False
+
+    envelope = encrypt_payload(payload, passphrase)
     with open(output_path, "w") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Successfully wrote {len(all_txs)} transactions to {output_path}")
+        json.dump(envelope, f, indent=2)
+    print(f"Successfully encrypted {len(all_txs)} transactions into {output_path}")
     return True
 
 if __name__ == "__main__":
@@ -170,5 +234,11 @@ if __name__ == "__main__":
         url = sys.argv[1]
     if not url:
         print("Usage: python3 sync_cloud.py <SIMPLEFIN_ACCESS_URL>")
+        print("       (requires LEDGER_PASSPHRASE in the environment)")
         sys.exit(1)
-    sync_to_data_json(url)
+    passphrase = os.environ.get("LEDGER_PASSPHRASE")
+    if not passphrase:
+        print("ERROR: LEDGER_PASSPHRASE is not set. Aborting rather than publishing plaintext.")
+        sys.exit(2)
+    ok = sync_to_data_json(url, passphrase=passphrase)
+    sys.exit(0 if ok else 1)
